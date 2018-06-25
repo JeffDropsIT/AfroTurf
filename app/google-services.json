@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "260252811526",
+    "firebase_url": "https://afroturf-d2c3a.firebaseio.com",
+    "project_id": "afroturf-d2c3a",
+    "storage_bucket": "afroturf-d2c3a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260252811526:android:9f0019fcc5aed01c",
+        "android_client_info": {
+          "package_name": "com.example.a21__void.afroturf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "260252811526-u5c033ell060blskud03ja8geoiccosn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.a21__void.afroturf",
+            "certificate_hash": "d25f5fec15827401202fa270794ba5d0ad33f6b6"
+          }
+        },
+        {
+          "client_id": "260252811526-huq8e7trklib0un37qoo9hjsmeeep1im.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "260252811526-huq8e7trklib0un37qoo9hjsmeeep1im.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD52LEMZAhyc6NJQyAfCkZ-VC9zxjDoVHk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "260252811526-huq8e7trklib0un37qoo9hjsmeeep1im.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
