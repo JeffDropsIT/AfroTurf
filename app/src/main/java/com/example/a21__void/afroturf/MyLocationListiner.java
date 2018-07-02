@@ -1,13 +1,18 @@
 package com.example.a21__void.afroturf;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,7 +21,8 @@ import java.util.Locale;
 
 class MyLocationListiner implements LocationListener{
 
-
+    public static Double longitude;
+    public static Double latitude;
     public static final String TAG = "asd";
     private final Context context;
 
@@ -27,17 +33,26 @@ class MyLocationListiner implements LocationListener{
 
     List<Address> addresses;
 
+    private Myact myAct = Myact.getInstance();
+
     public MyLocationListiner(Context context){
         this.context = context;
     }
     @Override
     public void onLocationChanged(Location loc) {
 
+        longitude = loc.getLongitude();
+        //Log.v(TAG, longitude);
+        latitude =  loc.getLatitude();
 
-        String longitude = "Longitude: " + loc.getLongitude();
-        Log.v(TAG, longitude);
-        String latitude = "Latitude: " + loc.getLatitude();
-        Log.v(TAG, latitude);
+        myAct.init(longitude, latitude);
+       // Log.v(TAG, latitude);
+
+        Intent intent = new Intent();
+        intent.putExtra("lat", latitude);
+        intent.putExtra("long", longitude);
+        context.startActivity(intent);
+
 
         update = latitude+" lat | long "+longitude;
 
@@ -84,3 +99,4 @@ class MyLocationListiner implements LocationListener{
 
     }
 }
+
