@@ -1,0 +1,75 @@
+Hatfield Plaza Salon
+1122 Burnett St, Hatfield, Pretoria, 0083
+-25.749734, 28.236226
+
+
+
+KrisNique Unisex Hair Salon
+Jan Shoba St & Duxbury Road, Hillcrest, Pretoria, 0083
+-25.755799, 28.238803
+
+
+Unnamed Road
+Hatfield, Pretoria, 0083
+-25.750243, 28.236861
+
+
+Hatfield
+Pretoria, 0083
+-25.750212, 28.234012
+
+
+427 Hilda St
+Hatfield, Pretoria, 0028
+-25.750141, 28.234813
+
+Hatfield
+Pretoria, 0028
+-25.750721, 28.236875
+
+
+Hatfield
+Pretoria, 0083
+-25.749823, 28.235268
+
+
+
+
+
+
+
+
+
+
+Ferndale
+Randburg, 2160
+-26.089351, 28.004830
+
+
+
+Ferndale
+Randburg, 2160
+-26.091562, 28.003978
+
+
+
+Ferndale
+Randburg, 2160
+-26.090753, 28.005533
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+keytool -exportcert -keystore C:\Users\<USERNAME>\.android\debug.keystore -list -v
