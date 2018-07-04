@@ -21,8 +21,6 @@ import java.util.Locale;
 
 class MyLocationListiner implements LocationListener{
 
-    public static Double longitude;
-    public static Double latitude;
     public static final String TAG = "asd";
     private final Context context;
 
@@ -33,7 +31,6 @@ class MyLocationListiner implements LocationListener{
 
     List<Address> addresses;
 
-    private Myact myAct = Myact.getInstance();
 
     public MyLocationListiner(Context context){
         this.context = context;
@@ -41,17 +38,13 @@ class MyLocationListiner implements LocationListener{
     @Override
     public void onLocationChanged(Location loc) {
 
-        longitude = loc.getLongitude();
+        double longitude = loc.getLongitude();
         //Log.v(TAG, longitude);
-        latitude =  loc.getLatitude();
+        double latitude =  loc.getLatitude();
 
-        myAct.init(longitude, latitude);
        // Log.v(TAG, latitude);
 
-        Intent intent = new Intent();
-        intent.putExtra("lat", latitude);
-        intent.putExtra("long", longitude);
-        context.startActivity(intent);
+
 
 
         update = latitude+" lat | long "+longitude;
