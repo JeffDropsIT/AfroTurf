@@ -27,6 +27,9 @@
         <activity android:name=".HomeActivity">
 
         </activity>
+        <activity android:name=".Salon">
+
+        </activity>
         <activity android:name=".signUpActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

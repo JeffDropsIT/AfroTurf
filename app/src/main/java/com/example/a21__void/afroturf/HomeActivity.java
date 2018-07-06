@@ -1,6 +1,7 @@
 package com.example.a21__void.afroturf;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -47,7 +48,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
     private TextView ttvUpdate;
     private FusedLocationProviderClient mFusedLocationClient;
 
-    private ClusterManager<MySaloon> mClusterManager;
+    private ClusterManager<MySalon> mClusterManager;
 
     private List<Marker> originMarkers = new ArrayList<>();
     private List<Marker> destinationMarkers = new ArrayList<>();
@@ -153,6 +154,18 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 mMap.setMyLocationEnabled(true);
 
+                mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                    @Override
+                    public void onInfoWindowClick(Marker marker) {
+
+                        Intent intent = new Intent(getApplicationContext(),Salon.class);
+                        startActivity(intent);
+
+
+
+                    }
+                });
+
                 // mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 50f));
 
 
@@ -186,10 +199,10 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Add ten cluster items in close proximity, for purposes of this example.
         for (int i = 0; i < 10; i++) {
-            double offset = i / 60d;
+            double offset = i / 10d;
             lat = lat + offset;
             lng = lng + offset;
-            MySaloon offsetItem = new MySaloon(lat, lng);
+            MySalon offsetItem = new MySalon(lat, lng);
             mClusterManager.addItem(offsetItem);
         }
     }
@@ -204,6 +217,20 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    public void findPath(){
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+
+                Intent intent = new Intent(getApplicationContext(),Salon.class);
+                startActivity(intent);
+
+
+
+            }
+        });
+    }
+
     public GoogleMap getMap() {
         return mMap;
     }
@@ -213,6 +240,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (v.getId()){
             case R.id.btn_path:
                 sendRequest();
+
                 break;
         }
     }

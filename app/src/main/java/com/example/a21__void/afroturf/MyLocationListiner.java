@@ -56,7 +56,6 @@ class MyLocationListiner implements LocationListener{
             addresses = geocoder.getFromLocation(loc.getLatitude(),
                     loc.getLongitude(), 1);
             if (addresses.size() > 0) {
-                System.out.println(addresses.get(0).getLocality());
                 cityName = addresses.get(0).getLocality();
             }
         }
@@ -65,7 +64,7 @@ class MyLocationListiner implements LocationListener{
         }
         update = longitude + "\n" + latitude;
 
-        Toast.makeText(context, update, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, update, Toast.LENGTH_SHORT).show();
 
 
 
