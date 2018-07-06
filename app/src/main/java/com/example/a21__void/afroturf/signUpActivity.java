@@ -121,6 +121,7 @@ public class signUpActivity extends AppCompatActivity implements View.OnClickLis
                         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
+                        finish();
 
                     }else {
                         Toast.makeText(signUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();

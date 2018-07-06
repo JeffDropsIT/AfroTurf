@@ -1,5 +1,6 @@
 package com.example.a21__void.afroturf;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -121,6 +122,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.getUiSettings().setMapToolbarEnabled(false);
         getDeviceLocation(new DataCallBack() {
             @Override
             public void onLocation(double lang, double lat) {
@@ -159,7 +161,8 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onInfoWindowClick(Marker marker) {
 
                         Intent intent = new Intent(getApplicationContext(),Salon.class);
-                        startActivity(intent);
+                        startActivityForResult(intent, Salon.REQUEST_PATH);
+                        finish();
 
 
 
@@ -317,4 +320,29 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i("ZAQ", "startActivityForResult: clicked");
+
+        sendRequest();
+        //sendRequest();
+        if (requestCode == Salon.REQUEST_PATH) {
+            // Make sure the request was successful
+            Log.i("ZAQ", "startActivityForResult: in");
+
+            sendRequest();
+
+
+        }
+
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        super.startActivityForResult(intent, requestCode);
+
+        Log.i("ZAQ", "startActivityForResult: 1");
+    }
 }
