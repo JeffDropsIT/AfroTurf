@@ -218,8 +218,8 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void sendRequest() {
-        String origin = "Pretoria";
-        String destination = "Mandeni";
+        String origin = Double.toString(latitude) + "," + Double.toString(longitude);
+        String destination = Double.toString(latitude+.1) + "," + Double.toString(longitude+.1);
         try{
             new DirectionFinder(this, origin, destination).execute();
         }catch (UnsupportedEncodingException e){
