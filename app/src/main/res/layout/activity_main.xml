@@ -12,6 +12,34 @@
         android:layout_width="match_parent"
         android:layout_height="250dp" />
 
+    <Button
+        android:id="@+id/btn_path"
+        android:layout_width="118dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/map"
+        android:background="#3b78e7"
+        android:text="Find Path"
+        android:textColor="#FFFF" />
+
+    <TextView
+        android:id="@+id/ttvDuration"
+        android:layout_width="116dp"
+        android:layout_height="49dp"
+        android:layout_alignBottom="@+id/btn_path"
+        android:layout_alignParentEnd="true"
+        android:text="Duration"
+        android:gravity="center"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:id="@+id/ttvDistance"
+        android:layout_width="129dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/map"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="Distance" />
+
 
 
 </RelativeLayout>
