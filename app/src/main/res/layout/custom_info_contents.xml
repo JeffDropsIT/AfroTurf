@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    >
+
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="250dp"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+
+        card_view:cardBackgroundColor="#d3d3d6"
+        card_view:cardCornerRadius="4dp">
+
+
+           <RelativeLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content">
+               <TextView
+                   android:id="@+id/ttvInfo"
+                   android:textColor="#6c969d"
+                   android:layout_width="match_parent"
+                   android:layout_height="45dp"
+                   android:padding="10dp"
+                   android:text="Snazzy info Window"
+                   android:textSize="20dp" />
+               <TextView
+                   android:id="@+id/border"
+                   android:layout_below="@+id/ttvInfo"
+                   android:layout_marginLeft="10dp"
+                   android:layout_marginTop="2dp"
+                   android:layout_marginRight="10dp"
+                   android:layout_width="match_parent"
+                   android:layout_height="2dp"
+                   android:background="#6c969d"/>
+
+           </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+
+</RelativeLayout>

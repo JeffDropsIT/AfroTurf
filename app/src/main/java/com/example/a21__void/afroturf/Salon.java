@@ -29,8 +29,7 @@ public class Salon extends AppCompatActivity implements View.OnClickListener{
         switch(v.getId()){
             case R.id.btn_find_path:
                 Log.i("ZAQ", "onClick: clicked");
-                Intent intent = new Intent(this, HomeActivity.class);
-                startActivityForResult(intent, REQUEST_PATH);
+                finish();
                 break;
         }
     }

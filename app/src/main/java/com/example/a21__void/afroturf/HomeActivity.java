@@ -12,14 +12,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.example.a21__void.Modules.DirectionFinder;
 import com.example.a21__void.Modules.DirectionFinderListener;
 import com.example.a21__void.Modules.Route;
+import com.google.android.gms.common.internal.Constants;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,17 +38,69 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class HomeActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, DirectionFinderListener {
+public class HomeActivity extends AppCompatActivity implements OnMapAndViewReadyListener.OnGlobalLayoutAndMapReadyListener, View.OnClickListener, DirectionFinderListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMarkerClickListener {
 
 
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+
+        Intent intent = new Intent(getApplicationContext(),Salon.class);
+        startActivityForResult(intent, Salon.REQUEST_PATH);
+    }
+    @Override
+    public boolean onMarkerClick(final Marker marker){
+
+        Toast.makeText(this, marker.getTitle() + " z-index set to " ,
+                Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
+    class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+
+
+
+        private final View mWindow;
+
+        private final View mContents;
+
+        CustomInfoWindowAdapter() {
+            mWindow = getLayoutInflater().inflate(R.layout.custom_info_window, null);
+            mContents = getLayoutInflater().inflate(R.layout.custom_info_contents, null);
+        }
+
+
+
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+
+            return mWindow;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            return null;
+        }
+    }
     LocationManager locationManager;
     MyLocationListiner locationListener;
+
+
 
     private GoogleMap mMap;
     private double longitude, latitude;
@@ -63,6 +121,8 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
         btn_path = findViewById(R.id.btn_path);
         btn_path.setOnClickListener(this);
@@ -86,8 +146,10 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
         setUpMap();
+        getDeviceLocation();
 
     }
+
 
 
     public void getDeviceLocation(final DataCallBack dataCallBack) {
@@ -119,10 +181,48 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
+    public void getDeviceLocation() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+
+                if (location != null && mMap != null) {
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    Log.i("ZAQ", "onReceiveResult: " + latitude + "| " + longitude);
+
+
+                }
+
+            }
+        });
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        Log.i("ZAQ", "onMapReady: " + "| " + 2);
+
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+
+        mMap.setOnInfoWindowClickListener(this);
+        mMap.setOnMarkerClickListener(this);
+
+        mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
+
+
         getDeviceLocation(new DataCallBack() {
             @Override
             public void onLocation(double lang, double lat) {
@@ -156,18 +256,6 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 mMap.setMyLocationEnabled(true);
 
-                mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                    @Override
-                    public void onInfoWindowClick(Marker marker) {
-
-                        Intent intent = new Intent(getApplicationContext(),Salon.class);
-                        startActivityForResult(intent, Salon.REQUEST_PATH);
-                        finish();
-
-
-
-                    }
-                });
 
                 // mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 50f));
 
@@ -213,25 +301,12 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+       // mapFragment.getMapAsync(HomeActivity.this);
+        new OnMapAndViewReadyListener(mapFragment, this);
 
 
         Log.i("ZAQ", "setUpMap: " + latitude + "| " + longitude);
 
-    }
-
-    public void findPath(){
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-
-                Intent intent = new Intent(getApplicationContext(),Salon.class);
-                startActivity(intent);
-
-
-
-            }
-        });
     }
 
     public GoogleMap getMap() {
@@ -243,7 +318,6 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (v.getId()){
             case R.id.btn_path:
                 sendRequest();
-
                 break;
         }
     }
@@ -257,6 +331,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
             e.printStackTrace();
         }
     }
+
 
     public interface DataCallBack{
 
@@ -310,8 +385,8 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             PolylineOptions polylineOptions = new PolylineOptions().
                     geodesic(true).
-                    color(Color.BLUE).
-                    width(10);
+                    color(Color.rgb( 0,179, 253))
+                    .width(10);
 
             for (int i = 0; i < route.points.size(); i++)
                 polylineOptions.add(route.points.get(i));
@@ -325,8 +400,6 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i("ZAQ", "startActivityForResult: clicked");
 
-        sendRequest();
-        //sendRequest();
         if (requestCode == Salon.REQUEST_PATH) {
             // Make sure the request was successful
             Log.i("ZAQ", "startActivityForResult: in");
@@ -339,10 +412,5 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         super.onActivityResult(requestCode, resultCode, data);
     }
-    @Override
-    public void startActivityForResult(Intent intent, int requestCode) {
-        super.startActivityForResult(intent, requestCode);
 
-        Log.i("ZAQ", "startActivityForResult: 1");
-    }
 }

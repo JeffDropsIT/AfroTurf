@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    >
+
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="160dp"
+        android:layout_height="120dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+
+        card_view:cardBackgroundColor="#f5f4f4"
+        card_view:cardCornerRadius="4dp">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/ttvInfo"
+                android:textColor="#6c969d"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:lineSpacingExtra="2dp"
+                android:text="JeffNCoda's Salon"
+                android:textSize="10dp" />
+            <TextView
+                android:id="@+id/imgView_rating"
+                android:layout_toRightOf="@+id/ttvInfo"
+                android:layout_width="60dp"
+                android:layout_margin="5dp"
+                android:text="5"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="#408f2e"
+                android:gravity="center"
+                android:background="@drawable/ic_rating"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/border"
+                android:layout_below="@+id/ttvInfo"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#6c969d"/>
+            <ImageView
+                android:id="@+id/imgView_cover"
+                android:layout_marginTop="2dp"
+                android:layout_below="@id/border"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:background="@drawable/ic_img"/>
+
+        </RelativeLayout>
+
+
+
+    </android.support.v7.widget.CardView>
+
+
+</RelativeLayout>
