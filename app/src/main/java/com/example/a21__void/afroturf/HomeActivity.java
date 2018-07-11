@@ -255,7 +255,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
 
         //mMap.setOnInfoWindowClickListener(this);
         mMap.setOnMarkerClickListener(this);
-        mMap.getUiSettings().setZoomControlsEnabled(false);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
 
         mMap.getUiSettings().setMapToolbarEnabled(false);
 
@@ -287,7 +287,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
                                 SalonsPreviewFragment previewFragment = new SalonsPreviewFragment();
                                 previewFragment.setSalon(salon);
 
-                                HomeActivity.this.salonsFragementAdapter.Add(previewFragment);
+                                HomeActivity.this.salonsFragementAdapter.add(previewFragment);
                                 mClusterManager.addItem(salon);
                             }
                             Random random = new Random();
@@ -300,7 +300,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
                                 SalonsPreviewFragment previewFragment = new SalonsPreviewFragment();
                                 previewFragment.setSalon(salon);
 
-                                HomeActivity.this.salonsFragementAdapter.Add(previewFragment);
+                                HomeActivity.this.salonsFragementAdapter.add(previewFragment);
                                 mClusterManager.addItem(salon);
                             }
                         } catch (JSONException e) {
@@ -317,7 +317,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
                 // Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
                 CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(customerLoaction)      // Sets the center of the map to Mountain View
-                        .zoom(12f)                   // Sets the zoom
+                        .zoom(17)                   // Sets the zoom
                         .bearing(50)                // Sets the orientation of the camera to east
                         .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                         .build();                  // Creates a CameraPosition from the builder
@@ -356,7 +356,6 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
         mClusterManager = new ClusterManager<>(this, getMap());
-
 
         // Point the map's listeners at the listeners implemented by the cluster
         // manager.

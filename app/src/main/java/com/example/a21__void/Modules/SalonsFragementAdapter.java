@@ -31,10 +31,11 @@ public class SalonsFragementAdapter extends FragmentStatePagerAdapter {
         return fragments.size();
     }
 
-    public void Add(SalonsPreviewFragment fragment){
+    public void add(SalonsPreviewFragment fragment){
         this.fragments.add(fragment);
         this.notifyDataSetChanged();
     }
+
 
     public int get(LatLng position) {
         for(int pos = 0; pos < this.fragments.size();pos++){
