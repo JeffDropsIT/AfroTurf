@@ -9,6 +9,7 @@ public class MySalon implements ClusterItem {
     private final String mTitle;
     private final String mSnippet;
 
+
     public MySalon(double lat, double lng) {
         mPosition = new LatLng(lat, lng);
         mSnippet = null;

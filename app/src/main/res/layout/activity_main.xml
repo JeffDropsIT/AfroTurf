@@ -3,29 +3,70 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".HomeActivity">
 
+
+<android.support.design.widget.FloatingActionButton
+    android:id="@+id/fab_hide"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:fabSize="normal"
+    android:src="@drawable/ic_arrow_down"
+    android:layout_alignBottom="@id/map"
+    android:layout_margin="10dp"
+    android:layout_alignParentRight="true"
+
+    />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_nav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fabSize="normal"
+        android:layout_alignBottom="@id/map"
+        android:src="@drawable/ic_navigate"
+        android:layout_toLeftOf="@id/fab_hide"
+        android:layout_marginBottom="10dp"/>
 
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_above="@id/tmp_rel"
+         />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@drawable/shadow"
+        android:layout_above="@id/tmp_rel"/>
 
     <RelativeLayout
+        android:id="@+id/tmp_rel"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="200dp"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/map"
-        android:layout_marginTop="-49dp">
+        android:background="#eeeeee"
+        >
 
         <Button
             android:id="@+id/btn_path"
-            android:layout_width="118dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#3b78e7"
-            android:text="Find Path"
-            android:textColor="#FFFF" />
+            android:text="Less"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:textColor="#505050"
+            android:visibility="gone"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vpgSalons"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v4.view.ViewPager>
 
         <TextView
             android:id="@+id/ttvDuration"
@@ -35,6 +76,8 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:gravity="center"
+            android:visibility="gone"
+
             android:text="Duration" />
 
         <TextView
@@ -43,6 +86,7 @@
             android:layout_height="50dp"
             android:layout_centerHorizontal="true"
             android:gravity="center"
+            android:visibility="gone"
             android:text="Distance" />
     </RelativeLayout>
 

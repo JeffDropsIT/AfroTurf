@@ -27,6 +27,8 @@ public class signUpActivity extends AppCompatActivity implements View.OnClickLis
     //firebase stuff
     private FirebaseAuth mAuth;
     private String username, password;
+    private boolean debug = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +48,11 @@ public class signUpActivity extends AppCompatActivity implements View.OnClickLis
         //setOnClick
         loginBtn.setOnClickListener(this);
 
+        if(debug){
+            Intent intent = new Intent(this, HomeActivity.class);
+            this.startActivity(intent);
+            Toast.makeText(this, "Skipped Login ", Toast.LENGTH_SHORT).show();
+        }
 
     }
     @Override
@@ -105,8 +112,8 @@ public class signUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void userLogin() {
-       // validate();
-        //if(!(username.isEmpty() || password.isEmpty())){
+        // validate();
+        // if(!(username.isEmpty() || password.isEmpty())){
 
             progBar.setVisibility(View.VISIBLE);
             mAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -126,9 +133,6 @@ public class signUpActivity extends AppCompatActivity implements View.OnClickLis
                     }else {
                         Toast.makeText(signUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
-
-
-
 
 
                 }

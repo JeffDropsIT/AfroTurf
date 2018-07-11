@@ -11,7 +11,7 @@ import android.widget.Button;
 
 public class Salon extends AppCompatActivity implements View.OnClickListener{
 
-    static final int REQUEST_PATH = 1;
+    public static final int REQUEST_PATH = 1;
     private Button btn_path;
 
     @Override
