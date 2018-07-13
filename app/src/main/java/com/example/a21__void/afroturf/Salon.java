@@ -68,6 +68,8 @@ public class Salon extends AppCompatActivity implements View.OnClickListener, Bo
     }
 
     private ArrayList<String> generateFakeNames(){
+        
+
         ArrayList<String> nameList = new ArrayList<>();
         nameList.add("Karen");
         nameList.add("Kylie");
@@ -81,7 +83,6 @@ public class Salon extends AppCompatActivity implements View.OnClickListener, Bo
     public void setmViewPager(ViewPager viewPager){
 
         SalonsFragementAdapter adapter = new SalonsFragementAdapter(getSupportFragmentManager());
-
         viewPager.setAdapter(adapter);
 
     }
