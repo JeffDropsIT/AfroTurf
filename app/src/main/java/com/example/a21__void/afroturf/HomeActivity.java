@@ -2,21 +2,34 @@ package com.example.a21__void.afroturf;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.JsonReader;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +42,7 @@ import com.example.a21__void.Modules.RemoteDataRetriever;
 import com.example.a21__void.Modules.Route;
 import com.example.a21__void.Modules.SalonsFragementAdapter;
 import com.example.a21__void.Modules.SalonsPreviewFragment;
+import com.example.a21__void.Modules.SearchFragment;
 import com.google.android.gms.common.internal.Constants;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
@@ -63,16 +77,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class HomeActivity extends AppCompatActivity implements OnMapAndViewReadyListener.OnGlobalLayoutAndMapReadyListener, View.OnClickListener, DirectionFinderListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMarkerClickListener {
+public class HomeActivity extends AppCompatActivity implements OnMapAndViewReadyListener.OnGlobalLayoutAndMapReadyListener, View.OnClickListener, DirectionFinderListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMarkerClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
     private ViewPager vpgSalons;
+    private MySalon selectedSalon;
     private SalonsFragementAdapter salonsFragementAdapter;
 
     private RelativeLayout previewLayout;
     private FloatingActionButton fabHide;
 
     private boolean previewing = true;
+    private boolean progressShown = true;
+
+    private RelativeLayout relProgress, relSwitcher;
+    private SmallPreview smallPreview;
 
     private BitmapDescriptor locationIcon;
+
+    private Animation animRotation;
     @Override
     public void onInfoWindowClick(Marker marker) {
 
@@ -93,6 +114,8 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
     public void onPointerCaptureChanged(boolean hasCapture) {
 
     }
+
+
 
     class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
@@ -139,30 +162,44 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
     private ProgressDialog progressDialog;
 
 
-    Button btn_path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.animRotation = AnimationUtils.loadAnimation(this, R.anim.rortation);
         this.locationIcon  = BitmapDescriptorFactory.fromResource(R.drawable.ic_locationpin);
 
 
-        btn_path = findViewById(R.id.btn_path);
-        FloatingActionButton fabNav = findViewById(R.id.fab_nav);
-        this.fabHide = findViewById(R.id.fab_hide);
+        //btn_path = findViewById(R.id.btn_path);
+        //FloatingActionButton fabNav = findViewById(R.id.fab_nav);
+        Toolbar toolbar = this.findViewById(R.id.toolbar);
+        this.setSupportActionBar(toolbar);
 
-        fabNav.setOnClickListener(this);
-        fabHide.setOnClickListener(this);
+
+        BottomNavigationView bnvNav = this.findViewById(R.id.bnv_nav);
+        bnvNav.setSelectedItemId(R.id.nav_map);
+        bnvNav.setOnNavigationItemSelectedListener(this);
+
+        this.relProgress = this.findViewById(R.id.prog_loading);
+        this.relSwitcher = this.findViewById(R.id.rel_switcher);
+        this.relProgress.findViewById(R.id.tmp_prog).startAnimation(this.animRotation);
+
+        //this.fabHide = findViewById(R.id.fab_hide);
+
+        //fabNav.setOnClickListener(this);
+        //fabHide.setOnClickListener(this);
 
         this.previewLayout = this.findViewById(R.id.tmp_rel);
+
+        this.smallPreview = new SmallPreview(this);
 
         this.vpgSalons = findViewById(R.id.vpgSalons);
 
         this.salonsFragementAdapter = new SalonsFragementAdapter(getSupportFragmentManager());
         this.vpgSalons.setAdapter(salonsFragementAdapter);
 
-        btn_path.setOnClickListener(this);
+       // btn_path.setOnClickListener(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
 
@@ -245,6 +282,23 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
         });
     }
 
+
+
+    private void showProgress(int parentId){
+        if(!this.progressShown && relProgress != null){
+            ((ViewGroup)this.findViewById(parentId)).addView(this.relProgress);
+            this.relProgress.findViewById(R.id.tmp_prog).startAnimation(this.animRotation);
+            progressShown = true;
+        }
+    }
+
+    private void hideProgress(int parentId){
+        if(this.progressShown && relProgress != null){
+            ((ViewGroup)this.findViewById(parentId)).removeView(relProgress);
+            this.animRotation.cancel();
+            progressShown = false;
+        }
+    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -274,6 +328,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
                     public void onReceive(String rawData) {
                         Log.i("RFC", "onReceive: " + rawData);
                         try {
+                            Random random = new Random();
                             JSONArray rawSalons = new JSONArray(rawData);
                             for(int pos = 0; pos < rawSalons.length(); pos++){
                                 JSONObject rawSalon = rawSalons.getJSONObject(pos);
@@ -283,25 +338,34 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
                                 String[] locationParts = salonLocation.split(",");
                                 double sLatitude = Double.parseDouble(locationParts[0]), sLongitude = Double.parseDouble(locationParts[1]);
 
-                                MySalon salon = new MySalon(sLatitude,sLongitude, salonName, salonName);
+                                MySalon salon = new MySalon(sLatitude,sLongitude, salonName, salonName, random.nextInt(5));
                                 SalonsPreviewFragment previewFragment = new SalonsPreviewFragment();
                                 previewFragment.setSalon(salon);
 
                                 HomeActivity.this.salonsFragementAdapter.Add(previewFragment);
                                 mClusterManager.addItem(salon);
                             }
-                            Random random = new Random();
+
                             for (int i = 0; i < 10; i++) {
+
                                 double offset = i / 100d;
                                 double mul1 = random.nextBoolean() ? -1 : 1, mul2 = random.nextBoolean() ? -1 : 1, mul3 = random.nextBoolean() ? -1:1;
                                 double nextLati = (lat + offset * mul1);
                                 double nextLong = (lang + offset * mul2);
-                                MySalon salon = new MySalon(nextLati, nextLong, "Hard Coded Salon", "");
+                                MySalon salon = new MySalon(nextLati, nextLong, "Hard Coded Salon", "", random.nextInt(5));
                                 SalonsPreviewFragment previewFragment = new SalonsPreviewFragment();
                                 previewFragment.setSalon(salon);
+                                if(i == 0)
+                                    selectedSalon = salon;
 
                                 HomeActivity.this.salonsFragementAdapter.Add(previewFragment);
                                 mClusterManager.addItem(salon);
+                            }
+
+
+                            HomeActivity.this.hideProgress(R.id.frame_container);
+                            if(selectedSalon != null){
+                                HomeActivity.this.smallPreview.show(HomeActivity.this.relSwitcher, selectedSalon);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -416,14 +480,15 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.fab_nav:
-                sendRequest();
-                break;
-            case R.id.fab_hide:
-                togglePreview();
-                break;
-        }
+//        switch (v.getId()){
+//            case R.id.fab_nav:
+//                sendRequest();
+//                break;
+//            case R.id.fab_hide:
+//                //togglePreview();
+//                getSupportFragmentManager().beginTransaction().add(R.id.rel_container, new SearchFragment()).addToBackStack("search").commit();
+//                break;
+//        }
     }
 
     private void togglePreview() {
@@ -489,8 +554,8 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
 
         for (Route route : routes) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
-            ((TextView) findViewById(R.id.ttvDuration)).setText(route.duration.text);
-            ((TextView) findViewById(R.id.ttvDistance)).setText(route.distance.text);
+            //((TextView) findViewById(R.id.ttvDuration)).setText(route.duration.text);
+            //((TextView) findViewById(R.id.ttvDistance)).setText(route.distance.text);
 
             originMarkers.add(mMap.addMarker(new MarkerOptions()
                     .title(route.startAddress)
@@ -529,6 +594,80 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
 
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_nav_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.nav_user:
+                Toast.makeText(this, "User", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_search:
+                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.nav_map:
+                Toast.makeText(this, "Map", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_nearby:
+                Toast.makeText(this, "Nearby", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_list:
+                Toast.makeText(this, "List", Toast.LENGTH_SHORT).show();
+                break;
+                default:
+                    return false;
+        }
+        return true;
+    }
+
+    private static class SmallPreview{
+        private final RelativeLayout parentView;
+        private final TextView txtName;
+        private final RatingBar ratRating;
+        private final ImageView imgNext;
+
+        private RelativeLayout currentContainer;
+
+        public SmallPreview(Context context){
+            this.parentView = (RelativeLayout)LayoutInflater.from(context).inflate(R.layout.small_preview, null, false);
+            this.txtName = this.parentView.findViewById(R.id.txt_name);
+            this.ratRating = this.parentView.findViewById(R.id.rat_rating);
+            this.imgNext = this.parentView.findViewById(R.id.img_next);
+        }
+
+        public void show(RelativeLayout container, MySalon salon){
+            this.hide();
+            Animation  animFade = AnimationUtils.loadAnimation(container.getContext(), android.R.anim.fade_in);
+            animFade.setDuration(1000);
+            this.currentContainer = container;
+
+            this.txtName.setText(salon.getTitle());
+            this.ratRating.setRating(salon.getRating());
+            RelativeLayout.LayoutParams params  = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            this.currentContainer.addView(this.parentView, params);
+            this.parentView.startAnimation(animFade);
+        }
+
+        public void hide(){
+            if(this.currentContainer != null){
+                this.currentContainer.removeView(parentView);
+                this.currentContainer = null;
+            }
+        }
     }
 
 }

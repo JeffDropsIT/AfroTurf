@@ -27,7 +27,7 @@ public class signUpActivity extends AppCompatActivity implements View.OnClickLis
     //firebase stuff
     private FirebaseAuth mAuth;
     private String username, password;
-    private boolean debug = false;
+    private boolean debug = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

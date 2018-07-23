@@ -8,17 +8,23 @@ public class MySalon implements ClusterItem {
     private final LatLng mPosition;
     private final String mTitle;
     private final String mSnippet;
-
+    private final float rating;
 
     public MySalon(double lat, double lng) {
         mPosition = new LatLng(lat, lng);
         mSnippet = null;
         mTitle = null;
+        this.rating = 0f;
     }
-    public MySalon(double lat, double lng, String mTitle, String mSnippet) {
+    public MySalon(double lat, double lng, String mTitle, String mSnippet, float pRating) {
+        this.mPosition = new LatLng(lat, lng);
         this.mTitle = mTitle;
         this.mSnippet = mSnippet;
-        mPosition = new LatLng(lat, lng);
+        this.rating = pRating;
+    }
+
+    public float getRating() {
+        return rating;
     }
 
     @Override
