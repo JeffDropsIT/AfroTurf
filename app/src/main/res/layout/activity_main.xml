@@ -5,16 +5,15 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".HomeActivity"
-    android:id="@+id/rel_container">
+    android:id="@+id/rel_main_container">
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar_template">
+        layout="@layout/toolbar_template"/>
 
-    </include>
 
     <FrameLayout
-        android:id="@+id/frame_container"
+        android:id="@+id/frame_secondary_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar">
@@ -26,9 +25,6 @@
             android:layout_height="match_parent"
             />
 
-        <include
-            android:id="@+id/prog_loading"
-            layout="@layout/progress_layout"/>
     </FrameLayout>
 
     <View
@@ -38,13 +34,6 @@
         android:layout_below="@+id/toolbar"
         android:rotation="180"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@drawable/shadow"
-        android:layout_above="@id/rel_switcher"/>
-
-
     <RelativeLayout
         android:id="@+id/rel_switcher"
         android:layout_width="match_parent"
@@ -53,29 +42,7 @@
         android:layout_above="@+id/bnv_nav"
         android:background="@android:color/transparent">
 
-        <RelativeLayout
-            android:id="@+id/tmp_rel"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="200dp"
-       >
 
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/vpgSalons"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            </android.support.v4.view.ViewPager>
-        </RelativeLayout>
-
-        <include
-            layout="@layout/small_preview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:visibility="invisible"
-            />
     </RelativeLayout>
 
     <android.support.design.widget.BottomNavigationView

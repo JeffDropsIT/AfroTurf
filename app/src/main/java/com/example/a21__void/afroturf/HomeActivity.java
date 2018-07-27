@@ -85,7 +85,7 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
     private RelativeLayout previewLayout;
     private FloatingActionButton fabHide;
 
-    private boolean previewing = true;
+    private boolean previewing = false;
     private boolean progressShown = true;
 
     private RelativeLayout relProgress, relSwitcher;
@@ -188,13 +188,14 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
         //this.fabHide = findViewById(R.id.fab_hide);
 
         //fabNav.setOnClickListener(this);
-        //fabHide.setOnClickListener(this);
+        //fabHide.(this);
 
         this.previewLayout = this.findViewById(R.id.tmp_rel);
 
         this.smallPreview = new SmallPreview(this);
 
         this.vpgSalons = findViewById(R.id.vpgSalons);
+        this.vpgSalons.startViewTransition(null);///;/.setPageMargin(20);
 
         this.salonsFragementAdapter = new SalonsFragementAdapter(getSupportFragmentManager());
         this.vpgSalons.setAdapter(salonsFragementAdapter);
@@ -494,11 +495,10 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
     private void togglePreview() {
         if(previewing){
             previewLayout.setVisibility(View.GONE);
+
         }else{
             previewLayout.setVisibility(View.VISIBLE);
         }
-
-        fabHide.setImageResource(previewing ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down);
         this.previewing = !previewing;
     }
 
@@ -619,10 +619,12 @@ public class HomeActivity extends AppCompatActivity implements OnMapAndViewReady
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.nav_map:
-                Toast.makeText(this, "Map", Toast.LENGTH_SHORT).show();
+                this.togglePreview();
+                this.smallPreview.show(relSwitcher, selectedSalon);
                 break;
             case R.id.nav_nearby:
-                Toast.makeText(this, "Nearby", Toast.LENGTH_SHORT).show();
+                this.smallPreview.hide();
+                togglePreview();
                 break;
             case R.id.nav_list:
                 Toast.makeText(this, "List", Toast.LENGTH_SHORT).show();

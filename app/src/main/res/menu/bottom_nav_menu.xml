@@ -13,8 +13,9 @@
         android:checked="true"/>
 
     <item
-        android:id="@+id/nav_list"
-        android:icon="@drawable/ic_list"
-        android:title="List"/>
+        android:id="@+id/nav_user"
+        android:icon="@drawable/user_icon"
+        android:title="user"
+         />
 
 </menu>
