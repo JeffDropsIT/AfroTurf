@@ -9,9 +9,6 @@ import android.widget.Button;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -25,7 +22,7 @@ public class signUpActivity extends AppCompatActivity implements View.OnClickLis
 
 
     //firebase stuff
-    private FirebaseAuth mAuth;
+
     private String username, password;
     private boolean debug = true;
 
@@ -36,7 +33,7 @@ public class signUpActivity extends AppCompatActivity implements View.OnClickLis
 
 
         //firebase init
-        mAuth = FirebaseAuth.getInstance();
+   //     mAuth = FirebaseAuth.getInstance();
 
 
         //init views
@@ -59,7 +56,7 @@ public class signUpActivity extends AppCompatActivity implements View.OnClickLis
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+       // FirebaseUser currentUser = mAuth.getCurrentUser();
         //updateUI(currentUser);
     }
     private void validateAndSignIn(){
@@ -116,28 +113,28 @@ public class signUpActivity extends AppCompatActivity implements View.OnClickLis
         // if(!(username.isEmpty() || password.isEmpty())){
 
             progBar.setVisibility(View.VISIBLE);
-            mAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-
-                    progBar.setVisibility(View.GONE);
-
-                    if(task.isSuccessful()){
-
-                        Toast.makeText(signUpActivity.this, "LOGIN SUCCESSFUL", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        finish();
-
-                    }else {
-                        Toast.makeText(signUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-
-
-                }
-
-            });
+//            mAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                @Override
+//                public void onComplete(@NonNull Task<AuthResult> task) {
+//
+//                    progBar.setVisibility(View.GONE);
+//
+//                    if(task.isSuccessful()){
+//
+//                        Toast.makeText(signUpActivity.this, "LOGIN SUCCESSFUL", Toast.LENGTH_SHORT).show();
+//                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        startActivity(intent);
+//                        finish();
+//
+//                    }else {
+//                        Toast.makeText(signUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//
+//
+//                }
+//
+//            });
 
 
 

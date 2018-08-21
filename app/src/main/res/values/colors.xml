@@ -2,11 +2,13 @@
 <resources>
     <color name="colorPrimary">#DDE4E4</color>
     <color name="colorPrimaryDark">#DDE4E4</color>
-    <color name="colorAccent">#2daf86</color>
-    <color name="colorSecondAccent">#ffc800</color>
+    <color name="colorAccent">#2196f3</color>
+    <color name="colorSecondAccent">#2196f3</color>
     <color name="colorLightBackground">#F2F2F2</color>
+    <color name="colorTextSuperDark">#5b5b5b</color>
     <color name="colorTextDark">#868C8C</color>
     <color name="colorTextLight">#DDE4E4</color>
     <color name="googleColor">#00b3fd</color>
     <color name="white">#FFFFFF</color>
+
 </resources>

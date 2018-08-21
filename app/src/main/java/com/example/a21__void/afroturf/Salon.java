@@ -18,20 +18,11 @@ public class Salon extends AppCompatActivity implements View.OnClickListener{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.salon_activity);
-        findViewById(R.id.btn_find_path).setOnClickListener(this);
-
-
-
     }
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
-            case R.id.btn_find_path:
-                Log.i("ZAQ", "onClick: clicked");
-                finish();
-                break;
-        }
+
     }
 
 

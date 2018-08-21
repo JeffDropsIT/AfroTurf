@@ -24,7 +24,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD52LEMZAhyc6NJQyAfCkZ-VC9zxjDoVHk"/>
 
-        <activity android:name=".HomeActivity">
+        <activity android:name=".HomeActivity"
+            android:windowSoftInputMode="adjustNothing">
 
         </activity>
         <activity android:name=".Salon">
