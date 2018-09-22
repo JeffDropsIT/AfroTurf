@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/crd_service"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#f5f5f5"
+    android:elevation="1dp"
+    app:cardCornerRadius="1dp"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_profile"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/ic__map"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                app:civ_circle_background_color="@color/colorTextLight"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/img_profile"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/txt_post"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="15sp"
+                        android:text="31"
+                        android:textColor="#2d2d2d"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="15sp"
+                        android:text="posts"
+                        android:textColor="@color/colorTextDark"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/txt_followers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="15sp"
+                        android:text="313"
+                        android:textColor="#2d2d2d"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="15sp"
+                        android:text="followers"
+                        android:textColor="@color/colorTextDark"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/txt_reviewa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="15sp"
+                        android:text="3274"
+                        android:textColor="#2d2d2d" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="15sp"
+                        android:text="reviews"
+                        android:textColor="@color/colorTextDark"/>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/lin_stats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/txt_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Phindile Sthah Ngobese"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_toLeftOf="@id/rat_rating"/>
+
+            <RatingBar
+                android:id="@+id/rat_rating"
+               android:layout_centerVertical="true"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:progressTint="#ffb954"
+                android:isIndicator="true"
+                android:stepSize="1"
+                android:rating="4"
+                android:layout_alignParentRight="true"
+
+                />
+
+
+
+        </RelativeLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:background="#f5f"
+            android:backgroundTint="#f9af45"
+            android:text="Follow"
+            android:textColor="#FFF"
+            android:textStyle="bold"
+            android:layout_gravity="start"
+            android:layout_marginTop="10dp"
+            />
+
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

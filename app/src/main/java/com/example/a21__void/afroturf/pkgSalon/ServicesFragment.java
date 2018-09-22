@@ -30,7 +30,6 @@ import java.util.ArrayList;
  */
 public class ServicesFragment extends AfroFragment implements Response.ErrorListener, Response.Listener<DevDesignRequest.DevDesignResponse> {
 
-    public static final String DEBUG_SALON_ID = "1";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -43,7 +42,7 @@ public class ServicesFragment extends AfroFragment implements Response.ErrorList
     private String mParam1;
     private String mParam2;
 
-    private SubServiceAdapter subServiceAdapter;
+    private GeneralRecyclerAdapter subServiceAdapter;
 
     public ServicesFragment() {
         // Required empty public constructor
@@ -82,7 +81,7 @@ public class ServicesFragment extends AfroFragment implements Response.ErrorList
         RelativeLayout parent = (RelativeLayout)inflater.inflate(R.layout.fragment_services, container, false);
         RecyclerView recyclerView = parent.findViewById(R.id.rcy_services);
 
-        this.subServiceAdapter = new SubServiceAdapter();
+        this.subServiceAdapter = new GeneralRecyclerAdapter(SubServiceObject.SubServiceTemplate.class, R.layout.service_layout);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -94,7 +93,7 @@ public class ServicesFragment extends AfroFragment implements Response.ErrorList
     @Override
     public void onResume() {
         super.onResume();
-        String url = ServerCon.BASE_URL + "/afroturf/" + DEBUG_SALON_ID + "/service/-a";
+        String url = ServerCon.BASE_URL + "/afroturf/" + ServerCon.DEBUG_SALON_ID + "/service/-a";
         ServerCon.getInstance(this.getContext()).HTTP(Request.Method.GET, url, 0, this, this);
     }
 

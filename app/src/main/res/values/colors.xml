@@ -11,4 +11,12 @@
     <color name="googleColor">#00b3fd</color>
     <color name="white">#FFFFFF</color>
 
+
+
+    <color name="black">#000000</color>
+    <color name="lightBlack">#262626</color>
+    <color name="lightGrey">#999999</color>
+    <color name="lightWhite">#fafafa</color>
+    <color name="customNavColor">#3F51B5</color>
+
 </resources>

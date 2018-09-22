@@ -1,5 +1,6 @@
 package com.example.a21__void.afroturf.pkgSalon;
 
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.a21__void.afroturf.R;
+import com.example.a21__void.afroturf.pkgCommon.HolderTemplate;
 
 /**
  * Created by ASANDA on 2018/09/22.
@@ -26,7 +28,7 @@ public class SubServiceObject {
         Price = price;
     }
 
-    public static class SubServiceTemplate extends RecyclerView.ViewHolder {
+    public static class SubServiceTemplate extends HolderTemplate<SubServiceObject> {
         public final ImageView imgService;
         public final TextView txtName, txtCat, txtPrice;
 
@@ -37,6 +39,13 @@ public class SubServiceObject {
             this.txtCat = parent.findViewById(R.id.txtCat);
             this.txtPrice = parent.findViewById(R.id.txtPrice);
 
+        }
+
+        @Override
+        public void bind(SubServiceObject subServiceObject) {
+            txtName.setText(subServiceObject.Name);
+            txtCat.setText(subServiceObject.Category);
+            txtPrice.setText("R" + subServiceObject.Price);
         }
     }
 }

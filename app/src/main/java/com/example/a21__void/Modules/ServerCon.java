@@ -28,6 +28,7 @@ import java.net.URLConnection;
 public class ServerCon {
     public final static String BASE_URL = "http://ec2-52-15-103-215.us-east-2.compute.amazonaws.com";
     private static final String TAG = "ServerCon";
+    public static final String DEBUG_SALON_ID = "1";
     private static ServerCon instance;
     private final RequestQueue queue;
 
