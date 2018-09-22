@@ -20,6 +20,7 @@ import com.example.a21__void.Modules.PageTransformer;
 import com.example.a21__void.Modules.SalonsFragementAdapter;
 import com.example.a21__void.Modules.SalonsManager;
 import com.example.a21__void.Modules.SalonsPreviewFragment;
+import com.example.a21__void.afroturf.pkgSalon.SalonObject;
 
 import java.util.ArrayList;
 
@@ -65,7 +66,7 @@ public class PagesFragment extends Fragment implements View.OnClickListener {
         this.pagesAdapter = new SalonsFragementAdapter(this.getActivity().getSupportFragmentManager());
         this.listPagesAdapter = new ListPagesAdapter(this.getContext(), R.layout.salon_layout, new ArrayList<SalonObject>());
 
-        Toast.makeText(this.getContext(), "Pages Created...", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this.getContext(), "Pages Created...", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -86,7 +87,7 @@ public class PagesFragment extends Fragment implements View.OnClickListener {
         this.vpgPages.setOffscreenPageLimit(3);
 
         this.lstPages.setAdapter(this.listPagesAdapter);
-        this.listPagesAdapter.addAll(SalonsManager.getInstance().getSalons());
+        this.listPagesAdapter.addAll(SalonsManager.getInstance(getContext()).getSalons());
 
         return parent;
     }
@@ -94,7 +95,12 @@ public class PagesFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        SalonObject[] salonObjects = SalonsManager.getInstance().getSalons();
+        PageTransformer fragmentCardShadowTransformer = new PageTransformer(vpgPages, pagesAdapter);
+        fragmentCardShadowTransformer.enableScaling(true);
+
+
+
+        SalonObject[] salonObjects = SalonsManager.getInstance(getContext()).getSalons();
 
         this.pagesAdapter.clear();
         Log.i("pages", salonObjects.length + "");
@@ -102,6 +108,10 @@ public class PagesFragment extends Fragment implements View.OnClickListener {
             this.pagesAdapter.Add(SalonsPreviewFragment.newInstance(salonObjects[pos]));
         }
         this.pagesAdapter.notifyDataSetChanged();
+
+        this.vpgPages.setAdapter(this.pagesAdapter);
+        this.vpgPages.setPageTransformer(false, fragmentCardShadowTransformer);
+        this.vpgPages.setOffscreenPageLimit(3);
     }
 
     public void addPage(SalonObject salonObject){

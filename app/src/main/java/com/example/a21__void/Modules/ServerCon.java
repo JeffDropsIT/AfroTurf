@@ -1,6 +1,16 @@
 package com.example.a21__void.Modules;
 
+import android.content.Context;
 import android.os.Handler;
+
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.a21__void.afroturf.pkgConnection.DevDesignRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,43 +26,30 @@ import java.net.URLConnection;
  * for Pandaphic
  */
 public class ServerCon {
+    public final static String BASE_URL = "http://ec2-52-15-103-215.us-east-2.compute.amazonaws.com";
+    private static final String TAG = "ServerCon";
+    private static ServerCon instance;
+    private final RequestQueue queue;
 
-    public static void GET(final String url, final int timeout, final ConCallback conCallback){
-        final Handler handler = new Handler();
-        Thread runner = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    URL connectionUrl = new URL(url);
-                    final HttpURLConnection connection = (HttpURLConnection)connectionUrl.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.connect();
-
-                    final StringBuffer buffer = new StringBuffer();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        buffer.append(line + "\n");
-                    }
-                    final int statusCode = connection.getResponseCode();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            conCallback.onRespond(statusCode, connection.getContentType(), buffer.toString());
-                        }
-                    });
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        runner.start();
+    public ServerCon(Context context){
+        this.queue = Volley.newRequestQueue(context);
     }
 
-    public interface ConCallback{
-        void onRespond(int statusCode, String bodyType, String body);
+    public void HTTP(int method, final String url, final int timeout, Response.Listener<DevDesignRequest.DevDesignResponse> requestListener, Response.ErrorListener errorListener){
+        DevDesignRequest devDesignRequest = new DevDesignRequest(method, url,requestListener, errorListener);
+        devDesignRequest.setTag(TAG);
+        this.queue.add(devDesignRequest);
+    }
+
+    public void release(){
+        if(this.queue != null)
+            this.queue.cancelAll(TAG);
+    }
+
+    public static ServerCon getInstance(Context context){
+        if(instance == null)
+            instance = new ServerCon(context);
+
+        return instance;
     }
 }

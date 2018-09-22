@@ -37,4 +37,9 @@ public class UserSettingFragment extends AfroFragment {
         }
         return view;
     }
+
+    @Override
+    public String getTitle() {
+        return "User Settings";
+    }
 }

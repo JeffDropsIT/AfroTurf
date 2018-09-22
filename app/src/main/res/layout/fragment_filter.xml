@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".pkgCommon.FilterFragment"
+    android:background="#f2f2f2">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/tmp_txt_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show Results For:"
+        android:textSize="20sp"
+        android:padding="10dp"
+        android:textStyle="bold"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tmp_txt_title">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <android.support.v7.widget.SwitchCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Salons"
+                android:padding="10dp"
+                android:checked="true"
+                android:textColor="@color/colorTextSuperDark"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.AppCompatCheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No Filters"
+                    android:layoutDirection="rtl"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="left|center_vertical"
+                    android:layout_marginRight="10dp"
+                    />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="20dp"
+                    android:background="@color/colorTextDark"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="RATING:"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold"/>
+
+                <com.appyvet.materialrangebar.RangeBar
+                    android:layout_width="match_parent"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_height="wrap_content"
+                    app:mrb_temporaryPins="false"
+
+                    app:mrb_rangeBarColor="@color/colorTextDark"
+                    app:mrb_selectorColor="#b0813a"
+                    app:mrb_tickInterval="1"
+                    app:mrb_tickStart="0"
+                    app:mrb_pinMaxFont="10sp"
+                    app:mrb_pinRadius="10dp"
+                    app:mrb_connectingLineColor="#ffb954"
+                    app:mrb_pinColor="#b0813a"
+                    >
+
+                </com.appyvet.materialrangebar.RangeBar>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

@@ -1,11 +1,14 @@
 package com.example.a21__void.Modules;
 
-import android.content.Context;
-import android.net.Uri;
+import android.animation.Animator;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -29,6 +32,45 @@ public class ProgressFragment extends Fragment {
         args.putString(ARG_MSG, msg);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public Animator hide(){
+        if(getView() != null){
+            int width = getView().getWidth(), height = this.getView().getHeight();
+            int cx = width,
+                    cy = 0,
+                    radius = (int)Math.sqrt(width * width + height*height);
+            Animator anim = null;
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                anim = ViewAnimationUtils.createCircularReveal(getView(), cx, cy, radius, 0);
+                anim.setDuration(1000);
+                anim.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        ProgressFragment.this.getView().setVisibility(View.INVISIBLE);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                Log.i(TAG, "hide: ");
+            }
+
+            return anim;
+        }
+        return  null;
     }
 
     @Override
@@ -55,9 +97,10 @@ public class ProgressFragment extends Fragment {
         ((AVLoadingIndicatorView)this.getView().findViewById(R.id.av_progress)).smoothToShow();
     }
 
+
     @Override
     public void onPause() {
-        ((AVLoadingIndicatorView)this.getView().findViewById(R.id.av_progress)).smoothToShow();
+        ((AVLoadingIndicatorView)this.getView().findViewById(R.id.av_progress)).smoothToHide();
         super.onPause();
     }
 }

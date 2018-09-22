@@ -31,6 +31,8 @@ public abstract class AfroFragment extends Fragment {
         this.afroFragmentCallback = pAfroFragmentCallback;
     }
 
+    public abstract String getTitle();
+
     public AfroFragmentCallback getAfroFragmentCallback(){ return this.afroFragmentCallback; }
 
     public interface AfroFragmentCallback{

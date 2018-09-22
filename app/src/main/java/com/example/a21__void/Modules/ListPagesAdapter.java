@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.a21__void.afroturf.R;
-import com.example.a21__void.afroturf.SalonObject;
+import com.example.a21__void.afroturf.pkgSalon.SalonObject;
 
 import java.util.List;
 

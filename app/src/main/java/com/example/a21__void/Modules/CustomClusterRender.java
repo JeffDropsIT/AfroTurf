@@ -2,14 +2,12 @@ package com.example.a21__void.Modules;
 
 import android.content.Context;
 
-import com.example.a21__void.afroturf.MySalon;
 import com.example.a21__void.afroturf.R;
-import com.example.a21__void.afroturf.SalonObject;
+import com.example.a21__void.afroturf.pkgSalon.SalonObject;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.MarkerManager;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 

@@ -1,5 +1,6 @@
 package com.example.a21__void.afroturf;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -10,8 +11,10 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -49,6 +52,8 @@ import com.example.a21__void.Modules.SalonsFragementAdapter;
 import com.example.a21__void.Modules.SalonsManager;
 import com.example.a21__void.Modules.SalonsPreviewFragment;
 import com.example.a21__void.Modules.SearchFragment;
+import com.example.a21__void.afroturf.pkgSalon.SalonActivity;
+import com.example.a21__void.afroturf.pkgSalon.SalonObject;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -84,7 +89,7 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
 
     private int currentMode = MODE_IDLE;
     private ViewPager vpgSalons;
-    private SalonObject selectedSalon;
+    private com.example.a21__void.afroturf.pkgSalon.SalonObject selectedSalon;
     private SalonsFragementAdapter salonsFragementAdapter;
 
     private RelativeLayout previewLayout;
@@ -113,7 +118,7 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
     private boolean isMapReady = false;
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap googleMap;
-    private ClusterManager<SalonObject> clusterManager;
+    private ClusterManager<com.example.a21__void.afroturf.pkgSalon.SalonObject> clusterManager;
 
 
     LocationManager locationManager;
@@ -128,6 +133,12 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(true){
+            Intent intent = new Intent(this, SalonActivity.class);
+            this.startActivity(intent);
+            return;
+        }
 
         this.smallPreview = new SmallPreview(this);
 
@@ -160,15 +171,16 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
     }
 
     private void init(){
+        this.showPages();
         this.showProgress();
         this.getDeviceLocation(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(final Location location) {
 
 
-                SalonsManager.getInstance().fetchSalons(location, new SalonsManager.SalonsManagerCallback() {
+                SalonsManager.getInstance(HomeActivity.this).fetchSalons(location, new SalonsManager.SalonsManagerCallback() {
                     @Override
-                    public void onFetchSalons(SalonObject[] salonObjects) {
+                    public void onFetchSalons(com.example.a21__void.afroturf.pkgSalon.SalonObject[] salonObjects) {
                         HomeActivity.this.currentLocation = location;
                         HomeActivity.this.refreshMap();
                     }
@@ -231,7 +243,7 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
 
     private void refreshMap() {
         if(isMapReady && currentLocation != null){
-            SalonObject[] salonObjects = SalonsManager.getInstance().getSalons();
+            com.example.a21__void.afroturf.pkgSalon.SalonObject[] salonObjects = SalonsManager.getInstance(this).getSalons();
             if(salonObjects.length > 0){
                 LatLng customerLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                 CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -240,7 +252,7 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
                         .bearing(50)                // Sets the orientation of the camera to east
                         .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                         .build();                  // Creates a CameraPosition from the builder
-                this.googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2500, null);
+                this.googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
                 this.clusterManager.clearItems();
                 this.salonsFragementAdapter.clear();
@@ -255,7 +267,7 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
                 @Override
                 public void run() {
                     HomeActivity.this.hideProgress();
-                    HomeActivity.this.showPages();
+                    //HomeActivity.this.showPages();
 //                    if(!HomeActivity.this.smallPreview.isShown()){
 //
 //                        HomeActivity.this.smallPreview.show(rel_secondary_container, HomeActivity.this.selectedSalon, new View.OnClickListener() {
@@ -266,7 +278,7 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
 //                        });
 //                    }
                 }
-            }, 2600);
+            }, 100);
 
         }
     }
@@ -274,17 +286,47 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
 
     private void showProgress(){
         FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.rel_secondary_container, ProgressFragment.newInstance("Loading Salons"), ProgressFragment.TAG);
+        transaction.add(R.id.rel_secondary_container, ProgressFragment.newInstance("Loading Salons"), ProgressFragment.TAG);
         transaction.commit();
     }
 
     private void hideProgress(){
-        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-        Fragment currentProgressTag = this.getSupportFragmentManager().findFragmentByTag(ProgressFragment.TAG);
+        final Fragment currentProgressTag = this.getSupportFragmentManager().findFragmentByTag(ProgressFragment.TAG);
 
         if(currentProgressTag != null){
-            transaction.remove(currentProgressTag);
-            transaction.commit();
+            Animator animator = ((ProgressFragment)currentProgressTag).hide();
+
+            if(animator != null){
+                animator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        FragmentTransaction transaction = HomeActivity.this.getSupportFragmentManager().beginTransaction();
+                        transaction.remove(currentProgressTag);
+                        transaction.commit();
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                animator.start();
+            }else{
+                FragmentTransaction transaction = HomeActivity.this.getSupportFragmentManager().beginTransaction();
+                transaction.remove(currentProgressTag);
+                transaction.commit();
+            }
+
         }
     }
 

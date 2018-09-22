@@ -12,10 +12,9 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.a21__void.afroturf.MySalon;
 import com.example.a21__void.afroturf.R;
 import com.example.a21__void.afroturf.Salon;
-import com.example.a21__void.afroturf.SalonObject;
+import com.example.a21__void.afroturf.pkgSalon.SalonObject;
 
 /**
  * Created by ASANDA on 2018/07/10.
