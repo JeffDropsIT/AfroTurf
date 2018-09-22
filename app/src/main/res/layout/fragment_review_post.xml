@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <include
+        android:id="@+id/user_bar"
+        android:layout_width="match_parent"
+        android:background="@color/lightBlack"
+        android:layout_height="wrap_content"
+        layout="@layout/action_bar_user"
+        />
+    <View
+        android:id="@+id/shadow_view_3"
+        android:layout_below="@+id/user_bar"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@drawable/dropshadow" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_profile_reviews"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_below="@+id/shadow_view_3"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/profile_place"
+        android:layout_marginBottom="2dp"
+        />
+
+    <EditText
+        android:id="@+id/edt_reviews"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@+id/shadow_view_3"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:theme="@style/MyEditTextTheme"
+        android:layout_toRightOf="@id/img_profile_reviews"
+        android:gravity="start"
+        android:background="#eeeeee"
+        android:hint="@string/rate_our_service">
+        <requestFocus/>
+    </EditText>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="#fafafa"
+        app:cardElevation="4dp"
+        android:layout_marginTop="5dp"
+        app:cardPreventCornerOverlap="false"
+        app:contentPadding="0dp"
+        android:layout_marginRight="15dp"
+        android:layout_alignStart="@id/edt_reviews"
+        android:layout_below="@id/edt_reviews"
+        android:layout_alignLeft="@id/edt_reviews">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/img_picker_gallery"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/img_picker" />
+
+            <ImageView
+                android:id="@+id/img_rating"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="20dp"
+                android:padding="5dp"
+                android:src="@drawable/rating_icon"
+                android:layout_alignTop="@+id/img_picker_gallery"
+                android:layout_toEndOf="@+id/img_picker_gallery"
+                android:layout_toRightOf="@+id/img_picker_gallery" />
+
+            <ImageView
+                android:id="@+id/send_message_to_chat"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="15dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@+id/img_rating"
+                android:src="@drawable/send_icon"
+                android:layout_alignParentRight="true" />
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+
+
+</RelativeLayout>

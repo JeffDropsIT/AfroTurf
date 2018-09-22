@@ -34,6 +34,9 @@
         <activity android:name=".pkgSalon.SalonActivity"></activity>
         <activity android:name=".pkgStylist.pakages.SpacePhotoActivity"></activity>
         <activity android:name=".pkgStylist.StylistActivity"></activity>
+        <activity android:name=".pkgStylist.pakages.WriteReview"></activity>
+        <activity android:name=".pkgStylist.pakages.StylistBooking"></activity>
+        <activity android:name=".pkgStylist.pakages.ChatActivity"></activity>
     </application>
 
 </manifest>
