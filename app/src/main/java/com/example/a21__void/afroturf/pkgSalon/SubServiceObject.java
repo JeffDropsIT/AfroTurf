@@ -42,7 +42,7 @@ public class SubServiceObject {
         }
 
         @Override
-        public void bind(SubServiceObject subServiceObject) {
+        public void bind(SubServiceObject subServiceObject, int pos) {
             txtName.setText(subServiceObject.Name);
             txtCat.setText(subServiceObject.Category);
             txtPrice.setText("R" + subServiceObject.Price);

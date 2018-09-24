@@ -18,7 +18,7 @@ import com.example.a21__void.afroturf.fragments.Gallery;
 import com.example.a21__void.afroturf.fragments.Posts;
 import com.example.a21__void.afroturf.fragments.Reviews;
 import com.example.a21__void.afroturf.pkgStylist.pakages.ChatActivity;
-import com.example.a21__void.afroturf.pkgStylist.pakages.StylistBooking;
+import com.example.a21__void.afroturf.pkgStylist.pakages.BookingActivity;
 import com.example.a21__void.afroturf.pkgStylist.pakages.ViewPagerAdapter;
 import com.example.a21__void.afroturf.pkgStylist.pakages.WriteReview;
 
@@ -149,7 +149,7 @@ public class StylistActivity extends AppCompatActivity implements View.OnClickLi
                 break;
                 case R.id.fab_booking:
                 Log.i("WSX","ONFAB PRESSED: ");
-                Intent intentBooking=new Intent(this,StylistBooking.class);
+                Intent intentBooking=new Intent(this,BookingActivity.class);
                 startActivity(intentBooking);
                 break;
                 case R.id.btn_message:

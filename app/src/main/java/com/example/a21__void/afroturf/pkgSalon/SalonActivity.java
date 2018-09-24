@@ -1,5 +1,7 @@
 package com.example.a21__void.afroturf.pkgSalon;
 
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -7,14 +9,16 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TableLayout;
 
 import com.example.a21__void.Modules.AfroFragmentAdapter;
 import com.example.a21__void.afroturf.R;
 import com.example.a21__void.afroturf.pkgCommon.ReviewsFragment;
 import com.example.a21__void.afroturf.pkgStylist.StylistsFragment;
+import com.example.a21__void.afroturf.pkgStylist.pakages.BookingActivity;
 
-public class SalonActivity extends AppCompatActivity {
+public class SalonActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String EXTRA_SALON = "eSalon";
 
     private SalonObject salonObject;
@@ -41,6 +45,8 @@ public class SalonActivity extends AppCompatActivity {
         Toolbar toolbar = this.findViewById(R.id.toolbar);
         TabLayout tabLayout = this.findViewById(R.id.tabLayout);
         ViewPager vpgSalon = this.findViewById(R.id.vpg_salon);
+        FloatingActionButton fabBooking = this.findViewById(R.id.fab_booking);
+        fabBooking.setOnClickListener(this);
 
         this.setSupportActionBar(toolbar);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -56,7 +62,7 @@ public class SalonActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_nav_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_salon, menu);
         return true;
     }
 
@@ -69,5 +75,11 @@ public class SalonActivity extends AppCompatActivity {
                 break;
         }
         return true;
+    }
+
+    @Override
+    public void onClick(View view) {
+        Intent intent = new Intent(this, BookingActivity.class);
+        this.startActivity(intent);
     }
 }

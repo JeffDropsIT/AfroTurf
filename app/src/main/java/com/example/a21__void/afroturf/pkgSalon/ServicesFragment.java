@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -28,18 +29,18 @@ import java.util.ArrayList;
  * Use the {@link ServicesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ServicesFragment extends AfroFragment implements Response.ErrorListener, Response.Listener<DevDesignRequest.DevDesignResponse> {
+public class ServicesFragment extends AfroFragment implements Response.ErrorListener, Response.Listener<DevDesignRequest.DevDesignResponse>{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_LISTENER = "listener";
     private static final String ARG_PARAM2 = "param2";
     public static final String DATA = "data";
     public static final String NAME = "name";
 
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private GeneralRecyclerAdapter.GeneralAdapterListener<SubServiceObject>  listener;
     private String mParam2;
 
     private GeneralRecyclerAdapter subServiceAdapter;
@@ -57,12 +58,12 @@ public class ServicesFragment extends AfroFragment implements Response.ErrorList
      * @return A new instance of fragment ServicesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ServicesFragment newInstance(String param1, String param2) {
+    public static ServicesFragment newInstance(GeneralRecyclerAdapter.GeneralAdapterListener<SubServiceObject>  param1, String param2) {
         ServicesFragment fragment = new ServicesFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
+        fragment.listener =param1;
         return fragment;
     }
 
@@ -70,7 +71,6 @@ public class ServicesFragment extends AfroFragment implements Response.ErrorList
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
@@ -81,7 +81,7 @@ public class ServicesFragment extends AfroFragment implements Response.ErrorList
         RelativeLayout parent = (RelativeLayout)inflater.inflate(R.layout.fragment_services, container, false);
         RecyclerView recyclerView = parent.findViewById(R.id.rcy_services);
 
-        this.subServiceAdapter = new GeneralRecyclerAdapter(SubServiceObject.SubServiceTemplate.class, R.layout.service_layout);
+        this.subServiceAdapter = new GeneralRecyclerAdapter<SubServiceObject>(SubServiceObject.SubServiceTemplate.class, R.layout.service_layout, listener);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -141,4 +141,5 @@ public class ServicesFragment extends AfroFragment implements Response.ErrorList
         return subServiceObjects.toArray(new SubServiceObject[subServiceObjects.size()]);
 
     }
+
 }

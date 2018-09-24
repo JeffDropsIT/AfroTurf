@@ -12,9 +12,11 @@ import com.example.a21__void.afroturf.HomeActivity;
 import com.example.a21__void.afroturf.MySalon;
 import com.example.a21__void.afroturf.pkgConnection.DevDesignRequest;
 import com.example.a21__void.afroturf.pkgConnection.HttpStatus;
+import com.example.a21__void.afroturf.pkgSalon.BlankFragment;
 import com.example.a21__void.afroturf.pkgSalon.SalonObject;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
@@ -80,6 +82,31 @@ public class SalonsManager {
 
     public static SalonsManager getInstance(Context context){
         return (instance == null) ? (instance = new SalonsManager(context)) : instance;
+    }
+
+    public void fetchSalons( final SalonsManagerCallback managerCallback) {
+        String url= ServerCon.BASE_URL + "/afroturf/salons/-a";
+        serverCon.HTTP(0, url, 0, new Response.Listener<DevDesignRequest.DevDesignResponse>() {
+            @Override
+            public void onResponse(DevDesignRequest.DevDesignResponse response) {
+                JsonParser parser = new JsonParser();
+                JsonArray salons = parser.parse(response.data).getAsJsonArray();
+                salonObjectsList.clear();
+                for(int pos = 0; pos < salons.size(); pos++){
+                    JsonObject rawSalon = salons.get(pos).getAsJsonObject();
+                    salonObjectsList.add(SalonObject.parse(rawSalon));
+                }
+
+                if(managerCallback != null)
+                    managerCallback.onFetchSalons(getSalons());
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
     }
 
     public interface SalonsManagerCallback{

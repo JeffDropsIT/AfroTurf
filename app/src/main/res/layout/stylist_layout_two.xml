@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="20dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_profile"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/placeholder"
+            app:civ_circle_background_color="@color/colorTextLight"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/txt_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Asanda IX"
+                android:gravity="center"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:padding="5dp"
+                android:textColor="@color/colorTextSuperDark"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Follow"
+                android:background="@drawable/round_corner"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/colorAccent"
+                android:paddingLeft="20dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingRight="20dp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                />
+
+    </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        >
+        <TextView
+            android:id="@+id/txt_reviewa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="30 Reviews"
+            android:gravity="center"
+            android:textColor="@color/colorTextDark"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="●"
+            android:gravity="center"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/colorTextDark"/>
+
+        <TextView
+            android:id="@+id/txt_followers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="30 Followers"
+            android:gravity="center"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/colorTextDark"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="●"
+            android:gravity="center"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/colorTextDark"/>
+
+        <RatingBar
+            android:id="@+id/rat_rating"
+            android:layout_centerVertical="true"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:layout_marginLeft="5dp"
+            android:progressTint="#ffb954"
+            android:isIndicator="true"
+            android:stepSize="1"
+            android:rating="4"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            />
+    </LinearLayout>
+</LinearLayout>

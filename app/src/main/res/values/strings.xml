@@ -12,6 +12,9 @@
     <string name="SCROLL_FLAG_SCROLL">SCROLL</string>
     <string name="SCROLL_FLAG_SNAP">SNAP</string>
     <string name="userName">Phindile Sthah Ngobese</string>
+    <string name="select">&lt;select&gt;</string>
+    <string name="date_time">Date &amp; Time:</string>
+    <string name="salon_stylist">Salon &amp; Stylist:</string>
 
     <string name="rate_our_service">Write a review!</string>
 

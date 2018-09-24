@@ -26,10 +26,17 @@ public class GeneralRecyclerAdapter<T> extends RecyclerView.Adapter<HolderTempla
     private Class<? extends HolderTemplate> cls;
     private final int Res;
     private final ArrayList<T>  subServiceObjects;
+    private GeneralAdapterListener<T> listener;
 
     public GeneralRecyclerAdapter(Class<? extends  HolderTemplate> pcls, int res){
         this.cls = pcls;
         this.Res = res;
+        subServiceObjects = new ArrayList<>();
+    }
+    public GeneralRecyclerAdapter(Class<? extends  HolderTemplate> pcls, int res, GeneralAdapterListener<T> pListener){
+        this.cls = pcls;
+        this.Res = res;
+        this.listener = pListener;
         subServiceObjects = new ArrayList<>();
     }
 
@@ -53,9 +60,17 @@ public class GeneralRecyclerAdapter<T> extends RecyclerView.Adapter<HolderTempla
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HolderTemplate<T> holder, int position) {
-        T data = this.subServiceObjects.get(position);
-        holder.bind(data);
+    public void onBindViewHolder(@NonNull HolderTemplate<T> holder, final int position) {
+        final T data = this.subServiceObjects.get(position);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(listener != null){
+                    listener.onItemClick(position, data);
+                }
+            }
+        });
+        holder.bind(data, position);
     }
 
     @Override
@@ -71,5 +86,9 @@ public class GeneralRecyclerAdapter<T> extends RecyclerView.Adapter<HolderTempla
     public void clear() {
         this.subServiceObjects.clear();
         this.notifyDataSetChanged();
+    }
+
+    public interface GeneralAdapterListener<T>{
+        void onItemClick(int pos, T data);
     }
 }

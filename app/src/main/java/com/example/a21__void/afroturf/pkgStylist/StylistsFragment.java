@@ -42,7 +42,7 @@ public class StylistsFragment extends AfroFragment implements Response.ErrorList
     private GeneralRecyclerAdapter<StylistObject> stylistAdapter;
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private GeneralRecyclerAdapter.GeneralAdapterListener<StylistObject>  listener;
     private String mParam2;
 
 
@@ -59,11 +59,12 @@ public class StylistsFragment extends AfroFragment implements Response.ErrorList
      * @return A new instance of fragment StylistsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static StylistsFragment newInstance(String param1, String param2) {
+    public static StylistsFragment newInstance(GeneralRecyclerAdapter.GeneralAdapterListener<StylistObject>  listener
+            , String param2) {
         StylistsFragment fragment = new StylistsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+fragment.listener = listener;
+args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,7 +73,6 @@ public class StylistsFragment extends AfroFragment implements Response.ErrorList
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
@@ -84,7 +84,7 @@ public class StylistsFragment extends AfroFragment implements Response.ErrorList
         RelativeLayout parent = (RelativeLayout)inflater.inflate(R.layout.fragment_stylists, container, false);
         RecyclerView recyclerView = parent.findViewById(R.id.rcy_stylist);
 
-        this.stylistAdapter = new GeneralRecyclerAdapter(StylistObject.StylistObjectTemplate.class, R.layout.stylist_layout);
+        this.stylistAdapter = new GeneralRecyclerAdapter(StylistObject.StylistObjectTemplate.class, R.layout.stylist_layout_two, listener);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(mLayoutManager);

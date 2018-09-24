@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".pkgCommon.DatePickerFragment"
+    android:orientation="vertical">
+
+    <!-- TODO: Update blank fragment layout -->
+    <DatePicker
+        android:id="@+id/dpk_date"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:theme="@style/customPopup"/>
+
+    <Button
+        android:id="@+id/btn_done"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/dpk_date"
+        android:background="@color/colorAccent_two"
+        android:layout_alignRight="@id/dpk_date"
+        android:text="Done"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_alignParentBottom="true"
+        />
+
+</RelativeLayout>

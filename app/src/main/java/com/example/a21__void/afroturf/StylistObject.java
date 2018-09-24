@@ -1,6 +1,7 @@
 package com.example.a21__void.afroturf;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,17 +31,16 @@ public class StylistObject {
     }
 
     public static class StylistObjectTemplate extends HolderTemplate<StylistObject> implements View.OnClickListener {
-        private final CircleImageView ImgIcon;
-        private final TextView txtPosts, txtFollowers, txtReviews, txtName;
-        private final RatingBar ratRating;
+        private  CircleImageView ImgIcon;
+        private TextView txtPosts, txtFollowers, txtReviews, txtName;
+        private  RatingBar ratRating;
 
         public StylistObjectTemplate(ViewGroup itemView) {
             super(itemView);
-            itemView.setOnClickListener(this);
             Log.i("sdc", "StylistObjectTemplate: ");
             this.ImgIcon = itemView.findViewById(R.id.img_profile);
 
-            this.txtPosts = itemView.findViewById(R.id.txt_post);
+//            this.txtPosts = itemView.findViewById(R.id.txt_post);
             this.txtFollowers = itemView.findViewById(R.id.txt_followers);
             this.txtReviews = itemView.findViewById(R.id.txt_reviewa);
             this.txtName = itemView.findViewById(R.id.txt_name);
@@ -50,10 +50,15 @@ public class StylistObject {
         }
 
         @Override
-        public void bind(StylistObject data) {
-            this.txtPosts.setText("" + data.Posts);
-            this.txtFollowers.setText("" + data.Followers);
-            this.txtReviews.setText("" + data.Reviews);
+        public void bind(StylistObject data, int pos) {
+            if(pos % 2 == 0){
+                this.itemView.setBackgroundColor(Color.parseColor("#f2f2f2"));
+            }else{
+                this.itemView.setBackgroundColor(Color.parseColor("#fAfAfA"));
+            }
+            //this.txtPosts.setText("" + data.Posts);
+            this.txtFollowers.setText(data.Followers + " Followers");
+            this.txtReviews.setText(data.Reviews + " Reviews");
 
             this.txtName.setText(data.Name);
 

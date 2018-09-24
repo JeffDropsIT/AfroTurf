@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
-        android:layout_above="@id/tmp_lin_base">
+        >
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -62,13 +62,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:gravity="center">
+        android:background="@drawable/grad"
+        android:gravity="end"
+        android:padding="10dp">
         <Button
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Book A Session"
-            android:background="#f14545"
+            android:background="@drawable/round_corner"
             android:textColor="#fff"
-            android:textStyle="bold"/>
+            android:textSize="12sp"
+            android:padding="15dp"
+            android:visibility="gone"
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_booking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/booking_icon"
+            app:backgroundTint="#fb6c66"
+            app:fabCustomSize="60dp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginRight="20dp"
+            android:tint="@color/white"
+            />
     </LinearLayout>
 </RelativeLayout>

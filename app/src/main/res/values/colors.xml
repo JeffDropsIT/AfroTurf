@@ -10,8 +10,7 @@
     <color name="colorTextLight">#DDE4E4</color>
     <color name="googleColor">#00b3fd</color>
     <color name="white">#FFFFFF</color>
-
-
+    <color name="colorAccent_two">#fb6c66</color>
 
     <color name="black">#000000</color>
     <color name="lightBlack">#262626</color>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+    <TextView
+        android:id="@+id/txt_from"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Asanda IX"
+        android:padding="5dp"
+        android:textStyle="bold"
+        android:textSize="15sp"
+        android:textColor="@color/colorTextSuperDark"/>
+
+    <RatingBar
+        android:id="@+id/rat_rating"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:progressTint="#ffb954"
+        android:isIndicator="true"
+        android:stepSize="1"
+        android:rating="4"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/txt_from"
+        android:layout_margin="2dp"
+        />
+
+    <TextView
+        android:id="@+id/txt_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/rat_rating"
+        android:layout_below="@id/txt_from"
+        android:text="10/09/2018  20:15"
+        android:textColor="@color/colorTextDark"
+        android:layout_margin="2dp"
+        />
+
+    <TextView
+        android:id="@+id/txt_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rat_rating"
+        android:text="Description. Get your Basic Calculator with easy functionality and big buttons for everyday calculations. Join millions of users now and count on The Calculator."
+        android:padding="10dp"
+        android:textColor="@color/colorTextDark"
+        />
+</RelativeLayout>

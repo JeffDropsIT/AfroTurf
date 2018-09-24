@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+    <com.example.a21__void.afroturf.pkgCommon.SectionProgess
+        android:id="@+id/sc"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+    <TextView
+        android:id="@+id/txt_start_time"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10:00:00"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:padding="10dp"
+        android:layout_centerVertical="true"/>
+
+    <TextView
+        android:id="@+id/txt_end_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10:00:00"
+        android:layout_centerVertical="true"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_alignParentRight="true"
+        android:padding="10dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorTextLight"
+        android:layout_below="@id/sc"/>
+</RelativeLayout>
