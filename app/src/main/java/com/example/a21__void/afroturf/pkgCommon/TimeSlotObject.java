@@ -1,5 +1,6 @@
 package com.example.a21__void.afroturf.pkgCommon;
 
+import android.database.Cursor;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -25,14 +26,15 @@ public class TimeSlotObject {
         }
 
         @Override
-        public void bind(TimeSlotObject data, int pos) {
-            txtStart.setText(data.startHour + ":0" + data.startMin);
-            txtEnd.setText(data.endHour + ":0" + data.endMin);
+        public TimeSlotObject bind(Cursor cursor, int pos) {
+            txtStart.setText(  ":0" );
+            txtEnd.setText("1hr");
             if(pos % 3 ==0){
                 sc.section(true);
             }else{
                 sc.section(false);
             }
+            return  new TimeSlotObject(0,0,0,0);
         }
     }
 }

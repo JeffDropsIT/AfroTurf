@@ -30,8 +30,8 @@ public class ListPagesAdapter extends ArrayAdapter<SalonObject> {
             convertView  = LayoutInflater.from(getContext()).inflate(R.layout.salon_layout, parent, false);
         }
 
-        TextView txtName = convertView.findViewById(R.id.txtName),
-                txtLocation = convertView.findViewById(R.id.txtLocation);
+        TextView txtName = convertView.findViewById(R.id.txt_name),
+                txtLocation = convertView.findViewById(R.id.txt_location);
 
         SalonObject salonObj = this.getItem(position);
         txtName.setText(salonObj.getTitle());

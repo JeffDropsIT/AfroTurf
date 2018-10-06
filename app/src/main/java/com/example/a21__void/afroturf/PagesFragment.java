@@ -1,8 +1,5 @@
 package com.example.a21__void.afroturf;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -13,12 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.a21__void.Modules.ListPagesAdapter;
 import com.example.a21__void.Modules.PageTransformer;
 import com.example.a21__void.Modules.SalonsFragementAdapter;
-import com.example.a21__void.Modules.SalonsManager;
+import com.example.a21__void.afroturf.manager.SalonsManager;
 import com.example.a21__void.Modules.SalonsPreviewFragment;
 import com.example.a21__void.afroturf.pkgSalon.SalonObject;
 
@@ -87,7 +83,7 @@ public class PagesFragment extends Fragment implements View.OnClickListener {
         this.vpgPages.setOffscreenPageLimit(3);
 
         this.lstPages.setAdapter(this.listPagesAdapter);
-        this.listPagesAdapter.addAll(SalonsManager.getInstance(getContext()).getSalons());
+        //this.listPagesAdapter.addAll(SalonsManager.getInstance(getContext()).getSalons());
 
         return parent;
     }
@@ -100,7 +96,7 @@ public class PagesFragment extends Fragment implements View.OnClickListener {
 
 
 
-        SalonObject[] salonObjects = SalonsManager.getInstance(getContext()).getSalons();
+        SalonObject[] salonObjects = new SalonObject[0];//SalonsManager.getInstance(getContext()).getSalons();
 
         this.pagesAdapter.clear();
         Log.i("pages", salonObjects.length + "");

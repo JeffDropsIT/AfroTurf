@@ -22,8 +22,7 @@
                 android:id="@+id/img_icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_locationpin"
-                android:tint="@color/colorTextDark"
+                android:src="@drawable/ic_loading"
                 android:scaleType="center"
                 android:layout_above="@+id/tmp_lin_base"
                 />

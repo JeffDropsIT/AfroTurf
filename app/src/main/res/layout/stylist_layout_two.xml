@@ -15,7 +15,8 @@
             android:id="@+id/img_profile"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/placeholder"
+            android:src="@drawable/ic_loading"
+            android:scaleType="centerCrop"
             app:civ_circle_background_color="@color/colorTextLight"/>
 
         <LinearLayout

@@ -48,7 +48,7 @@
                 android:padding="8dp">
 
                 <TextView
-                    android:id="@+id/txtName"
+                    android:id="@+id/txt_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Salon Name"
@@ -57,7 +57,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txtLocation"
+                    android:id="@+id/txt_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Location"

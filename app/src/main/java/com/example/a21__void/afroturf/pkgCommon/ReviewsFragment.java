@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.android.volley.Response;
@@ -15,9 +16,11 @@ import com.android.volley.VolleyError;
 import com.example.a21__void.Modules.AfroFragment;
 import com.example.a21__void.Modules.ServerCon;
 import com.example.a21__void.afroturf.R;
-import com.example.a21__void.afroturf.StylistObject;
+import com.example.a21__void.afroturf.manager.CacheManager;
+import com.example.a21__void.afroturf.manager.ReviewsManager;
+import com.example.a21__void.afroturf.object.ReviewAfroObject;
 import com.example.a21__void.afroturf.pkgConnection.DevDesignRequest;
-import com.example.a21__void.afroturf.pkgSalon.GeneralRecyclerAdapter;
+import com.example.a21__void.afroturf.pkgSalon.AfroObjectCursorAdapter;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -27,44 +30,22 @@ import com.google.gson.JsonParser;
  * Use the {@link ReviewsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ReviewsFragment extends AfroFragment implements Response.ErrorListener, Response.Listener<DevDesignRequest.DevDesignResponse> {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    ReviewObject[] reviewObjects = new ReviewObject[]{
-            new ReviewObject("Asanda IX", "Online calculators for everything. Some solve problems, some satisfy curiosity.", "10/04/2017 15:56", 4),
-            new ReviewObject("Samu", "Use simple and easy free online calculator at work, at school or at home. With our calculator you can perform simple and trigonometric calculations.\n", "10/04/2017 15:56", 2),
-            new ReviewObject("Sizwe", "Online scientific calculator for quick calculations, along with a large collection of free online calculators, each with related information to gain in-depth knowledge ...\n", "10/04/2017 15:56", 3),
-            new ReviewObject("Jeff", "Use simple and easy free online calculator at work, at school or at home. With our calculator you can perform simple and trigonometric calculations.\n", "10/04/2017 15:56", 1),
-            new ReviewObject("eggs", "Online scientific calculator for quick calculations, along with a large collection of free online calculators, each with related information to gain in-depth knowledge ...\n", "10/04/2017 15:56", 5),
-    };
-    private GeneralRecyclerAdapter reviewsAdapter;
+public class ReviewsFragment extends AfroFragment  {
+    private ProgressBar progLoading;
+    private static final String PARAM_LISTENER = "listener";
+    private AfroObjectCursorAdapter reviewsAdapter;
+    private AfroObjectCursorAdapter.ItemClickListener reviewClickListener;
+    private ReviewsManager reviewsManager;
 
 
     public ReviewsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ReviewsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ReviewsFragment newInstance(String param1, String param2) {
+    public static ReviewsFragment newInstance(AfroObjectCursorAdapter.ItemClickListener listener) {
         ReviewsFragment fragment = new ReviewsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(PARAM_LISTENER, listener);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,25 +54,23 @@ public class ReviewsFragment extends AfroFragment implements Response.ErrorListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            this.reviewClickListener = (AfroObjectCursorAdapter.ItemClickListener)getArguments().getSerializable(PARAM_LISTENER);
         }
+        this.reviewsManager = (ReviewsManager)CacheManager.getManager(this.getContext(), ReviewsManager.class);
+        this.reviewsAdapter = new AfroObjectCursorAdapter(reviewsManager.getCachePointer(), ReviewAfroObject.UIHandler.class, R.layout.reviews_layout);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         RelativeLayout parent = (RelativeLayout)inflater.inflate(R.layout.fragment_stylists, container, false);
         RecyclerView recyclerView = parent.findViewById(R.id.rcy_stylist);
-
-        this.reviewsAdapter = new GeneralRecyclerAdapter(ReviewObject.ReviewObjectTemplate.class, R.layout.reviews_layout);
+        this.progLoading = parent.findViewById(R.id.prog_loading);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(this.reviewsAdapter);
-
-        return parent;    }
+        return parent;
+    }
 
     @Override
     public String getTitle() {
@@ -101,38 +80,21 @@ public class ReviewsFragment extends AfroFragment implements Response.ErrorListe
     @Override
     public void onResume() {
         super.onResume();
-        String url = ServerCon.BASE_URL + "/afroturf/reviews?userId=" + ServerCon.DEBUG_SALON_OID + "&reviewId=" + ServerCon.DEBUG_SALON_REVIEW_ID;
-        ServerCon.getInstance(this.getContext()).HTTP(0, url, 0,  this, this);
-    }
+        CacheManager.ManagerRequestListener<CacheManager> listener = null;
+        if(this.reviewsManager.getCount() == 0){
+            progLoading.setVisibility(View.VISIBLE);
+            listener = new CacheManager.ManagerRequestListener<CacheManager>() {
+                @Override
+                public void onRespond(CacheManager result) {
+                    progLoading.setVisibility(View.INVISIBLE);
+                    if(result.getCount() == 0){
+                        //no data
+                    }
 
-
-    @Override
-    public void onErrorResponse(VolleyError error) {
-
-    }
-
-    @Override
-    public void onResponse(DevDesignRequest.DevDesignResponse response) {
-        ReviewObject[] data = this.parse(response.data);
-        this.reviewsAdapter.clear();
-        this.reviewsAdapter.add(data);
-    }
-
-    private ReviewObject[] parse(String rawData) {
-        JsonParser parser = new JsonParser();
-        JsonArray reviews = parser.parse(rawData).getAsJsonObject().getAsJsonArray("data").get(0).getAsJsonObject().getAsJsonArray("reviewsIn");
-
-        ReviewObject[] reviewObjects = new ReviewObject[reviews.size()];
-        for(int pos  = 0; pos < reviews.size(); pos++){
-            JsonObject review = reviews.get(pos).getAsJsonObject();
-
-            String reviewerName = review.get("reviewerName").getAsString(),
-                    msg = review.get("payload").getAsString(),
-                    date = review.get("created").getAsString();
-            int rating = review.get("rating").getAsInt();
-
-            reviewObjects[pos] = new ReviewObject(reviewerName, msg, date, rating);
+                }
+            };
         }
-        return reviewObjects;
+
+        this.reviewsManager.requestRefresh(listener);
     }
 }

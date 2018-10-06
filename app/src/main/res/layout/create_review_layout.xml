@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:background="#f2f2f2">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Review"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textColor="@color/colorTextSuperDark"
+        android:padding="5dp"/>
+
+    <RatingBar
+        android:id="@+id/rat_rating"
+
+        style="@style/MyRatingBarTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:layout_marginLeft="5dp"
+
+        android:isIndicator="false"
+        android:stepSize="1"
+        android:rating="1"
+        android:layout_gravity="center"
+        />
+
+    <EditText
+        android:id="@+id/edt_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="100dp"
+        android:hint="type a review..."
+        android:backgroundTint="@color/colorAccent_two"
+        android:gravity="top|left"/>
+
+    <Button
+        android:id="@+id/btn_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:background="@drawable/round_corner"
+        android:textColor="@color/white"
+        android:layout_gravity="right"
+        android:paddingRight="20dp"
+        android:paddingLeft="20dp"/>
+
+</LinearLayout>

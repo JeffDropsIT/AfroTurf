@@ -75,21 +75,21 @@ public class SalonObject implements ClusterItem, Serializable {
                 endPart = endTime.split(":");
         return new SalonObject(name,  address, new LatLng(lati, longi), rating, Integer.parseInt(startPart[0]), Integer.parseInt(startPart[1]), Integer.parseInt(endPart[0]), Integer.parseInt(endPart[1]));
     }
-
-    public static class SalonObjectTemplate extends HolderTemplate<SalonObject> {
-        private TextView txtName, txtLoc;
-
-        public SalonObjectTemplate(ViewGroup itemView) {
-            super(itemView);
-            this.txtName = itemView.findViewById(R.id.txtName);
-            this.txtLoc=  itemView.findViewById(R.id.txtLocation);
-        }
-
-        @Override
-        public void bind(SalonObject data, int pos) {
-            txtName.setText(data.name);
-            txtLoc.setText(data.address);
-        }
-    }
+//
+//    public static class SalonObjectTemplate extends HolderTemplate<SalonObject> {
+//        private TextView txtName, txtLoc;
+//
+//        public SalonObjectTemplate(ViewGroup itemView) {
+//            super(itemView);
+//            this.txtName = itemView.findViewById(R.id.txtName);
+//            this.txtLoc=  itemView.findViewById(R.id.txtLocation);
+//        }
+//
+//        @Override
+//        public void bind(SalonObject data, int pos) {
+//            txtName.setText(data.name);
+//            txtLoc.setText(data.address);
+//        }
+//    }
 }
 

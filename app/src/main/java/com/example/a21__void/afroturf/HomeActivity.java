@@ -5,35 +5,26 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
@@ -42,16 +33,15 @@ import android.widget.Toast;
 
 
 import com.example.a21__void.Modules.AfroFragment;
-import com.example.a21__void.Modules.CustomClusterRender;
-import com.example.a21__void.Modules.DirectionFinder;
-import com.example.a21__void.Modules.DirectionFinderListener;
 import com.example.a21__void.Modules.ProgressFragment;
-import com.example.a21__void.Modules.RemoteDataRetriever;
-import com.example.a21__void.Modules.Route;
 import com.example.a21__void.Modules.SalonsFragementAdapter;
-import com.example.a21__void.Modules.SalonsManager;
-import com.example.a21__void.Modules.SalonsPreviewFragment;
+import com.example.a21__void.afroturf.manager.CacheManager;
+import com.example.a21__void.afroturf.manager.ReviewsManager;
+import com.example.a21__void.afroturf.manager.SalonsManager;
 import com.example.a21__void.Modules.SearchFragment;
+import com.example.a21__void.afroturf.manager.ServicesManager;
+import com.example.a21__void.afroturf.manager.StylistsManager;
+import com.example.a21__void.afroturf.object.SalonAfroObject;
 import com.example.a21__void.afroturf.pkgSalon.SalonActivity;
 import com.example.a21__void.afroturf.pkgSalon.SalonObject;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -60,25 +50,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.clustering.ClusterManager;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class HomeActivity extends AppCompatActivity implements  BottomNavigationView.OnNavigationItemSelectedListener {
     private static final int MODE_IDLE = 0, MODE_SEARCH = 1, MODE_USER_SETTINGS= 2;
@@ -118,7 +98,7 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
     private boolean isMapReady = false;
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap googleMap;
-    private ClusterManager<com.example.a21__void.afroturf.pkgSalon.SalonObject> clusterManager;
+    private ClusterManager<SalonAfroObject.SalonClusterItem> clusterManager;
 
 
     LocationManager locationManager;
@@ -128,11 +108,40 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
+    //FLAGS
+    private static final String FLAG_FIRST_RUN = "flag_first_run";
+    //MANAGERS
+    SalonsManager salonsManager;
+    ServicesManager servicesManager;
+    StylistsManager stylistsManager;
+    ReviewsManager reviewsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        this.salonsManager = (SalonsManager)CacheManager.getManager(this, SalonsManager.class);
+        this.servicesManager = (ServicesManager)CacheManager.getManager(this, ServicesManager.class);
+        this.stylistsManager = (StylistsManager)CacheManager.getManager(this, StylistsManager.class);
+        this.reviewsManager = (ReviewsManager)CacheManager.getManager(this, ReviewsManager.class);
+
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences(this.getPackageName(), MODE_PRIVATE);
+
+
+        boolean isFirstRun = sharedPreferences.getBoolean(FLAG_FIRST_RUN, true);
+        if(isFirstRun){
+            this.salonsManager.init(this.getApplicationContext());
+            this.stylistsManager.init(this.getApplicationContext());
+            this.servicesManager.init(this.getApplicationContext());
+            this.reviewsManager.init(this.getApplicationContext());
+        }
+
+        this.salonsManager.beginManagement();
+        this.stylistsManager.beginManagement();
+        this.servicesManager.beginManagement();
+        this.reviewsManager.beginManagement();
 
         if(true){
             Intent intent = new Intent(this, SalonActivity.class);
@@ -141,7 +150,6 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
         }
 
         this.smallPreview = new SmallPreview(this);
-
         Toolbar toolbar = this.findViewById(R.id.toolbar);
         this.setSupportActionBar(toolbar);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -163,10 +171,6 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
         this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         locationManager = (LocationManager) getSystemService(this.LOCATION_SERVICE);
-//        locationListener = new MyLocationListiner(getApplicationContext());
-//
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
         this.init();
     }
 
@@ -178,13 +182,7 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
             public void onSuccess(final Location location) {
 
 
-                SalonsManager.getInstance(HomeActivity.this).fetchSalons(location, new SalonsManager.SalonsManagerCallback() {
-                    @Override
-                    public void onFetchSalons(com.example.a21__void.afroturf.pkgSalon.SalonObject[] salonObjects) {
-                        HomeActivity.this.currentLocation = location;
-                        HomeActivity.this.refreshMap();
-                    }
-                });
+
             }
         });
 
@@ -224,27 +222,27 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
 
     private void setUpClusterManager() {
         if(isMapReady){
-            this.clusterManager = new ClusterManager<>(this, this.googleMap);
+            this.clusterManager = new ClusterManager<SalonAfroObject.SalonClusterItem>(this, this.googleMap);
 
             this.googleMap.setOnCameraIdleListener(this.clusterManager);
             this.googleMap.setOnMarkerClickListener(clusterManager);
-            this.clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<SalonObject>() {
+            this.clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<SalonAfroObject.SalonClusterItem>() {
                 @Override
-                public boolean onClusterItemClick(SalonObject salonObject) {
+                public boolean onClusterItemClick(SalonAfroObject.SalonClusterItem salonObject) {
                     //TODO handle pin click
-                    HomeActivity.this.smallPreview.update(salonObject);
+                    //HomeActivity.this.smallPreview.update(salonObject);
                     return false;
                 }
             });
 
-            this.clusterManager.setRenderer(new CustomClusterRender(this, this.googleMap, this.clusterManager));
+           // this.clusterManager.setRenderer(new CustomClusterRender(this, this.googleMap, this.clusterManager));
         }
     }
 
     private void refreshMap() {
         if(isMapReady && currentLocation != null){
-            com.example.a21__void.afroturf.pkgSalon.SalonObject[] salonObjects = SalonsManager.getInstance(this).getSalons();
-            if(salonObjects.length > 0){
+           // AJSalonObject[] salonObjects = SalonsManager.getInstance(this).getSalons();
+            if(false){
                 LatLng customerLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                 CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(customerLocation)      // Sets the center of the map to Mountain View
@@ -257,11 +255,11 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
                 this.clusterManager.clearItems();
                 this.salonsFragementAdapter.clear();
 
-                this.selectedSalon = salonObjects[0];
-
-                for(int pos = 0; pos < salonObjects.length; pos++){
-                    this.clusterManager.addItem(salonObjects[pos]);
-                }
+//                this.selectedSalon = salonObjects[0];
+//
+//                for(int pos = 0; pos < salonObjects.length; pos++){
+//                    this.clusterManager.addItem(salonObjects[pos]);
+//                }
             }
             new Handler().postDelayed(new Runnable() {
                 @Override

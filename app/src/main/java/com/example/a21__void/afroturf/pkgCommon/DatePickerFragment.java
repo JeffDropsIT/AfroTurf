@@ -10,7 +10,6 @@ import android.widget.DatePicker;
 
 import com.example.a21__void.Modules.AfroFragment;
 import com.example.a21__void.afroturf.R;
-import com.example.a21__void.afroturf.pkgSalon.GeneralRecyclerAdapter;
 
 /**
  * A simple {@link Fragment} subclass.

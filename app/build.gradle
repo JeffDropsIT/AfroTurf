@@ -49,10 +49,12 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
 
+    compile(
+    [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.7'],
+    [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.7'],
+    [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7']
 
-
-
-
+    )
     compile 'com.github.bumptech.glide:glide:3.7.0'
 
     // Recyclerview

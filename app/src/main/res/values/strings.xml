@@ -26,4 +26,13 @@ Ut justo velit, consectetur sit amet porttitor et, scelerisque et odio. Suspendi
 Aenean in arcu laoreet, gravida orci et, faucibus velit. Etiam finibus viverra tortor vel pretium. Curabitur vitae ex sed ex convallis suscipit. Pellentesque malesuada hendrerit neque, et vestibulum ligula mollis at. Mauris vehicula nisl quam, et eleifend orci varius eget. Quisque ut urna eu ipsum commodo feugiat. Suspendisse ac sem nec enim laoreet dictum venenatis eget neque. Donec egestas suscipit leo, sodales posuere nibh accumsan nec. Sed nec erat aliquam, hendrerit sapien non, fermentum diam. Aliquam erat volutpat. Aliquam varius semper purus, ac accumsan arcu finibus non.
     </string>
     <string name="content_text_two">Item\n\n\n\nItem\n\n\n\nItem\n\n\n\nItem\n\n\n\nItem\n\n\n\nItem\n\n\n\nItem\n\n\n\n</string>
+    <declare-styleable name="SectionProgess">
+        <attr name="angleDeg" format="float"/>
+        <attr name="sectionSpacing" format="dimension"/>
+        <attr name="sectionColor" format="color"/>
+        <attr name="sectionThickness" format="dimension"/>
+        <attr name="sectionText" format="string"/>
+    </declare-styleable>
 </resources>
+
+
