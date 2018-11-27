@@ -60,8 +60,9 @@ public class ServicesManager extends CacheManager {
 
                     for(int i = 0; i < subServices.size(); i++){
                         JsonObject subService = subServices.get(i).getAsJsonObject();
+                        subService.addProperty("category", category);
+                        Log.i("ixa", subService.toString());
                         ServiceAfroObject serviceAfroObject =  new ServiceAfroObject();//objectMapper.readValue(subService.toString(), ServiceAfroObject.class);
-                        serviceAfroObject.category = category;
                         serviceAfroObject.set(parser, subService.toString());
                         serviceAfroObjects.add(serviceAfroObject);
                     }

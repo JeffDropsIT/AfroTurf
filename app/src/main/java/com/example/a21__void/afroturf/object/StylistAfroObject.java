@@ -33,14 +33,29 @@ public class StylistAfroObject extends AfroObject {
     @Override
     public void set(JsonParser parser, String json) {
             JsonObject stylist = parser.parse(json).getAsJsonObject();
-            int posts = stylist.get("posts").getAsInt(), followers = stylist.get("followers").getAsInt(), reviews = stylist.get("reviews").getAsInt();
+            int posts = stylist.get("posts").getAsInt(), followers = stylist.get("followers").getAsInt();
             String name = stylist.get("name").getAsString();
             int rating = stylist.get("rating").getAsInt();
             this.name = name;
+            this.stylistUID = stylist.get("stylistId").getAsString();
             this.posts = posts;
             this.followers = followers;
             this.rating = rating;
     }
+
+    @Override
+    public String get() {
+        JsonObject stylist = new JsonObject();
+
+        stylist.addProperty("name", this.name);
+        stylist.addProperty("stylistId", this.stylistUID);
+        stylist.addProperty("posts", this.posts);
+        stylist.addProperty("followers", this.followers);
+        stylist.addProperty("rating", this.rating);
+
+        return stylist.toString();
+    }
+
     public static class UIHandler extends AfroObject.UIHandler {
         private final CircleImageView ImgIcon;
         private final TextView txtFollowers, txtReviews, txtName;

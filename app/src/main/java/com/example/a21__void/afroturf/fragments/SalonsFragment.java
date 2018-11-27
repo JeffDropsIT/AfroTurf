@@ -31,11 +31,13 @@ public class SalonsFragment extends AfroFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            this.salonClickListener = (AfroObjectCursorAdapter.ItemClickListener)getArguments().getSerializable(PARAMS_LISTENER);
-        }
         CacheManager.CachePointer cachePointer = CacheManager.getManager(this.getContext(), SalonsManager.class).getCachePointer();
         this.salonsCursorAdapter = new AfroObjectCursorAdapter(cachePointer, SalonAfroObject.UIHandler.class, R.layout.salon_layout);
+        if (getArguments() != null) {
+            this.salonClickListener = (AfroObjectCursorAdapter.ItemClickListener)getArguments().getSerializable(PARAMS_LISTENER);
+            this.salonsCursorAdapter.setItemClickListener(salonClickListener);
+        }
+
     }
 
     @Override

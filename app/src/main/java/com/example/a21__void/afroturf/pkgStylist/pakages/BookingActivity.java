@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.a21__void.Modules.AfroFragment;
 import com.example.a21__void.afroturf.R;
 import com.example.a21__void.afroturf.object.AfroObject;
+import com.example.a21__void.afroturf.object.SalonAfroObject;
 import com.example.a21__void.afroturf.pkgCommon.DatePickerFragment;
 import com.example.a21__void.afroturf.pkgCommon.TimeSlotObject;
 import com.example.a21__void.afroturf.pkgCommon.TimeslotFragment;
@@ -33,7 +34,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private TextView txtService, txtSalon, txtStylist, txtDate, txtTime, txtTitle;
     private ProgressBar progressBar;
 
-    private SalonObject selectedSalon;
+    private SalonAfroObject selectedSalon;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,41 +77,41 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         if(v.getId() == R.id.crd_stylist){
             showOverlay(ServicesFragment.newInstance(this));
         }else if(v.getId() ==R.id.rel_stylist){
-//            showOverlay(StylistsFragment.newInstance(new AfroObjectCursorAdapter.GeneralAdapte() {
-//                @Override
-//                public void onItemClick(int pos, StylistObject data) {
-//                    closeOverlay();
-//                    txtStylist.setText(data.Name);
-//                }
-//            },""));
+            showOverlay(StylistsFragment.newInstance(new AfroObjectCursorAdapter.ItemClickListener() {
+                @Override
+                public void onItemClick(AfroObject afroObject, int position) {
+                    closeOverlay();
+                    txtStylist.setText(afroObject.getName());
+                }
+            }));
         }else if(v.getId() ==R.id.rel_salon){
-//            this.showOverlay(SalonsFragment.newInstance(new AfroObjectCursorAdapter.GeneralAdapterListener<SalonObject>() {
-//                @Override
-//                public void onItemClick(int pos, SalonObject data) {
-//                    closeOverlay();
-//                    selectedSalon = data;
-//                    txtSalon.setText(data.getTitle());
-//                }
-//            }, ""));
+            this.showOverlay(SalonsFragment.newInstance(new AfroObjectCursorAdapter.ItemClickListener() {
+                @Override
+                public void onItemClick(AfroObject afroObject, int position) {
+                    closeOverlay();
+                    selectedSalon = (SalonAfroObject)afroObject;
+                    txtSalon.setText(afroObject.getName());
+                }
+            }));
         }else if(v.getId() == R.id.crd_date){
-//            this.showOverlay(DatePickerFragment.newInstance(new DatePickerFragment.DateListener() {
-//                @Override
-//                public void onGetDate(int year, int month, int day) {
-//                    closeOverlay();
-//                    txtDate.setText(day + "/" + month + "/" + year);
-//                }
-//            }));
+            this.showOverlay(DatePickerFragment.newInstance(new DatePickerFragment.DateListener() {
+                @Override
+                public void onGetDate(int year, int month, int day) {
+                    closeOverlay();
+                    txtDate.setText(day + "/" + month + "/" + year);
+                }
+            }));
         }else if(v.getId() == R.id.crd_time){
-//            if(selectedSalon != null){
-//                showOverlay(TimeslotFragment.newInstance(selectedSalon, new AfroObjectCursorAdapter.GeneralAdapterListener<TimeSlotObject>() {
-//                    @Override
-//                    public void onItemClick(int pos, TimeSlotObject data) {
-//
-//                    }
-//                }));
-//            }else{
-//                Toast.makeText(this, "Select Salon", Toast.LENGTH_SHORT).show();
-//            }
+            if(selectedSalon != null){
+                showOverlay(TimeslotFragment.newInstance(selectedSalon, new AfroObjectCursorAdapter.ItemClickListener() {
+                    @Override
+                    public void onItemClick(AfroObject afroObject, int position) {
+
+                    }
+                }));
+            }else{
+                Toast.makeText(this, "Select Salon", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

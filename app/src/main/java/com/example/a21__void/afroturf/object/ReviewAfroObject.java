@@ -40,6 +40,16 @@ public class ReviewAfroObject extends AfroObject {
         this.rating = rating;
     }
 
+    @Override
+    public String get() {
+        JsonObject review = new JsonObject();
+        review.addProperty("reviewerName", this.reviewerName);
+        review.addProperty("payload", this.message);
+        review.addProperty("created", this.creationDate);
+        review.addProperty("rating", this.rating);
+        return review.toString();
+    }
+
     public static class UIHandler extends AfroObject.UIHandler{
         private final TextView txtFrom, txtDate, txtMsg;
         private final RatingBar ratRating;

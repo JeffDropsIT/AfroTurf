@@ -98,10 +98,12 @@ public class SalonsManager extends CacheManager {
                         @Override
                         public void onRespond(SalonAfroObject[] result) {
                             cacheData(result);
+                            if(callback != null)
                             callback.onRespond(SalonsManager.this);
                         }
                     });
                 }else
+                    if(callback != null)
                     callback.onRespond(SalonsManager.this);
             }
         });

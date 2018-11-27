@@ -53,11 +53,14 @@ public class ReviewsFragment extends AfroFragment  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            this.reviewClickListener = (AfroObjectCursorAdapter.ItemClickListener)getArguments().getSerializable(PARAM_LISTENER);
-        }
         this.reviewsManager = (ReviewsManager)CacheManager.getManager(this.getContext(), ReviewsManager.class);
         this.reviewsAdapter = new AfroObjectCursorAdapter(reviewsManager.getCachePointer(), ReviewAfroObject.UIHandler.class, R.layout.reviews_layout);
+
+        if (getArguments() != null) {
+            this.reviewClickListener = (AfroObjectCursorAdapter.ItemClickListener)getArguments().getSerializable(PARAM_LISTENER);
+            this.reviewsAdapter.setItemClickListener(reviewClickListener);
+        }
+
     }
 
     @Override

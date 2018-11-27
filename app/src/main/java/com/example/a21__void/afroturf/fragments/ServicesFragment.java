@@ -45,11 +45,14 @@ public class ServicesFragment extends AfroFragment implements Response.ErrorList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            this.serviceClickListener = (AfroObjectCursorAdapter.ItemClickListener)getArguments().getSerializable(PARAMS_LISTENER);
-        }
         CacheManager.CachePointer cachePointer = ServicesManager.getManager(this.getContext(), ServicesManager.class).getCachePointer();
         this.serviceAdapter = new AfroObjectCursorAdapter(cachePointer, ServiceAfroObject.UIHandler.class, R.layout.service_layout);
+
+        if (getArguments() != null) {
+            this.serviceClickListener = (AfroObjectCursorAdapter.ItemClickListener)getArguments().getSerializable(PARAMS_LISTENER);
+            this.serviceAdapter.setItemClickListener(serviceClickListener);
+        }
+
     }
 
     @Override

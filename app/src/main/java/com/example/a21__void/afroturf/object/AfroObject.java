@@ -15,6 +15,7 @@ public abstract class AfroObject {
     public abstract String getName();
     public abstract String getUID();
     public abstract void set(JsonParser parser, String json);
+    public abstract String get();
 
     public static abstract class UIHandler extends RecyclerView.ViewHolder{
 

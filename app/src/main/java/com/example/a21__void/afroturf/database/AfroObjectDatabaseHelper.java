@@ -56,11 +56,7 @@ public class AfroObjectDatabaseHelper extends SQLiteOpenHelper {
             AfroObject afroObject = afroObjects[pos];
             contentValues.put(COLUMN_NAME, afroObject.getName());
             contentValues.put(COLUMN_UID, afroObject.getUID());
-            try {
-                contentValues.put(COLUMN_JSON, objectMapper.writeValueAsBytes(afroObject));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
+            contentValues.put(COLUMN_JSON, afroObject.get().getBytes());
             database.insert(this.tableName, null, contentValues);
         }
         database.setTransactionSuccessful();

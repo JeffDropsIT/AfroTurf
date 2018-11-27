@@ -45,24 +45,20 @@ dependencies {
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.wang.avi:library:2.1.3'
-
     implementation 'de.hdodenhof:circleimageview:2.2.0'
-
-
     compile(
-    [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.7'],
-    [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.7'],
-    [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7']
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.7'],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.7'],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7']
 
     )
     compile 'com.github.bumptech.glide:glide:3.7.0'
-
     // Recyclerview
     compile 'com.android.support:recyclerview-v7:27.1.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.github.bumptech.glide:volley-integration:1.4.0@aar'
     implementation 'com.android.support:palette-v7:27.1.1'
-
+    implementation project(':ixcoda')
 }
 
 apply plugin: 'com.google.gms.google-services'

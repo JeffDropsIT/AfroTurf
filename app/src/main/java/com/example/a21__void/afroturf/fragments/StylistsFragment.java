@@ -42,12 +42,15 @@ public class StylistsFragment extends AfroFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            this.stylistClickListener = (AfroObjectCursorAdapter.ItemClickListener)getArguments().getSerializable(PARAM_LISTENER);
-        }
         this.stylistsManager = (StylistsManager)CacheManager.getManager(this.getContext(), StylistsManager.class);
         CacheManager.CachePointer cachePointer = this.stylistsManager.getCachePointer();
         this.stylistAdapter = new AfroObjectCursorAdapter(cachePointer, StylistAfroObject.UIHandler.class, R.layout.stylist_layout_two);
+
+        if (getArguments() != null) {
+            this.stylistClickListener = (AfroObjectCursorAdapter.ItemClickListener)getArguments().getSerializable(PARAM_LISTENER);
+            this.stylistAdapter.setItemClickListener(stylistClickListener);
+        }
+
     }
 
     @Override

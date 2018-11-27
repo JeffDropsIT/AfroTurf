@@ -5,6 +5,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.a21__void.afroturf.R;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
@@ -13,12 +14,12 @@ import com.google.gson.JsonParser;
  */
 public class ServiceAfroObject extends AfroObject {
     public String category;
-    private String name, code, imgUrl, descp;
+    private String type, code, imgUrl, description;
     private int price;
 
     @Override
     public String getName() {
-        return name;
+        return type;
     }
 
     @Override
@@ -28,7 +29,27 @@ public class ServiceAfroObject extends AfroObject {
 
     @Override
     public void set(JsonParser parser, String json) {
+        JsonObject service = parser.parse(json).getAsJsonObject();
 
+        this.category = service.get("category").getAsString();
+        this.type = service.get("type").getAsString();
+        this.code = service.get("code").getAsString();
+        this.description = service.get("description").getAsString();
+        this.price = service.get("price").getAsInt();
+
+    }
+
+    @Override
+    public String get() {
+        JsonObject service = new JsonObject();
+
+        service.addProperty("category", this.category);
+        service.addProperty("type", this.type);
+        service.addProperty("code", this.code);
+        service.addProperty("description", this.description);
+        service.addProperty("price", this.price);
+
+        return  service.toString();
     }
 
     public static class UIHandler extends AfroObject.UIHandler{
@@ -46,7 +67,7 @@ public class ServiceAfroObject extends AfroObject {
         @Override
         public void bind(AfroObject afroObject, int position) {
             ServiceAfroObject serviceAfroObject = (ServiceAfroObject)afroObject;
-            txtName.setText(serviceAfroObject.name);
+            txtName.setText(serviceAfroObject.type);
             txtCat.setText(serviceAfroObject.category);
             txtPrice.setText("R" + serviceAfroObject.price);
         }

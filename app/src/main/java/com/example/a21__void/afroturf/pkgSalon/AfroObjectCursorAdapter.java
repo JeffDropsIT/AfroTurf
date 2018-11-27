@@ -11,11 +11,15 @@ import com.example.a21__void.afroturf.database.AfroObjectDatabaseHelper;
 import com.example.a21__void.afroturf.manager.CacheManager;
 import com.example.a21__void.afroturf.object.AfroObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+
+import okio.ByteString;
 
 /**
  * Created by ASANDA on 2018/09/22.
@@ -67,8 +71,12 @@ public class AfroObjectCursorAdapter extends RecyclerView.Adapter<AfroObject.UIH
             return;
 
         byte[] rawJson = cursor.getBlob(cursor.getColumnIndex(AfroObjectDatabaseHelper.COLUMN_JSON));
+
+        final AfroObject afroObject;
         try {
-            final AfroObject afroObject = objectMapper.readValue(rawJson, 0, rawJson.length, holder.getObjectClass());
+            afroObject = holder.getObjectClass().getConstructor().newInstance();
+            afroObject.set(new JsonParser(), new String(rawJson));
+
             holder.bind(afroObject, position);
 
             if(!holder.itemView.hasOnClickListeners()){
@@ -80,7 +88,14 @@ public class AfroObjectCursorAdapter extends RecyclerView.Adapter<AfroObject.UIH
                     }
                 });
             }
-        } catch (IOException e) {
+
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
 
