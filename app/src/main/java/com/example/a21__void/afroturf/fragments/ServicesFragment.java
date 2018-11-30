@@ -71,6 +71,11 @@ public class ServicesFragment extends AfroFragment implements Response.ErrorList
     }
 
     @Override
+    public void requestClose(AfroFragmentCallback callback) {
+        callback.onClose();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         ServicesManager servicesManager = (ServicesManager)CacheManager.getManager(this.getContext(), ServicesManager.class);

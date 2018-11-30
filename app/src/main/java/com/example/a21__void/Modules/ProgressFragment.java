@@ -52,6 +52,7 @@ public class ProgressFragment extends Fragment {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
+                        if(ProgressFragment.this.getView() != null)
                         ProgressFragment.this.getView().setVisibility(View.INVISIBLE);
                     }
 

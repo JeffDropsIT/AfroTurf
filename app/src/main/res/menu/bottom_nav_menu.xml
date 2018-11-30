@@ -4,22 +4,22 @@
 
     <item
         android:id="@+id/nav_map"
-        android:icon="@drawable/ic_map"
+        android:icon="@drawable/ic_map_deselected"
         android:title="Map"
         android:iconTintMode="multiply"
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/nav_nearby"
-        android:icon="@drawable/ic_pages"
+        android:id="@+id/nav_pages"
+        android:icon="@drawable/ic_pages_selected"
         android:title="Pages"
         android:checked="true"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/nav_user"
-        android:icon="@drawable/ic_rating"
-        android:title="Favourite"
+        android:icon="@drawable/ic_bookmark_deselected"
+        android:title="Bookmarks"
         app:showAsAction="always"
          />
 

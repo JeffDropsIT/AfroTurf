@@ -54,6 +54,11 @@ public class SalonsFragment extends AfroFragment {
     }
 
     @Override
+    public void requestClose(AfroFragmentCallback callback) {
+        callback.onClose();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         SalonsManager salonsManager = (SalonsManager)CacheManager.getManager(this.getContext(), SalonsManager.class);

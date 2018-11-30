@@ -112,7 +112,7 @@ public class SalonsManager extends CacheManager {
     @Override
     protected void isDataInSync(ManagerRequestListener<Boolean> callback) {
         //TODO implement isDataInSync
-        callback.onRespond(true);
+        callback.onRespond(false);
     }
 
 

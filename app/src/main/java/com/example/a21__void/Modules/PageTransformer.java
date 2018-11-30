@@ -21,14 +21,14 @@ public class PageTransformer implements ViewPager.OnPageChangeListener, ViewPage
     public void enableScaling(boolean enable) {
         if (scalingEnabled && !enable) {
             // shrink main card
-            CardView currentCard = cardAdapter.getCardViewAt(viewPager.getCurrentItem());
+            View currentCard = cardAdapter.getCardViewAt(viewPager.getCurrentItem());
             if (currentCard != null) {
                 currentCard.animate().scaleY(1);
                 currentCard.animate().scaleX(1);
             }
         } else if (!scalingEnabled && enable) {
             // grow main card
-            CardView currentCard = cardAdapter.getCardViewAt(viewPager.getCurrentItem());
+            View currentCard = cardAdapter.getCardViewAt(viewPager.getCurrentItem());
             if (currentCard != null) {
                 //enlarge the current item
                 currentCard.animate().scaleY(1.1f);
@@ -69,27 +69,27 @@ public class PageTransformer implements ViewPager.OnPageChangeListener, ViewPage
             return;
         }
 
-        RelativeLayout currentCard = (RelativeLayout)cardAdapter.getItem(realCurrentPosition).getView();
+        View currentCard = cardAdapter.getCardViewAt(realCurrentPosition);
 
         // This might be null if a fragment is being used
         // and the views weren't created yet
         if (currentCard != null) {
             if (scalingEnabled) {
-                currentCard.setScaleX((float) (1 + 0.05 * (1 - realOffset)));
-                currentCard.setScaleY((float) (1 + 0.05 * (1 - realOffset)));
+                currentCard.setScaleX((float) (1 + 0.08 * (1 - realOffset)));
+                currentCard.setScaleY((float) (1 + 0.08 * (1 - realOffset)));
             }
             //currentCard.setCardElevation((baseElevation + baseElevation
                     //* (5 - 1) * (1 - realOffset)));
         }
 
-        RelativeLayout nextCard = (RelativeLayout)cardAdapter.getItem(nextPosition).getView();
+        View nextCard = cardAdapter.getCardViewAt(nextPosition);
 
         // We might be scrolling fast enough so that the next (or previous) card
         // was already destroyed or a fragment might not have been created yet
         if (nextCard != null) {
             if (scalingEnabled) {
-                nextCard.setScaleX((float) (1 + 0.05 * (realOffset)));
-                nextCard.setScaleY((float) (1 + 0.05 * (realOffset)));
+                nextCard.setScaleX((float) (1 + 0.08 * (realOffset)));
+                nextCard.setScaleY((float) (1 + 0.08 * (realOffset)));
             }
             //nextCard.setCardElevation((baseElevation + baseElevation
                     //* (5 - 1) * (realOffset)));

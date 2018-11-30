@@ -11,6 +11,11 @@ public abstract class AfroFragment extends Fragment {
     private AfroFragmentCallback afroFragmentCallback;
 
 
+    public void requestClose(AfroFragmentCallback callback){
+        callback.onClose();
+    }
+
+
     @Override
     public void onResume() {
         super.onResume();

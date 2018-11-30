@@ -9,8 +9,8 @@
         android:id="@+id/av_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:indicatorColor="@color/colorSecondAccent"
-        app:indicatorName="BallPulseIndicator"
+        app:indicatorColor="#ffb954"
+        app:indicatorName="BallScaleMultipleIndicator"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/txt_msg"
         />

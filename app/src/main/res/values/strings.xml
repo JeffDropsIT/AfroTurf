@@ -28,13 +28,13 @@ Aenean in arcu laoreet, gravida orci et, faucibus velit. Etiam finibus viverra t
     </string>
     <string name="content_text_two">Item\n\n\n\nItem\n\n\n\nItem\n\n\n\nItem\n\n\n\nItem\n\n\n\nItem\n\n\n\nItem\n\n\n\n</string>
     <declare-styleable name="SectionProgess">
-        <attr name="angleDeg" format="float"/>
-        <attr name="sectionSpacing" format="dimension"/>
-        <attr name="sectionColor" format="color"/>
-        <attr name="sectionThickness" format="dimension"/>
-        <attr name="sectionText" format="string"/>
-        <attr name="sectionTextSize" format="dimension"/>
-        <attr name="sectionTextColor" format="color"/>
+        <attr name="angleDeg" format="float" />
+        <attr name="sectionSpacing" format="dimension" />
+        <attr name="sectionColor" format="color" />
+        <attr name="sectionThickness" format="dimension" />
+        <attr name="sectionText" format="string" />
+        <attr name="sectionTextSize" format="dimension" />
+        <attr name="sectionTextColor" format="color" />
     </declare-styleable>
 </resources>
 

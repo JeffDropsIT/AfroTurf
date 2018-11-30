@@ -3,6 +3,7 @@ package com.example.a21__void.Modules;
 import android.content.Context;
 
 import com.example.a21__void.afroturf.R;
+import com.example.a21__void.afroturf.object.SalonAfroObject;
 import com.example.a21__void.afroturf.pkgSalon.SalonObject;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -15,17 +16,17 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
  * Created by ASANDA on 2018/07/10.
  * for Pandaphic
  */
-public class CustomClusterRender extends DefaultClusterRenderer<SalonObject> {
+public class CustomClusterRender extends DefaultClusterRenderer<SalonAfroObject.SalonClusterItem> {
 
     private final BitmapDescriptor locationIcon;
 
-    public CustomClusterRender(Context context, GoogleMap map, ClusterManager<SalonObject> clusterManager) {
+    public CustomClusterRender(Context context, GoogleMap map, ClusterManager<SalonAfroObject.SalonClusterItem> clusterManager) {
         super(context, map, clusterManager);
         this.locationIcon  = BitmapDescriptorFactory.fromResource(R.drawable.ic_locationpin);
     }
 
     @Override
-    protected void onBeforeClusterItemRendered(SalonObject item, MarkerOptions markerOptions) {
+    protected void onBeforeClusterItemRendered(SalonAfroObject.SalonClusterItem item, MarkerOptions markerOptions) {
         markerOptions.icon(locationIcon);
         markerOptions.infoWindowAnchor(Float.MAX_VALUE, Float.MAX_VALUE);
         super.onBeforeClusterItemRendered(item, markerOptions);

@@ -1,6 +1,7 @@
 package com.example.a21__void.afroturf.manager;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -94,6 +95,7 @@ public class ReviewsManager extends CacheManager {
             @Override
             public void onResponse(DevDesignRequest.DevDesignResponse response) {
                 JsonParser parser = new JsonParser();
+
                 JsonArray reviews = parser.parse(response.data).getAsJsonObject().getAsJsonArray("data").get(0).getAsJsonObject().getAsJsonArray("reviewsIn");
 
                 ReviewAfroObject[] reviewObjects = new ReviewAfroObject[reviews.size()];

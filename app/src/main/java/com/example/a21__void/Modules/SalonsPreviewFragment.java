@@ -14,26 +14,27 @@ import android.widget.TextView;
 
 import com.example.a21__void.afroturf.R;
 import com.example.a21__void.afroturf.Salon;
+import com.example.a21__void.afroturf.object.SalonAfroObject;
 import com.example.a21__void.afroturf.pkgSalon.SalonObject;
 
 /**
  * Created by ASANDA on 2018/07/10.
  * for Pandaphic
  */
-public class SalonsPreviewFragment extends Fragment implements View.OnClickListener {
+public class SalonsPreviewFragment extends AfroFragment implements View.OnClickListener {
     public static final String PARAM_SALON_OBJ = "paramsSalonObject";
-    private SalonObject salonObject;
+    private SalonAfroObject salonObject;
     private CardView crdSalon;
 
     public SalonsPreviewFragment(){
 
     }
 
-    public SalonObject getSalonObject(){
+    public SalonAfroObject getSalonObject(){
         return this.salonObject;
     }
 
-    public void setSalonObject(SalonObject pSalonObject){
+    public void setSalonObject(SalonAfroObject pSalonObject){
         this.salonObject = pSalonObject;
     }
 
@@ -41,11 +42,11 @@ public class SalonsPreviewFragment extends Fragment implements View.OnClickListe
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         RelativeLayout parentView = (RelativeLayout)inflater.inflate(R.layout.salon_layout, container, false);
-        TextView txtName = parentView.findViewById(R.id.txtName);
+        TextView txtName = parentView.findViewById(R.id.txt_name);
         this.crdSalon = parentView.findViewById(R.id.crd_salon);
         if(this.getArguments() != null){
-            SalonObject salonObl = this.getSalonObject();
-            txtName.setText(salonObl.getTitle());
+            SalonAfroObject salonObl = this.getSalonObject();
+            txtName.setText(salonObl.getName());
             parentView.setOnClickListener(this);
         }
         return parentView;
@@ -58,7 +59,7 @@ public class SalonsPreviewFragment extends Fragment implements View.OnClickListe
         startActivityForResult(intent, Salon.REQUEST_PATH);
     }
 
-    public static SalonsPreviewFragment newInstance(SalonObject salonObject) {
+    public static SalonsPreviewFragment newInstance(SalonAfroObject salonObject) {
         SalonsPreviewFragment previewFragment = new SalonsPreviewFragment();
         previewFragment.setSalonObject(salonObject);
         Bundle args = new Bundle();
@@ -69,5 +70,10 @@ public class SalonsPreviewFragment extends Fragment implements View.OnClickListe
 
     public CardView getCard() {
         return this.crdSalon;
+    }
+
+    @Override
+    public String getTitle() {
+        return "Salon Preview";
     }
 }
