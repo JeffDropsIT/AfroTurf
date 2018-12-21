@@ -41,12 +41,14 @@ import com.example.a21__void.Modules.ProgressFragment;
 import com.example.a21__void.Modules.SalonsFragementAdapter;
 import com.example.a21__void.afroturf.database.AfroObjectDatabaseHelper;
 import com.example.a21__void.afroturf.fragments.SmallPreviewFragment;
+import com.example.a21__void.afroturf.manager.BookmarkManager;
 import com.example.a21__void.afroturf.manager.CacheManager;
 import com.example.a21__void.afroturf.manager.ReviewsManager;
 import com.example.a21__void.afroturf.manager.SalonsManager;
 import com.example.a21__void.Modules.SearchFragment;
 import com.example.a21__void.afroturf.manager.ServicesManager;
 import com.example.a21__void.afroturf.manager.StylistsManager;
+import com.example.a21__void.afroturf.object.AfroObject;
 import com.example.a21__void.afroturf.object.SalonAfroObject;
 import com.example.a21__void.afroturf.pkgSalon.AfroObjectCursorAdapter;
 import com.example.a21__void.afroturf.pkgSalon.SalonActivity;
@@ -69,7 +71,9 @@ import com.google.maps.android.clustering.ClusterManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity implements  BottomNavigationView.OnNavigationItemSelectedListener {
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
+
+public class HomeActivity extends AfroActivity implements  BottomNavigationView.OnNavigationItemSelectedListener {
     private static final boolean debug = false;
     private static final int MODE_IDLE = 0, MODE_SEARCH = 1, MODE_USER_SETTINGS= 2;
     private static final int SEARCH_RADIUS = 5;
@@ -82,7 +86,7 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
             STACK_NAME_FAVOURITE = "stack_favourite";
 
     private int currentMode = MODE_IDLE;
-    private static String stackNameNavBottom = null, stackNameNavTop = null;
+    private String stackNameNavBottom = null, stackNameNavTop = null;
     private SalonAfroObject selectedSalon = null;
 
     private RelativeLayout previewLayout;
@@ -124,12 +128,17 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
     //FLAGS
-    private static final String FLAG_FIRST_RUN = "flag_first_run";
+    public static final String FLAG_FIRST_RUN = "flag_first_run";
     //MANAGERS
     SalonsManager salonsManager;
     ServicesManager servicesManager;
     StylistsManager stylistsManager;
     ReviewsManager reviewsManager;
+    BookmarkManager bookmarkManager;
+
+
+    private MaterialProgressBar progBackgroundWork;
+    private Menu topNavigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +149,7 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
         this.servicesManager = (ServicesManager)CacheManager.getManager(this, ServicesManager.class);
         this.stylistsManager = (StylistsManager)CacheManager.getManager(this, StylistsManager.class);
         this.reviewsManager = (ReviewsManager)CacheManager.getManager(this, ReviewsManager.class);
+        this.bookmarkManager =(BookmarkManager) CacheManager.getManager(this, BookmarkManager.class);
 
 
         SharedPreferences sharedPreferences = this.getSharedPreferences(this.getPackageName(), MODE_PRIVATE);
@@ -151,12 +161,14 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
             this.stylistsManager.init(this.getApplicationContext());
             this.servicesManager.init(this.getApplicationContext());
             this.reviewsManager.init(this.getApplicationContext());
+            this.bookmarkManager.init(this.getApplicationContext());
         }
 
         this.salonsManager.beginManagement();
         this.stylistsManager.beginManagement();
         this.servicesManager.beginManagement();
         this.reviewsManager.beginManagement();
+        this.bookmarkManager.beginManagement();
 
         if(debug){
             Intent intent = new Intent(this, SalonActivity.class);
@@ -175,11 +187,29 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
         bnvNav.setOnNavigationItemSelectedListener(this);
 
         this.rel_secondary_container = this.findViewById(R.id.rel_secondary_container);
+        this.progBackgroundWork = this.findViewById(R.id.prog_background_work);
 
 
         this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        this.progBackgroundWork.setVisibility(View.INVISIBLE);
         locationManager = (LocationManager) getSystemService(this.LOCATION_SERVICE);
+        this.smallPreviewFragment.setClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, SalonActivity.class);
+                intent.putExtra(SalonActivity.EXTRA_SALON, HomeActivity.this.selectedSalon);
+                HomeActivity.this.startActivity(intent);
+            }
+        });
+        this.pagesFragment.setOnItemClickListener(new SalonsFragementAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(SalonAfroObject salonAfroObject, int position) {
+                Intent intent = new Intent(HomeActivity.this, SalonActivity.class);
+                intent.putExtra(SalonActivity.EXTRA_SALON, salonAfroObject);
+                HomeActivity.this.startActivity(intent);
+            }
+        });
         this.init();
     }
 
@@ -194,6 +224,11 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
                     public void onRespond(CacheManager result) {
                         currentLocation = location;
                         HomeActivity.this.refreshMap();
+                    }
+
+                    @Override
+                    public void onApiError(CacheManager.ApiError apiError) {
+                        //todo error
                     }
                 });
             }
@@ -258,7 +293,7 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
             SmallPreviewFragment smallPreviewFragment = (SmallPreviewFragment) this.getSupportFragmentManager().findFragmentByTag(stackNameNavBottom);
             smallPreviewFragment.setSalonObject(this.selectedSalon);
         }else if(stackNameNavBottom == STACK_NAME_PAGES){
-
+            PagesFragment pagesFragment = (PagesFragment) this.getSupportFragmentManager().findFragmentByTag(stackNameNavBottom);
         }else{
 
         }
@@ -298,6 +333,11 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
                         Log.i("TGIF", customerLocation + ":");
                         HomeActivity.this.hideProgress();
                         bnvNav.setSelectedItemId(R.id.nav_pages);
+                    }
+
+                    @Override
+                    public void onApiError(CacheManager.ApiError apiError) {
+                        //todo error
                     }
                 });
             }
@@ -440,78 +480,60 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_nav_menu, menu);
+        this.topNavigation = menu;
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.nav_user:
-                this.onUserSettingsClick(item);
-                break;
-            case R.id.nav_search:
-                this.onSearchClick(item);
-                break;
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        if(this.stackNameNavTop != null){
+            AfroFragment afroFragment = (AfroFragment)this.getSupportFragmentManager().findFragmentByTag(this.stackNameNavTop);
+            afroFragment.requestClose(new AfroFragment.AfroFragmentCallback() {
+                @Override
+                public void onShow() {
+
+                }
+
+                @Override
+                public void onClose() {
+                    HomeActivity.this.getSupportFragmentManager().popBackStack(stackNameNavTop, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    if(!stackNameNavTop.equals(convertTOStackName(item.getItemId())))
+                        addTopNavFragment(convertTOStackName(item.getItemId()));
+                    else
+                        stackNameNavTop = null;
+                }
+            });
+        }else{
+            this.addTopNavFragment(this.convertTOStackName(item.getItemId()));
         }
         return true;
     }
 
-    private void onUserSettingsClick(final MenuItem item) {
-        if(currentMode == MODE_USER_SETTINGS){
-            this.getSupportFragmentManager().popBackStack(STACK_NAME_USER_PATH, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            currentMode = MODE_IDLE;
-        }else{
-            if(userSettingFragment.getAfroFragmentCallback() == null){
-                userSettingFragment.setAfroFragmentCallback(new AfroFragment.AfroFragmentCallback() {
-                    @Override
-                    public void onShow() {
-                        HomeActivity.this.currentMode = MODE_USER_SETTINGS;
-                        item.setIcon(R.drawable.user_icon_selected);
-                    }
+    private void addTopNavFragment(String stackName) {
+        FragmentManager fragmentManager = this.getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        this.deselectMenuItem(topNavigation, stackNameNavTop);
 
-                    @Override
-                    public void onClose() {
-                        item.setIcon(R.drawable.user_icon);
-                    }
-                });
-            }
-            getSupportFragmentManager().popBackStack(STACK_NAME_SEARCH, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.rel_secondary_container, userSettingFragment);
-            transaction.addToBackStack(STACK_NAME_USER_PATH);
-            transaction.commit();
+        switch (stackName){
+            case STACK_NAME_USER_PATH:
+                transaction.replace(R.id.rel_tertiary_container, this.userSettingFragment, STACK_NAME_USER_PATH);
+                stackNameNavTop = STACK_NAME_USER_PATH;
+                break;
+            case STACK_NAME_SEARCH:
+                transaction.replace(R.id.rel_tertiary_container, this.searchFragment, STACK_NAME_SEARCH);
+                stackNameNavTop = STACK_NAME_SEARCH;
+                break;
+                default:
+                return;
         }
+        transaction.commit();
     }
-
-    private void onSearchClick(final MenuItem item) {
-        if(currentMode == MODE_SEARCH){
-            this.getSupportFragmentManager().popBackStack(STACK_NAME_SEARCH, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            HomeActivity.this.currentMode = MODE_IDLE;
-        }else{
-            if(searchFragment.getAfroFragmentCallback() == null){
-                searchFragment.setAfroFragmentCallback(new AfroFragment.AfroFragmentCallback() {
-                    @Override
-                    public void onShow() {
-                        HomeActivity.this.currentMode = MODE_SEARCH;
-                        item.setIcon(R.drawable.search_icon_selected);
-                    }
-
-                    @Override
-                    public void onClose() {
-                        item.setIcon(R.drawable.search_icon);
-                    }
-                });
-            }
-            getSupportFragmentManager().popBackStack(STACK_NAME_USER_PATH, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.rel_secondary_container, searchFragment);
-            transaction.addToBackStack(STACK_NAME_SEARCH);
-            transaction.commit();
-        }
-    }
-
-    @Override
+ @Override
     public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
+        if(this.stackNameNavTop != null) {
+            this.getSupportFragmentManager().popBackStack(stackNameNavTop, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            stackNameNavTop = null;
+        }
 
         if(this.stackNameNavBottom == convertTOStackName(item.getItemId()))
             return true;
@@ -528,12 +550,10 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
 
                     @Override
                     public void onClose() {
-                        fragmentManager.popBackStack(HomeActivity.this.stackNameNavBottom, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         switchBottomNavigation(item);
                     }
                 });
             else{
-                fragmentManager.popBackStack(this.stackNameNavBottom, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 switchBottomNavigation(item);
             }
         }else{
@@ -548,8 +568,12 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
                 return STACK_NAME_SMALL_PREVIEW;
             case R.id.nav_pages:
                 return  STACK_NAME_PAGES;
-            case R.id.nav_user:
+            case R.id.nav_bookmark:
                 return  STACK_NAME_FAVOURITE;
+            case R.id.nav_user:
+                return STACK_NAME_USER_PATH;
+            case R.id.nav_search:
+                return STACK_NAME_SEARCH;
                 default:
                     return "";
         }
@@ -572,7 +596,7 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
                 this.stackNameNavBottom = STACK_NAME_PAGES;
                 transaction.replace(R.id.rel_secondary_container, this.pagesFragment, STACK_NAME_PAGES);
                 break;
-            case R.id.nav_user:
+            case R.id.nav_bookmark:
                 item.setIcon(R.drawable.ic_bookmark_selected);
                 this.stackNameNavBottom = STACK_NAME_FAVOURITE;
                 transaction.replace(R.id.rel_secondary_container, this.favouriteFragment, STACK_NAME_FAVOURITE);
@@ -591,12 +615,23 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
             case STACK_NAME_SMALL_PREVIEW:
                 item = menu.findItem(R.id.nav_map);
                 item.setIcon(R.drawable.ic_map_deselected);
+                break;
             case STACK_NAME_PAGES:
                 item = menu.findItem(R.id.nav_pages);
                 item.setIcon(R.drawable.ic_pages_deslected);
+                break;
             case STACK_NAME_FAVOURITE:
-                item = menu.findItem(R.id.nav_user);
+                item = menu.findItem(R.id.nav_bookmark);
                 item.setIcon(R.drawable.ic_bookmark_deselected);
+                break;
+            case STACK_NAME_USER_PATH:
+                item = menu.findItem(R.id.nav_user);
+                item.setIcon(R.drawable.ic_user);
+                break;
+            case STACK_NAME_SEARCH:
+                item = menu.findItem(R.id.nav_search);
+                item.setIcon(R.drawable.search_icon);
+                break;
                 default:
         }
     }
@@ -613,6 +648,18 @@ public class HomeActivity extends AppCompatActivity implements  BottomNavigation
     public void onBackPressed() {
         this.currentMode = MODE_IDLE;
         super.onBackPressed();
+    }
+
+    @Override
+    public void showIndeterminateProgress() {
+        if(this.progBackgroundWork != null && this.progBackgroundWork.getVisibility() != View.VISIBLE)
+            this.progBackgroundWork.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideIndeterminateProgress() {
+        if(this.progBackgroundWork != null && this.progBackgroundWork.getVisibility() != View.INVISIBLE)
+            this.progBackgroundWork.setVisibility(View.INVISIBLE);
     }
 
     private static class SmallPreview{

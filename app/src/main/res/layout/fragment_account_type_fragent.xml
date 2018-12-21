@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rel_main_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_above="@id/tmp_lin_bottom_nav"
+    tools:context=".fragments.AccountTypeFragment"
+    android:background="@color/white">
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/img_logo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/ic_launcher_two"
+            android:layout_above="@id/txt_title"
+            />
+
+        <TextView
+            android:id="@+id/txt_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Account Type"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginBottom="15dp"
+            android:textColor="@color/colorTextSuperDark"
+            android:layout_above="@id/tmp_lin_base"
+            />
+
+        <RadioGroup
+            android:id="@+id/rgp_types"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checkedButton="@id/rbtn_customer">
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/rbtn_customer"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="Customer"
+                android:background="@drawable/background_one"
+                android:layout_marginTop="10dp"
+                />
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/rbtn_stylist"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="Stylist"
+                android:background="@drawable/background_one"
+                android:layout_marginTop="10dp"/>
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/rbtn_salon_manager"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="Salon Manager"
+                android:background="@drawable/background_one"
+                android:layout_marginTop="10dp"
+                />
+        </RadioGroup>
+
+    </LinearLayout>
+</RelativeLayout>

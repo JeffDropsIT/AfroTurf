@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.CreateUserFragment"
+    android:background="@color/white"
+    android:gravity="center">
+
+
+
+
+    <LinearLayout
+        android:id="@+id/tmp_lin_base"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_centerInParent="true"
+        android:gravity="center">
+
+
+
+        <ImageView
+            android:id="@+id/img_logo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/ic_map_two"
+            android:scaleType="centerCrop"
+            android:layout_above="@id/txt_title"
+            />
+
+        <TextView
+            android:id="@+id/txt_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Login Credentials"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:padding="5dp"
+            android:textColor="@color/colorTextSuperDark"
+            android:layout_above="@id/tmp_lin_base"
+            />
+
+
+        <TextView
+            android:id="@+id/txt_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Invalid username"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:textColor="@color/error"
+            android:visibility="visible"/>
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            android:id="@+id/prog_background_work"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:indeterminate="true"
+            app:mpb_progressStyle="horizontal"
+            app:mpb_useIntrinsicPadding="false"
+            android:layout_alignBottom="@+id/toolbar"
+            android:tint="@color/colorAccent"
+            android:layout_alignParentTop="true"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/lin_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_one"
+            android:layout_marginTop="10dp"
+            >
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/user_icon"
+                android:padding="15dp"
+                android:tint="#b4b4b4"/>
+
+            <EditText
+                android:id="@+id/edt_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:hint="name"
+                android:textSize="13sp"
+                android:inputType="text"
+                android:maxLines="1"
+                android:imeOptions="actionNext"
+                android:nextFocusDown="@+id/edt_email_address"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lin_email_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_one"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/ic_email"
+                android:padding="15dp"
+                android:tint="#b4b4b4"/>
+
+            <EditText
+                android:id="@+id/edt_email_address"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:hint="email address"
+                android:textSize="13sp"
+                android:inputType="text"
+                android:maxLines="1"
+                android:imeOptions="actionNext"
+                android:nextFocusDown="@+id/edt_password"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lin_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_one"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/ic_lock"
+                android:padding="15dp"
+                android:tint="#b4b4b4"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/edt_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:hint="password"
+                    android:inputType="textPassword"
+                    android:textSize="13sp"
+                    android:layout_toLeftOf="@+id/img_toggle"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1"
+                    android:nextFocusDown="@+id/edt_confirm_password"/>
+
+                <ImageView
+                    android:id="@+id/img_toggle"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:src="@drawable/ic_eye"
+                    android:padding="15dp"
+                    android:layout_alignParentRight="true"
+                    android:tint="@color/background_light_shade3"/>
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lin_confirm_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_one"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/ic_lock"
+                android:padding="15dp"
+                android:tint="#b4b4b4"/>
+
+            <EditText
+                android:id="@+id/edt_confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:hint="confirm password"
+                android:inputType="textPassword"
+                android:textSize="13sp"
+                android:maxLines="1"
+                android:imeOptions="actionDone"
+
+                />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+    <RelativeLayout
+        android:id="@+id/rel_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </RelativeLayout>
+
+</RelativeLayout>

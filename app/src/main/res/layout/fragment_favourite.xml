@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FavouriteFragment"
-    android:background="#f2f2f2">
+    android:background="#eeffffff">
 
     <TextView
         android:id="@+id/txt_clear_all"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Clear All"
-        android:textColor="#2c2cf2"
+        android:textColor="#df1742"
         android:textStyle="bold"
         android:padding="10dp"
         android:gravity="end"/>
@@ -20,12 +20,16 @@
         android:id="@+id/lst_bookmarks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/txt_clear_all">
+        android:layout_below="@+id/txt_clear_all"
+        android:divider="#00000000"
+        android:dividerHeight="0dp">
+
 
     </ListView>
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/txt_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Opps Looks Like you don't have any Bookmarks yet\nSalon and Stylist you like will appear hare"

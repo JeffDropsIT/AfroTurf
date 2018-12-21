@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.CreateSalonFragment"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/txt_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tmp_lin_base"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Create Salon"
+        android:textColor="@color/colorTextSuperDark"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/tmp_lin_base"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
+
+        <com.example.a21__void.afroturf.pkgCommon.AfroEditText
+            android:id="@+id/edt_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:iconRes="@drawable/ic_map_deselected"
+            app:hint="salon name"
+            >
+
+        </com.example.a21__void.afroturf.pkgCommon.AfroEditText>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight=".5"
+                android:padding="10dp">
+
+
+                <TextView
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Opening time"
+                    android:textStyle="bold"
+                    android:padding="5dp"
+                    android:textColor="@color/colorTextSuperDark"
+                    android:layout_weight="1"
+                    />
+
+                <com.example.a21__void.afroturf.pkgCommon.AfroDropDown
+                    android:id="@+id/drp_time_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight=".5"
+                android:padding="10dp">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Closing time"
+                    android:textStyle="bold"
+                    android:padding="5dp"
+                    android:textColor="@color/colorTextSuperDark"
+                    android:layout_weight="1"
+                    />
+
+                <com.example.a21__void.afroturf.pkgCommon.AfroDropDown
+                    android:id="@+id/drp_time_close"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="Open day(s)"
+                android:textStyle="bold"
+                android:padding="5dp"
+                android:textColor="@color/colorTextSuperDark"
+                />
+
+
+            <include layout="@layout/day_selector_layout"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="Location"
+                android:textStyle="bold"
+                android:padding="5dp"
+                android:textColor="@color/colorTextSuperDark"
+                />
+
+            <com.example.a21__void.afroturf.pkgCommon.AfroDropDown
+                android:id="@+id/drp_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp"
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="Services (must have at least one)"
+                android:textStyle="bold"
+                android:padding="5dp"
+                android:textColor="@color/colorTextSuperDark"
+                />
+
+            <com.example.a21__void.afroturf.pkgCommon.AfroDropDown
+                android:id="@+id/drp_services"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

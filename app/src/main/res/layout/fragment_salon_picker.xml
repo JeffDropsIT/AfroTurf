@@ -5,7 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.ServicesFragment"
-    android:background="#ffffff">
+    android:background="#ffffff"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/txt_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Salon( Workplace )"
+        android:textStyle="bold"
+        android:gravity="center_vertical"
+        android:textSize="15sp"
+        android:padding="10dp"/>
 
     <LinearLayout
         android:id="@+id/tmp_lin_search"
@@ -13,7 +24,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/background_one"
         android:layoutDirection="rtl"
-        android:layout_margin="10dp"
+        android:layout_below="@+id/txt_title"
         >
 
         <ImageView
@@ -51,7 +62,8 @@
         android:id="@+id/rcy_stylist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tmp_lin_search">
+        android:layout_below="@id/tmp_lin_search"
+        android:layout_marginTop="10dp">
 
     </android.support.v7.widget.RecyclerView>
 </RelativeLayout>
