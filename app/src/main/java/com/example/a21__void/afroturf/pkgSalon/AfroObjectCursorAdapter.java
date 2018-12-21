@@ -32,6 +32,7 @@ public class AfroObjectCursorAdapter extends RecyclerView.Adapter<AfroObject.UIH
     private final ObjectMapper objectMapper;
     private final CacheManager.CachePointer cachePointer;
     private ItemClickListener itemClickListener;
+    private AfroObject.UIHandler selectedUI = null;
 
     public AfroObjectCursorAdapter(CacheManager.CachePointer pCachePointer, Class<? extends AfroObject.UIHandler> pUIClass, int pResPath){
         try {
@@ -65,7 +66,7 @@ public class AfroObjectCursorAdapter extends RecyclerView.Adapter<AfroObject.UIH
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AfroObject.UIHandler holder, final int position) {
+    public void onBindViewHolder(@NonNull final AfroObject.UIHandler holder, final int position) {
         Cursor cursor = this.cachePointer.getCursor();
         if(!cursor.moveToPosition(position))
             return;
@@ -83,6 +84,11 @@ public class AfroObjectCursorAdapter extends RecyclerView.Adapter<AfroObject.UIH
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if(selectedUI != null)
+                            selectedUI.itemView.setSelected(false);
+
+                        selectedUI = holder;
+                        selectedUI.itemView.setSelected(true);
                         if(itemClickListener != null)
                             itemClickListener.onItemClick(afroObject, position);
                     }

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#ffffff"
+    tools:context=".LoginActivity"
+    android:gravity="center">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/logo_img_view"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/ic_map_two"
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="AfroTurf"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="@color/colorTextSuperDark"
+            />
+
+        <TextView
+            android:id="@+id/txt_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="incorrect email/password"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/error"
+            android:layout_marginTop="10dp"
+            android:visibility="invisible"
+            />
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            android:id="@+id/prog_background_work"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:indeterminate="true"
+            app:mpb_progressStyle="horizontal"
+            app:mpb_useIntrinsicPadding="false"
+            android:layout_alignBottom="@+id/toolbar"
+            android:tint="@color/colorAccent"
+            android:layout_alignParentTop="true"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/lin_email_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_one"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/user_icon"
+                android:padding="15dp"
+                android:tint="#b4b4b4"/>
+
+            <EditText
+                android:id="@+id/edt_email_address"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:hint="email address"
+                android:textSize="13sp"
+                android:maxLines="1"
+                android:inputType="text"
+                android:nextFocusDown="@+id/edt_password"
+                android:imeOptions="actionNext">
+                <requestFocus/>
+            </EditText>
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:id="@+id/lin_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_one"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/ic_lock"
+                android:padding="15dp"
+                android:tint="#b4b4b4"/>
+
+            <EditText
+                android:id="@+id/edt_password"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:hint="password"
+                android:textSize="13sp"
+                android:maxLines="1"
+                android:inputType="textPassword"
+                android:imeOptions="actionDone"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txt_forgot_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Forgot password?"
+            android:textSize="14sp"
+            android:padding="15dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/colorTextSuperDark"
+            />
+
+            <TextView
+                android:id="@+id/txt_login"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="Login"
+                android:gravity="center"
+                android:background="@drawable/round_corner"
+                android:backgroundTint="@color/colorAccent_three"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/txt_sign_up"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Sign up"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:padding="15dp"
+            android:textColor="@color/colorTextSuperDark"
+            />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -20,7 +20,8 @@
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="iconShape" value="NONE" />
-                                      <entry key="imageAsset" value="C:\Users\ASANDA\Desktop\afroturf_assest\ic_launcher.png" />
+                                      <entry key="imageAsset" value="C:\Users\ASANDA\Desktop\afroturf_assest\ic_launcher_two.png" />
+                                      <entry key="outputName" value="ic_launcher_two" />
                                     </map>
                                   </option>
                                 </PersistentState>

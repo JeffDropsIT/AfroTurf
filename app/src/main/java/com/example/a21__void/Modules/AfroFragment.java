@@ -1,7 +1,10 @@
 package com.example.a21__void.Modules;
 
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
+
+import com.example.a21__void.afroturf.AfroActivity;
 
 /**
  * Created by ASANDA on 2018/08/21.
@@ -13,6 +16,20 @@ public abstract class AfroFragment extends Fragment {
 
     public void requestClose(AfroFragmentCallback callback){
         callback.onClose();
+    }
+
+    public final void showIndeterminateProgress(){
+        Activity parentActivity = this.getActivity();
+        if(parentActivity != null)
+            if(parentActivity instanceof AfroActivity)
+                ((AfroActivity)parentActivity).showIndeterminateProgress();
+    }
+
+    public final void hideIndeterminateProgress(){
+        Activity parentActivity = this.getActivity();
+        if(parentActivity != null)
+            if(parentActivity instanceof AfroActivity)
+                ((AfroActivity)parentActivity).hideIndeterminateProgress();
     }
 
 

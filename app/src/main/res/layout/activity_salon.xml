@@ -51,10 +51,11 @@
                             android:id="@+id/img_tmp"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
-                            android:src="@drawable/ic_map"
+                            android:src="@drawable/ic_map_selected"
                             android:layout_alignParentBottom="true"/>
 
                         <TextView
+                            android:id="@+id/txt_address"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Pretoria, The Glen Street 0083"
@@ -65,9 +66,10 @@
                             android:layout_alignParentBottom="true"
                             android:layout_toRightOf="@id/img_tmp"/>
                         <ImageView
+                            android:id="@+id/img_bookmark"
                             android:layout_width="30dp"
                             android:layout_height="40dp"
-                            android:src="@drawable/ic_bookmark"
+                            android:src="@drawable/ic_bookmark_deselected_light"
                             android:layout_alignParentRight="true"/>
                     </RelativeLayout>
 
@@ -84,7 +86,7 @@
                 android:layout_gravity="bottom"
                 android:background="#f2f2f2"
 
-                app:tabIndicatorColor="#f14545"/>
+                app:tabIndicatorColor="@color/colorAccent_three"/>
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.view.ViewPager
@@ -102,7 +104,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_reviews_light"
-        app:backgroundTint="#fb6c66"
+        app:backgroundTint="@color/colorAccent_three"
         app:fabCustomSize="60dp"
         android:scaleType="fitXY"
         android:layout_above="@id/tmp_lin_base"
@@ -110,6 +112,7 @@
         android:layout_marginRight="30dp"
         android:layout_alignParentRight="true"
         android:visibility="invisible"
+        android:tint="#3d3d3d"
         />
 
     <LinearLayout
@@ -117,7 +120,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/grad"
         android:gravity="end"
         android:padding="10dp"
         >
@@ -137,11 +139,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/booking_icon"
-            app:backgroundTint="#fb6c66"
+            app:backgroundTint="@color/colorAccent_three"
             app:fabCustomSize="60dp"
             android:layout_marginBottom="30dp"
             android:layout_marginRight="20dp"
-            android:tint="@color/white"
+            android:tint="#3d3d3d"
             />
     </LinearLayout>
+
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/prog_background_work"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:indeterminate="true"
+        app:mpb_progressStyle="horizontal"
+        app:mpb_useIntrinsicPadding="false"
+        android:layout_alignBaseline="@+id/toolbar"
+        android:layout_alignBottom="@+id/toolbar"
+        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal" />
 </RelativeLayout>

@@ -56,7 +56,7 @@ public class AfroObjectDatabaseHelper extends SQLiteOpenHelper {
             AfroObject afroObject = afroObjects[pos];
             contentValues.put(COLUMN_NAME, afroObject.getName());
             contentValues.put(COLUMN_UID, afroObject.getUID());
-            contentValues.put(COLUMN_JSON, afroObject.get().getBytes());
+            contentValues.put(COLUMN_JSON, afroObject.toString().getBytes());
             database.insert(this.tableName, null, contentValues);
         }
         database.setTransactionSuccessful();
@@ -71,4 +71,6 @@ public class AfroObjectDatabaseHelper extends SQLiteOpenHelper {
     public void clear(){
         this.getWritableDatabase().execSQL("DELETE FROM " + this.tableName);
     }
+
+    public void remove(String uid){ this.getWritableDatabase().execSQL("DELETE FROM " + this.tableName + " WHERE " + COLUMN_UID + " = "  + uid );}
 }

@@ -53,21 +53,32 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="25dp"
-            android:layout_marginBottom="80dp"
-            app:fabCustomSize="60dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="30dp"
+            app:fabCustomSize="65dp"
             app:backgroundTint="#ffb954"
-            android:visibility="invisible"
             android:src="@drawable/booking_icon"
             android:tint="#3d3d3d"/>
     </RelativeLayout>
 
     <View
+        android:id="@+id/tmp_vw_shadow"
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:background="@drawable/shadow"
         android:layout_below="@+id/toolbar"
         android:rotation="180"/>
+
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/prog_background_work"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:indeterminate="true"
+        app:mpb_progressStyle="horizontal"
+        app:mpb_useIntrinsicPadding="false"
+        android:layout_alignBottom="@+id/toolbar"
+        android:tint="@color/colorAccent"
+        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal" />
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bnv_nav"
