@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.example.a21__void.afroturf.R;
 import com.example.a21__void.afroturf.object.AfroObject;
 import com.google.android.gms.common.util.Strings;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.maps.internal.StringJoin;
 import com.ixcoda.StringsUtils;
@@ -40,13 +42,18 @@ public class TimeSlotObject extends AfroObject {
     }
 
     @Override
-    public void set(JsonParser parser, String json) {
+    public void set(JsonParser parser, JsonElement jsonElement) {
 
     }
 
     @Override
-    public String get() {
-        return "";
+    public JsonElement asJson() {
+        return new JsonObject();
+    }
+
+    @Override
+    public void set(JsonParser parser, String json) {
+
     }
 
     public static class Slot{

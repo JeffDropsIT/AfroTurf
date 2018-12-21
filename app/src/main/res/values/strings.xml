@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AfroTurf</string>
+    <string name="app_name">Afroturf</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -36,6 +36,16 @@ Aenean in arcu laoreet, gravida orci et, faucibus velit. Etiam finibus viverra t
         <attr name="sectionTextSize" format="dimension" />
         <attr name="sectionTextColor" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="AfroEditText">
+        <attr name="iconRes" format="reference"/>
+        <attr name="hint" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="AfroDropDown">
+        <attr name="selection" format="string"/>
+    </declare-styleable>
+
 </resources>
 
 

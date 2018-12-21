@@ -26,6 +26,7 @@ public class SmallPreviewFragment extends AfroFragment {
     private boolean isShown = false;
     private Animation animSlideIn, animSlideOut;
     private View preview = null;
+    private View.OnClickListener clickListener;
 
     public SmallPreviewFragment() {
         // Required empty public constructor
@@ -93,6 +94,10 @@ public class SmallPreviewFragment extends AfroFragment {
         this.animSlideOut = AnimationUtils.loadAnimation(this.getContext(), R.anim.anim_slide_down);
         this.animSlideIn.setDuration(250);
         this.animSlideOut.setDuration(250);
+
+        if(this.clickListener != null)
+            preview.setOnClickListener(this.clickListener);
+
         return relParent;
     }
 
@@ -131,6 +136,12 @@ public class SmallPreviewFragment extends AfroFragment {
         return "Preview";
     }
 
+
+    public void setClickListener(View.OnClickListener clickListener) {
+        this.clickListener = clickListener;
+        if(this.preview != null)
+            this.preview.setOnClickListener(clickListener);
+    }
 
     public void setSalonObject(SalonAfroObject pSalonObject){
         this.salonAfroObject = pSalonObject;

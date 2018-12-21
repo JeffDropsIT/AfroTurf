@@ -85,6 +85,11 @@ public class StylistsFragment extends AfroFragment {
                         //no data
                     }
                 }
+
+                @Override
+                public void onApiError(CacheManager.ApiError apiError) {
+                    //todo error
+                }
             };
         }
         this.stylistsManager.requestRefresh(listener);

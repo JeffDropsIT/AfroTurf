@@ -38,7 +38,7 @@ public class StylistsManager extends CacheManager {
             @Override
             public void onResponse(DevDesignRequest.DevDesignResponse response) {
                 JsonParser jsonParser = new JsonParser();
-                JsonObject resultOrAnd = jsonParser.parse(response.data).getAsJsonObject().getAsJsonArray("data").get(0).getAsJsonObject();
+                JsonObject resultOrAnd = jsonParser.parse(response.data).getAsJsonArray().get(0).getAsJsonObject();
 
                 JsonArray stylists = resultOrAnd.getAsJsonArray("or").get(0).getAsJsonArray().get(0).getAsJsonObject().getAsJsonArray("stylists");
 
@@ -76,6 +76,11 @@ public class StylistsManager extends CacheManager {
             public void onRespond(StylistAfroObject[] result) {
                 cacheData(result);
             }
+
+            @Override
+            public void onApiError(ApiError apiError) {
+
+            }
         });
     }
 
@@ -102,11 +107,22 @@ public class StylistsManager extends CacheManager {
                             if(callback != null)
                                 callback.onRespond(StylistsManager.this);
                         }
+
+                        @Override
+                        public void onApiError(ApiError apiError) {
+                            //todo error
+                        }
                     });
                 }else {
                     if (callback != null)
                         callback.onRespond(StylistsManager.this);
                 }
+            }
+
+            @Override
+            public void onApiError(ApiError apiError) {
+                if(callback != null)
+                    callback.onApiError(apiError);
             }
         });
     }

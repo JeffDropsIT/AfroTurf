@@ -6,6 +6,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.a21__void.afroturf.R;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -31,20 +32,21 @@ public class StylistAfroObject extends AfroObject {
     }
 
     @Override
-    public void set(JsonParser parser, String json) {
-            JsonObject stylist = parser.parse(json).getAsJsonObject();
-            int posts = stylist.get("posts").getAsInt(), followers = stylist.get("followers").getAsInt();
-            String name = stylist.get("name").getAsString();
-            int rating = stylist.get("rating").getAsInt();
-            this.name = name;
-            this.stylistUID = stylist.get("stylistId").getAsString();
-            this.posts = posts;
-            this.followers = followers;
-            this.rating = rating;
+    public void set(JsonParser parser, JsonElement jsonElement) {
+        JsonObject stylist = jsonElement.getAsJsonObject();
+        int posts = stylist.get("posts").getAsInt(), followers = stylist.get("followers").getAsInt();
+        String name = stylist.get("name").getAsString();
+        int rating = stylist.get("rating").getAsInt();
+        this.name = name;
+        this.stylistUID = stylist.get("stylistId").getAsString();
+        this.posts = posts;
+        this.followers = followers;
+        this.rating = rating;
     }
 
+
     @Override
-    public String get() {
+    public JsonElement asJson() {
         JsonObject stylist = new JsonObject();
 
         stylist.addProperty("name", this.name);
@@ -53,7 +55,7 @@ public class StylistAfroObject extends AfroObject {
         stylist.addProperty("followers", this.followers);
         stylist.addProperty("rating", this.rating);
 
-        return stylist.toString();
+        return stylist;
     }
 
     public static class UIHandler extends AfroObject.UIHandler {
