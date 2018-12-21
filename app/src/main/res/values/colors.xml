@@ -11,6 +11,16 @@
     <color name="googleColor">#00b3fd</color>
     <color name="white">#FFFFFF</color>
     <color name="colorAccent_two">#fb6c66</color>
+    <color name="colorAccent_three">#ffb954</color>
+    <color name="colorAccent_three_aphle">#aaffb954</color>
+
+    <color name="background_light_shade0">#f2f2f2</color>
+    <color name="background_light_shade1">#f8f8f8</color>
+    <color name="background_light_shade2">#eeeeee</color>
+    <color name="background_light_shade3">#b4b4b4</color>
+
+    <color name="error">#fb6c66</color>
+
 
     <color name="black">#000000</color>
     <color name="lightBlack">#262626</color>

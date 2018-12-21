@@ -5,9 +5,12 @@ import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.util.Log;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.example.a21__void.afroturf.database.AfroObjectDatabaseHelper;
 import com.example.a21__void.afroturf.object.AfroObject;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +50,18 @@ public abstract class CacheManager {
         this.notifyCacheChanged();
     }
 
+    public static ApiError parseApiError(NetworkResponse response){
+            int httpCode = response.statusCode;
+            String msg;
+            try {
+                msg = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                msg = "Server Side Error.";
+            }
+            return new ApiError(httpCode, msg);
+    }
+
     public CachePointer getCachePointer() {
         return cachePointer;
     }
@@ -76,6 +91,7 @@ public abstract class CacheManager {
 
     public interface ManagerRequestListener<T>{
         void onRespond(T result);
+        void onApiError(ApiError apiError);
     }
 
     public static class CachePointer{
@@ -116,6 +132,16 @@ public abstract class CacheManager {
 
         public interface CursorSwapListener{
             void onSwapCursor(Cursor cursor);
+        }
+    }
+
+    public static class ApiError{
+        public final int errorCode;
+        public final String message;
+
+        public ApiError(int pErrorCode, String pMessage){
+            this.errorCode = pErrorCode;
+            this.message = pMessage;
         }
     }
 }

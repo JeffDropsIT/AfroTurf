@@ -31,6 +31,8 @@ public class CustomClusterRender extends DefaultClusterRenderer<SalonAfroObject.
         markerOptions.infoWindowAnchor(Float.MAX_VALUE, Float.MAX_VALUE);
         super.onBeforeClusterItemRendered(item, markerOptions);
     }
+    
+
 
 
 }
