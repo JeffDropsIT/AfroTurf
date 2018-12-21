@@ -47,10 +47,9 @@ public class ServicesManager extends CacheManager {
             @Override
             public void onResponse(DevDesignRequest.DevDesignResponse response) {
                 JsonParser parser = new JsonParser();
-                JsonObject jsonRes = parser.parse(response.data).getAsJsonObject();
-                ObjectMapper objectMapper = ServicesManager.this.afroObjectDatabaseHelper.objectMapper;
+                JsonObject salonObject = parser.parse(response.data).getAsJsonArray().get(0).getAsJsonObject();
 
-                JsonArray services = jsonRes.getAsJsonArray("data").get(0).getAsJsonArray().get(0).getAsJsonObject().getAsJsonArray("services");
+                JsonArray services = salonObject.getAsJsonArray("services");
                 ArrayList<ServiceAfroObject> serviceAfroObjects = new ArrayList<>();
 
                 for(int pos = 0; pos < services.size(); pos++){
@@ -86,6 +85,11 @@ public class ServicesManager extends CacheManager {
             public void onRespond(ServiceAfroObject[] result) {
                 ServicesManager.this.cacheData(result);
             }
+
+            @Override
+            public void onApiError(ApiError apiError) {
+                //todo error
+            }
         });
     }
 
@@ -114,11 +118,22 @@ public class ServicesManager extends CacheManager {
                             if(callback != null)
                                 callback.onRespond(ServicesManager.this);
                         }
+
+                        @Override
+                        public void onApiError(ApiError apiError) {
+                            //todo data
+                        }
                     });
                 }else{
                     if(callback != null)
                         callback.onRespond(ServicesManager.this);
                 }
+            }
+
+            @Override
+            public void onApiError(ApiError apiError) {
+                if(callback != null)
+                        callback.onApiError(apiError);
             }
         });
     }

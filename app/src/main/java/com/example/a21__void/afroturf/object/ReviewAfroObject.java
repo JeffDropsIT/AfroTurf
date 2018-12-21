@@ -5,6 +5,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.a21__void.afroturf.R;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -27,8 +28,8 @@ public class ReviewAfroObject extends AfroObject {
     }
 
     @Override
-    public void set(JsonParser parser, String json) {
-        JsonObject review = parser.parse(json).getAsJsonObject();
+    public void set(JsonParser parser, JsonElement jsonElement) {
+        JsonObject review = jsonElement.getAsJsonObject();
         String reviewerName = review.get("reviewerName").getAsString(),
                 msg = review.get("payload").getAsString(),
                 date = review.get("created").getAsString();
@@ -41,13 +42,13 @@ public class ReviewAfroObject extends AfroObject {
     }
 
     @Override
-    public String get() {
+    public JsonElement asJson() {
         JsonObject review = new JsonObject();
         review.addProperty("reviewerName", this.reviewerName);
         review.addProperty("payload", this.message);
         review.addProperty("created", this.creationDate);
         review.addProperty("rating", this.rating);
-        return review.toString();
+        return review;
     }
 
     public static class UIHandler extends AfroObject.UIHandler{

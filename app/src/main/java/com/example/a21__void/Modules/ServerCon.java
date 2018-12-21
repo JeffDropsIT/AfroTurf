@@ -11,6 +11,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.a21__void.afroturf.pkgConnection.DevDesignRequest;
+import com.google.gson.JsonElement;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,6 +31,9 @@ public class ServerCon {
     private static final String TAG = "ServerCon";
     public static final String DEBUG_SALON_ID = "1", DEBUG_SALON_OID = "5b95231903d3825174322a50";
     public static final String DEBUG_SALON_REVIEW_ID = "5b95231c03d3825174322a53";
+    public static final String DEBUG_USER_ID = "5b9644aa6fb76e2ed83a25f6";
+    public static final int TIMEOUT = 1000
+            ;
     private static ServerCon instance;
     private final RequestQueue queue;
 
@@ -38,8 +42,15 @@ public class ServerCon {
     }
 
     public void HTTP(int method, final String url, final int timeout, Response.Listener<DevDesignRequest.DevDesignResponse> requestListener, Response.ErrorListener errorListener){
+        DevDesignRequest devDesignRequest = new DevDesignRequest(method, url, requestListener, errorListener);
+        devDesignRequest.setTag(TAG);
+        this.queue.add(devDesignRequest);
+    }
+
+    public void HTTP(int method, final String url, final int timeout, Response.Listener<DevDesignRequest.DevDesignResponse> requestListener, Response.ErrorListener errorListener, JsonElement body){
         DevDesignRequest devDesignRequest = new DevDesignRequest(method, url,requestListener, errorListener);
         devDesignRequest.setTag(TAG);
+        devDesignRequest.setRequestBody(body.toString());
         this.queue.add(devDesignRequest);
     }
 

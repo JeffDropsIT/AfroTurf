@@ -48,6 +48,11 @@ public class SalonsManager extends CacheManager {
             public void onRespond(SalonAfroObject[] result) {
                 SalonsManager.this.cacheData(result);
             }
+
+            @Override
+            public void onApiError(ApiError apiError) {
+
+            }
         });
     }
 
@@ -101,10 +106,21 @@ public class SalonsManager extends CacheManager {
                             if(callback != null)
                             callback.onRespond(SalonsManager.this);
                         }
+
+                        @Override
+                        public void onApiError(ApiError apiError) {
+                            if(callback != null)
+                                callback.onApiError(apiError);
+                        }
                     });
                 }else
                     if(callback != null)
                     callback.onRespond(SalonsManager.this);
+            }
+
+            @Override
+            public void onApiError(ApiError apiError) {
+
             }
         });
     }

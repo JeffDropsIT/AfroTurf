@@ -35,40 +35,52 @@ import java.util.zip.Inflater;
 public class SalonsFragementAdapter extends PagerAdapter implements CacheManager.CachePointer.CursorSwapListener {
     private final Context context;
     private final CacheManager.CachePointer cachePointer;
-    private List<SalonAfroObject.UIHandler>  salonAfroObjects;
+    private List<SalonAfroObject.UIHandler>  salonAfroObjectsUI;
+    private final ArrayList<SalonAfroObject> salonAfroObjects;
+
+    private OnItemClickListener clickListener;
 
 
     public SalonsFragementAdapter(Context pContext, CacheManager.CachePointer pCachePointer) {
         this.context = pContext;
+        this.salonAfroObjectsUI = new ArrayList<>();
         this.salonAfroObjects = new ArrayList<>();
         this.cachePointer = pCachePointer;
         this.cachePointer.addListener(this);
 
         this.onSwapCursor(cachePointer.getCursor());
-        Log.i("TGIFk", this.salonAfroObjects.size() + "|");
     }
 
     @NonNull
     @Override
-    public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        SalonAfroObject.UIHandler salonObl = this.salonAfroObjects.get(position);
+    public Object instantiateItem(@NonNull ViewGroup container, final int position) {
+        SalonAfroObject.UIHandler salonObl = this.salonAfroObjectsUI.get(position);
         container.addView(salonObl.itemView);
+        salonObl.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(SalonsFragementAdapter.this.clickListener != null)
+                    SalonsFragementAdapter.this.clickListener.onItemClick(salonAfroObjects.get(position), position);
+            }
+        });
         return salonObl.itemView;
     }
 
     @Override
     public int getCount() {
-        return salonAfroObjects.size();
+        return salonAfroObjectsUI.size();
     }
 
 
     public View getCardViewAt(int currentItem) {
-            return (currentItem >= 0 && currentItem < this.getCount()) ? this.salonAfroObjects.get(currentItem).itemView : null;// this.salonAfroObjects.get(currentItem).getCard() : null;
+            return (currentItem >= 0 && currentItem < this.getCount()) ? this.salonAfroObjectsUI.get(currentItem).itemView : null;// this.salonAfroObjects.get(currentItem).getCard() : null;
     }
 
     @Override
     public void onSwapCursor(Cursor cursor) {
+        this.salonAfroObjectsUI.clear();
         this.salonAfroObjects.clear();
+
         JsonParser jsonParser = new JsonParser();
         LayoutInflater inflater = LayoutInflater.from(this.context);
         for(int pos = 0; pos < cursor.getCount(); pos++){
@@ -82,7 +94,8 @@ public class SalonsFragementAdapter extends PagerAdapter implements CacheManager
 
             SalonAfroObject.UIHandler uiHandler = new SalonAfroObject.UIHandler(inflater.inflate(R.layout.salon_layout, null, false));
             uiHandler.bind(salonAfroObject, pos);
-            this.salonAfroObjects.add(uiHandler);
+            this.salonAfroObjectsUI.add(uiHandler);
+            this.salonAfroObjects.add(salonAfroObject);
         }
 
         notifyDataSetChanged();
@@ -104,4 +117,13 @@ public class SalonsFragementAdapter extends PagerAdapter implements CacheManager
             super.unregisterDataSetObserver(observer);
         }
     }
+
+    public void setClickListener(OnItemClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(SalonAfroObject salonAfroObject, int position);
+    }
+
 }

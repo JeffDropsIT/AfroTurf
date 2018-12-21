@@ -11,6 +11,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -40,6 +42,9 @@ public class SearchFragment extends AfroFragment implements View.OnClickListener
     private ServerCon serverCon;
     private Map<String, SearchResult> cacheResults = new HashMap<>();
 
+    private boolean animating = false;
+    private Animation animIn, animOut;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +62,11 @@ public class SearchFragment extends AfroFragment implements View.OnClickListener
         ImageButton ibtnSearch  = parent.findViewById(R.id.ibtn_search);
         ListView lstResults = parent.findViewById(R.id.lst_result);
 
+        this.animIn  = AnimationUtils.loadAnimation(this.getContext(), R.anim.anim_slide_left);
+        this.animOut = AnimationUtils.loadAnimation(this.getContext(), R.anim.anim_slide_right);
+        this.animIn.setDuration(250);
+        this.animOut.setDuration(250);
+
         edtInput.addTextChangedListener(this);
 
         lstResults.setAdapter(this.searchResultAdapter);
@@ -66,11 +76,60 @@ public class SearchFragment extends AfroFragment implements View.OnClickListener
         return parent;
     }
 
+
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        if(this.getView() != null && this.animIn != null){
+            this.animating = true;
+            this.animIn.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    animating = false;
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            this.getView().startAnimation(this.animIn);
+        }
+        super.onStart();
     }
 
+    @Override
+    public void requestClose(final AfroFragmentCallback callback) {
+        if(this.getView() != null && this.animOut != null){
+            this.animating = true;
+            this.animOut.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    animating = false;
+                    if(callback != null)
+                        callback.onClose();
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            this.getView().startAnimation(animOut);
+        }else{
+            if(callback != null)
+                callback.onClose();
+        }
+    }
     @Override
     public String getTitle() {
         return "Search";

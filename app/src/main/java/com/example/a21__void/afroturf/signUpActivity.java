@@ -1,144 +1,232 @@
 package com.example.a21__void.afroturf;
 
-import android.content.Intent;
-import android.support.annotation.NonNull;
+import android.content.DialogInterface;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class signUpActivity extends AppCompatActivity implements View.OnClickListener{
+import com.android.volley.Cache;
+import com.example.a21__void.afroturf.fragments.AccountTypeFragment;
+import com.example.a21__void.afroturf.fragments.CreateSalonFragment;
+import com.example.a21__void.afroturf.fragments.CreateUserFragment;
+import com.example.a21__void.afroturf.fragments.ProgressFragment;
+import com.example.a21__void.afroturf.fragments.SalonsFragment;
+import com.example.a21__void.afroturf.fragments.StylistsFragment;
+import com.example.a21__void.afroturf.manager.CacheManager;
+import com.example.a21__void.afroturf.manager.SalonsManager;
+import com.example.a21__void.afroturf.manager.UserManager;
+import com.example.a21__void.afroturf.object.SalonAfroObject;
+import com.example.a21__void.afroturf.object.UserAfroObject;
 
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
-    Button loginBtn;
-    EditText editTextUsername, editTextPassword;
-    ProgressBar progBar;
+public class SignUpActivity extends AfroActivity implements View.OnClickListener {
 
+    private static final String TAG_CREATE_USER = "create_user"
+            , TAG_ACCOUNT_TYPE = "account_type"
+            , TAG_SELECT_SALON = "select_salon"
+            , TAG_CREATE_SALON = "create_salon";
+    private static final String TAG_PROGRESS = "tag_progress";
+    private static final String TAG_ERROR = "tag_error";
 
-    //firebase stuff
+    private int currentStep = 0;
 
-    private String username, password;
-    private boolean debug = true;
+    private CreateUserFragment createUserFragment;
+    private AccountTypeFragment accountTypeFragment;
+    private SalonsFragment salonsFragment;
+    private CreateSalonFragment createSalonFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_in);
+        setContentView(R.layout.activity_sign_up);
 
+        this.createUserFragment = new CreateUserFragment();
+        this.accountTypeFragment = new AccountTypeFragment();
+        this.salonsFragment = new SalonsFragment();
+        this.createSalonFragment = new CreateSalonFragment();
 
-        //firebase init
-   //     mAuth = FirebaseAuth.getInstance();
+        this.salonsFragment.setMode(SalonsFragment.MODE_SELECT);
 
+        this.findViewById(R.id.txt_cancel).setOnClickListener(this);
+        this.findViewById(R.id.txt_next).setOnClickListener(this);
 
-        //init views
-        progBar = findViewById(R.id.progBar);
-        loginBtn = findViewById(R.id.login_btn);
-        editTextUsername = findViewById(R.id.username_tv);
-        editTextPassword = findViewById(R.id.password_tv);
-
-        //setOnClick
-        loginBtn.setOnClickListener(this);
-
-        if(debug){
-            Intent intent = new Intent(this, HomeActivity.class);
-            this.startActivity(intent);
-            Toast.makeText(this, "Skipped Login ", Toast.LENGTH_SHORT).show();
-        }
-
-    }
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-       // FirebaseUser currentUser = mAuth.getCurrentUser();
-        //updateUI(currentUser);
-    }
-    private void validateAndSignIn(){
-
-        username = editTextUsername.getText().toString().trim();
-        password = editTextPassword.getText().toString().trim();
-
-        if(username.isEmpty()){
-
-            editTextUsername.setHint("email required");
-            editTextUsername.requestFocus();
-            return;
-
-        }
-        if(!android.util.Patterns.EMAIL_ADDRESS.matcher(username).matches()){
-            editTextPassword.setHint("enter valid email");
-            editTextPassword.requestFocus();
-            return;
-        }
-        if(password.isEmpty()){
-
-            editTextPassword.setHint("password required");
-            editTextPassword.requestFocus();
-            return;
-
-        }
-        if(password.length() < 6 ){
-
-            editTextPassword.setHint("minimum password length is 6");
-            editTextPassword.requestFocus();
-            return;
-
-        }
-
-        userLogin();
-
-
+        this.currentStep = 0;
+        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.rel_main_container, createUserFragment, TAG_CREATE_USER)
+                .commit();
     }
 
+    private void addFragment(Fragment fragment, String tag) {
+        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.anim_slide_left, R.anim.anim_slide_left_offscreen, android.R.anim.fade_in, R.anim.anim_slide_right)
+                .add(R.id.rel_main_container, fragment, tag)
+                .addToBackStack(tag)
+                .commit();
+    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.login_btn:
-                //do something
-                validateAndSignIn();
+            case R.id.txt_next:
+                this.nextFragment();
                 break;
+            case R.id.txt_cancel:
+                this.finish();
+                break;
+                default:
 
         }
     }
 
-    private void userLogin() {
-        // validate();
-        // if(!(username.isEmpty() || password.isEmpty())){
+    private void nextFragment() {
+        FragmentManager fragmentManager = this.getSupportFragmentManager();
+        int stackSize = fragmentManager.getBackStackEntryCount();
+        String currentTag;
+        if(stackSize == 0)
+            currentTag = TAG_CREATE_USER;
+        else
+            currentTag = this.getSupportFragmentManager().getBackStackEntryAt(stackSize - 1).getName();
+        switch (currentTag){
+            case TAG_CREATE_USER:
+                this.createUserFragment.shouldProceed(new Callback<Boolean>() {
+                    @Override
+                    public void onRespond(Boolean proceed) {
+                        if(proceed)
+                            addFragment(accountTypeFragment, TAG_ACCOUNT_TYPE);
+                    }
+                });
+                break;
+            case TAG_ACCOUNT_TYPE:
+                int accountType = this.accountTypeFragment.getAccountType();
+                if(accountType >= 0){
+                    switch (accountType){
+                        case AccountTypeFragment.TYPE_CUSTOMER:
+                            SignUpActivity.this.setResult(RESULT_OK);
+                            SignUpActivity.this.finish();
+                            break;
+                        case AccountTypeFragment.TYPE_STYLIST:
+                            this.salonsFragment.setMode(SalonsFragment.MODE_SELECT);
+                            SignUpActivity.this.addFragment(salonsFragment, TAG_SELECT_SALON);
+                            break;
+                        case AccountTypeFragment.TYPE_SALON_MANAGER:
+                            SignUpActivity.this.addFragment(createSalonFragment, TAG_CREATE_SALON);
+                            break;
+                    }
+                }else
+                    Toast.makeText(this, "Please Select Account Type", Toast.LENGTH_SHORT).show();
+                break;
+            case TAG_SELECT_SALON:
+                SalonAfroObject selectedSalon = this.salonsFragment.getSelectedSalon();
+                if(selectedSalon != null){
+                    this.registerUserWithSalon(selectedSalon);
+                }else
+                    Toast.makeText(this, "Please Select Salon", Toast.LENGTH_SHORT).show();
+                break;
+            case TAG_CREATE_SALON:
+                this.createSalonFragment.shouldProceed(new Callback<Boolean>() {
+                    @Override
+                    public void onRespond(Boolean proceed) {
+                        if(proceed){
+                            SignUpActivity.this.setResult(RESULT_OK);
+                            SignUpActivity.this.finish();
+                        }
+                    }
+                });
+                break;
+        }
+    }
 
-            progBar.setVisibility(View.VISIBLE);
-//            mAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                @Override
-//                public void onComplete(@NonNull Task<AuthResult> task) {
-//
-//                    progBar.setVisibility(View.GONE);
-//
-//                    if(task.isSuccessful()){
-//
-//                        Toast.makeText(signUpActivity.this, "LOGIN SUCCESSFUL", Toast.LENGTH_SHORT).show();
-//                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                        startActivity(intent);
-//                        finish();
-//
-//                    }else {
-//                        Toast.makeText(signUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-//                    }
-//
-//
-//                }
-//
-//            });
+    private void registerUserWithSalon (final SalonAfroObject salon) {
+        this.showIndeterminateProgress("Making request");
+        UserManager.getInstance(this.getApplicationContext()).registerWithSalon(salon, new CacheManager.ManagerRequestListener<UserAfroObject>() {
+            @Override
+            public void onRespond(UserAfroObject result) {
+                hideIndeterminateProgress();
+                AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
+                builder.setTitle("Success")
+                        .setCancelable(false)
+                        .setMessage("A request to be a stylist has been made. we will notify you once the salon manager has accepted your request.")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                SignUpActivity.this.setResult(RESULT_OK);
+                                SignUpActivity.this.finish();
+                            }
+                        });
+                builder.show();
+            }
+
+            @Override
+            public void onApiError(CacheManager.ApiError apiError) {
+                hideIndeterminateProgress();
+                showNetworkError(new ErrorFragment.OnFragmentInteractionListener() {
+                    @Override
+                    public void onRequestRetry() {
+                        registerUserWithSalon(salon);
+                    }
+
+                    @Override
+                    public void onRequestExit() {
+                        SignUpActivity.this.finish();
+                    }
+                });
+            }
+        });
+    }
 
 
+    @Override
+    public void showIndeterminateProgress() {
+        this.showIndeterminateProgress("Loading");
+    }
 
-        editTextUsername.setHint("username");
-        editTextPassword.setHint("password");
+    private void showIndeterminateProgress(String msg) {
+        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+
+        ProgressFragment progressFragment = ProgressFragment.newInstance(msg);
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.rel_secondary_container, progressFragment, TAG_PROGRESS)
+                .commit();
+    }
+
+    @Override
+    public void hideIndeterminateProgress() {
+        Fragment fragment = this.getSupportFragmentManager().findFragmentByTag(TAG_PROGRESS);
+        if(fragment == null)
+            return;
+
+        this.getSupportFragmentManager().beginTransaction()
+                .remove(fragment)
+                .commit();
+
+    }
+
+    private void showNetworkError(ErrorFragment.OnFragmentInteractionListener callback){
+        ErrorFragment errorFragment = ErrorFragment.newInstance(R.drawable.ic_no_connection, "No Connection", "dsfe");
+        errorFragment.setmListener(callback);
+
+        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.rel_secondary_container, errorFragment, TAG_ERROR)
+                .commit();
+    }
+
+    private void hideNetworkError(){
+        Fragment errorFragment = this.getSupportFragmentManager().findFragmentByTag(TAG_ERROR);
+        if(errorFragment != null){
+            this.getSupportFragmentManager().beginTransaction()
+                    .remove(errorFragment)
+                    .commit();
+        }
     }
 }

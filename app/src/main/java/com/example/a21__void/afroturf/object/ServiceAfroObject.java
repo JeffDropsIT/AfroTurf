@@ -5,6 +5,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.a21__void.afroturf.R;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -29,7 +30,12 @@ public class ServiceAfroObject extends AfroObject {
 
     @Override
     public void set(JsonParser parser, String json) {
-        JsonObject service = parser.parse(json).getAsJsonObject();
+        this.set(parser, parser.parse(json));
+    }
+
+    @Override
+    public void set(JsonParser parser, JsonElement jsonElement) {
+        JsonObject service = jsonElement.getAsJsonObject();
 
         this.category = service.get("category").getAsString();
         this.type = service.get("type").getAsString();
@@ -40,7 +46,7 @@ public class ServiceAfroObject extends AfroObject {
     }
 
     @Override
-    public String get() {
+    public JsonElement asJson() {
         JsonObject service = new JsonObject();
 
         service.addProperty("category", this.category);
@@ -49,7 +55,7 @@ public class ServiceAfroObject extends AfroObject {
         service.addProperty("description", this.description);
         service.addProperty("price", this.price);
 
-        return  service.toString();
+        return  service;
     }
 
     public static class UIHandler extends AfroObject.UIHandler{

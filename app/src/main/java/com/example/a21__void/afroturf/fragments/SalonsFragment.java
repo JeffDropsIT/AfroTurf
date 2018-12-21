@@ -4,6 +4,7 @@ package com.example.a21__void.afroturf.fragments;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +15,21 @@ import com.example.a21__void.Modules.AfroFragment;
 import com.example.a21__void.afroturf.manager.SalonsManager;
 import com.example.a21__void.afroturf.R;
 import com.example.a21__void.afroturf.manager.CacheManager;
+import com.example.a21__void.afroturf.object.AfroObject;
 import com.example.a21__void.afroturf.object.SalonAfroObject;
 import com.example.a21__void.afroturf.pkgSalon.AfroObjectCursorAdapter;
 
 
 public class SalonsFragment extends AfroFragment {
+    public static final int MODE_SELECT = 0, MODE_CLICK = 1;
     private static final String PARAMS_LISTENER = "listener";
     private ProgressBar progLoading;
     private AfroObjectCursorAdapter salonsCursorAdapter;
     private AfroObjectCursorAdapter.ItemClickListener salonClickListener;
+
+    private int mode = MODE_SELECT;
+
+    private SalonAfroObject selectedSalon = null;
 
     public SalonsFragment() {
         // Required empty public constructor
@@ -32,11 +39,22 @@ public class SalonsFragment extends AfroFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CacheManager.CachePointer cachePointer = CacheManager.getManager(this.getContext(), SalonsManager.class).getCachePointer();
-        this.salonsCursorAdapter = new AfroObjectCursorAdapter(cachePointer, SalonAfroObject.UIHandler.class, R.layout.salon_layout);
+        this.salonsCursorAdapter = new AfroObjectCursorAdapter(cachePointer, SalonAfroObject.UIHandler.class, R.layout.salon_item_small_layout);
         if (getArguments() != null) {
             this.salonClickListener = (AfroObjectCursorAdapter.ItemClickListener)getArguments().getSerializable(PARAMS_LISTENER);
-            this.salonsCursorAdapter.setItemClickListener(salonClickListener);
         }
+
+        this.salonsCursorAdapter.setItemClickListener(new AfroObjectCursorAdapter.ItemClickListener() {
+            @Override
+            public void onItemClick(AfroObject afroObject, int position) {
+                Log.i("TGITc", position + "|" + mode + afroObject.getName());
+                if(mode == MODE_SELECT)
+                    SalonsFragment.this.selectedSalon = (SalonAfroObject)afroObject;
+                else
+                    if(salonClickListener != null)
+                        salonClickListener.onItemClick(afroObject, position);
+            }
+        });
 
     }
 
@@ -74,6 +92,11 @@ public class SalonsFragment extends AfroFragment {
                     }
                     SalonsFragment.this.progLoading.setVisibility(View.INVISIBLE);
                 }
+
+                @Override
+                public void onApiError(CacheManager.ApiError apiError) {
+                    //todo error
+                }
             };
         }
         SalonsManager.getInstance(this.getContext()).requestRefresh(refreshFinishListener);
@@ -84,11 +107,20 @@ public class SalonsFragment extends AfroFragment {
         return "Salons";
     }
 
+
     public static SalonsFragment newInstance(AfroObjectCursorAdapter.ItemClickListener  salonClickListener) {
         SalonsFragment fragment = new SalonsFragment();
         Bundle args = new Bundle();
         args.putSerializable(PARAMS_LISTENER, salonClickListener);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public SalonAfroObject getSelectedSalon(){
+        return this.selectedSalon;
+    }
+
+    public void setMode(int pMode){
+        this.mode = pMode;
     }
 }

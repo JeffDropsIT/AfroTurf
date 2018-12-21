@@ -90,6 +90,11 @@ public class ServicesFragment extends AfroFragment implements Response.ErrorList
                     }
                     progLoading.setVisibility(View.INVISIBLE);
                 }
+
+                @Override
+                public void onApiError(CacheManager.ApiError apiError) {
+                    //todo error
+                }
             };
         }
 

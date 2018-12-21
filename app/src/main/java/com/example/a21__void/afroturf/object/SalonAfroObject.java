@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.example.a21__void.afroturf.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.maps.android.clustering.ClusterItem;
@@ -21,7 +22,7 @@ import java.io.Serializable;
  * for Pandaphic
  */
 public class SalonAfroObject extends AfroObject implements Serializable {
-    private String name, salonId;
+    private String name, salonId, salonObjId;
     private float rating = 3;
 
     public Location location;
@@ -37,19 +38,34 @@ public class SalonAfroObject extends AfroObject implements Serializable {
         return this.salonId;
     }
 
+    public String getSalonObjId(){
+        return this.salonObjId;
+    }
+
     public float getRating(){
         return this.rating;
     }
 
     @Override
     public void set(JsonParser parser, String json) {
-        JsonObject salon = parser.parse(json).getAsJsonObject();
+        this.set(parser, parser.parse(json));
+    }
+
+    @Override
+    public void set(JsonParser parser, JsonElement jsonElement) {
+        JsonObject salon = jsonElement.getAsJsonObject();
+        Log.i("TGIMM", salon.toString());
         this.name = salon.get("name").getAsString();
         this.salonId = salon.get("salonId").getAsString();
+        this.salonObjId = salon.get("_id").getAsString();
         this.rating = salon.get("rating").getAsFloat();
-        this.startTime = salon.get("startTime").getAsString();
-        this.endTime = salon.get("endTime").getAsString();
+        if(salon.has("startTime") && salon.has("endTime")) {
+            JsonElement timeStart = salon.get("startTime")
+                    , timeEnd = salon.get("endTime");
 
+            this.startTime = !timeStart.isJsonNull() ? timeStart.getAsString() : "00:00:00";
+            this.endTime = !timeEnd.isJsonNull() ? timeStart.getAsString() : "01:00:00";
+        }
         JsonObject rawLocation = salon.get("location").getAsJsonObject();
         JsonArray coordinates = rawLocation.get("coordinates").getAsJsonArray();
         Location location = new Location();
@@ -60,10 +76,11 @@ public class SalonAfroObject extends AfroObject implements Serializable {
     }
 
     @Override
-    public String get() {
+    public JsonElement asJson() {
         JsonObject salon = new JsonObject();
         salon.addProperty("name", this.name);
         salon.addProperty("salonId", this.salonId);
+        salon.addProperty("_id", this.salonObjId);
         salon.addProperty("rating", this.rating);
         salon.addProperty("startTime", this.startTime);
         salon.addProperty("endTime", this.endTime);
@@ -76,7 +93,7 @@ public class SalonAfroObject extends AfroObject implements Serializable {
         location.add("coordinates", coordinates);
 
         salon.add("location", location);
-        return salon.toString();
+        return salon;
     }
 
     public static class Location implements Serializable{

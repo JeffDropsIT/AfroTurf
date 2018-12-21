@@ -44,6 +44,11 @@ public class ReviewsManager extends CacheManager {
             public void onRespond(ReviewAfroObject[] result) {
                 cacheData(result);
             }
+
+            @Override
+            public void onApiError(ApiError apiError) {
+                //todo error
+            }
         });
     }
 
@@ -70,11 +75,22 @@ public class ReviewsManager extends CacheManager {
                             if(callback != null)
                                 callback.onRespond(ReviewsManager.this);
                         }
+
+                        @Override
+                        public void onApiError(ApiError apiError) {
+                            //todo error
+                        }
                     });
                 }else{
                     if(callback != null)
                         callback.onRespond(ReviewsManager.this);
                 }
+            }
+
+            @Override
+            public void onApiError(ApiError apiError) {
+                if(callback != null)
+                    callback.onApiError(apiError);
             }
         });
     }
@@ -96,7 +112,7 @@ public class ReviewsManager extends CacheManager {
             public void onResponse(DevDesignRequest.DevDesignResponse response) {
                 JsonParser parser = new JsonParser();
 
-                JsonArray reviews = parser.parse(response.data).getAsJsonObject().getAsJsonArray("data").get(0).getAsJsonObject().getAsJsonArray("reviewsIn");
+                JsonArray reviews = parser.parse(response.data).getAsJsonArray().get(0).getAsJsonObject().getAsJsonArray("reviewsIn");
 
                 ReviewAfroObject[] reviewObjects = new ReviewAfroObject[reviews.size()];
                 for(int pos  = 0; pos < reviews.size(); pos++){

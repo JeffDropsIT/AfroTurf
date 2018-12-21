@@ -95,6 +95,11 @@ public class ReviewsFragment extends AfroFragment  {
                     }
 
                 }
+
+                @Override
+                public void onApiError(CacheManager.ApiError apiError) {
+                    //todo error
+                }
             };
         }
 

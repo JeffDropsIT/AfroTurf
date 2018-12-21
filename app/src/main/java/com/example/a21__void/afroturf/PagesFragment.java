@@ -22,6 +22,7 @@ import com.example.a21__void.afroturf.fragments.SmallPreviewFragment;
 import com.example.a21__void.afroturf.manager.CacheManager;
 import com.example.a21__void.afroturf.manager.SalonsManager;
 import com.example.a21__void.Modules.SalonsPreviewFragment;
+import com.example.a21__void.afroturf.object.SalonAfroObject;
 import com.example.a21__void.afroturf.pkgSalon.SalonObject;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class PagesFragment extends AfroFragment {
     private ViewPager vpgPages;
     private Animation animSlideIn, animSlideOut;
     private boolean animating = false;
+    private SalonsFragementAdapter.OnItemClickListener onItemClickListener;
 
     public PagesFragment() {
         // Required empty public constructor
@@ -46,6 +48,7 @@ public class PagesFragment extends AfroFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.pagesAdapter = new SalonsFragementAdapter(this.getContext(), SalonsManager.getInstance(this.getContext()).getCachePointer());
+        this.pagesAdapter.setClickListener(this.onItemClickListener);
     }
 
     @Override
@@ -96,11 +99,16 @@ public class PagesFragment extends AfroFragment {
     @Override
     public void onResume() {
         super.onResume();
+        this.showIndeterminateProgress();
         SalonsManager.getInstance(this.getContext()).requestRefresh(new CacheManager.ManagerRequestListener<CacheManager>() {
             @Override
             public void onRespond(CacheManager result) {
-                Log.i("TGIT", pagesAdapter.getCount() + "");
+                PagesFragment.this.hideIndeterminateProgress();
+            }
 
+            @Override
+            public void onApiError(CacheManager.ApiError apiError) {
+                //todo error
             }
         });
     }
@@ -130,6 +138,12 @@ public class PagesFragment extends AfroFragment {
         }else{
             callback.onClose();
         }
+    }
+
+    public void setOnItemClickListener(SalonsFragementAdapter.OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+        if(this.pagesAdapter != null)
+            this.pagesAdapter.setClickListener(this.onItemClickListener);
     }
 
     @Override
