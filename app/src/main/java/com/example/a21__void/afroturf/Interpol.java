@@ -9,6 +9,8 @@ import android.view.inputmethod.InputMethodManager;
  * for Pandaphic
  */
 public final class Interpol {
+    public static final String NETWORK_ERROR_MSG = "udbweu";
+
     public static void hideKeyBoard(Context context, View view){
         InputMethodManager imm =(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if(view == null)

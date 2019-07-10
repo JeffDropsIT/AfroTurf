@@ -13,6 +13,7 @@ import com.google.gson.JsonParser;
  * for Pandaphic
  */
 public abstract class AfroObject {
+    public static final int TYPE_USER = 0, TYPE_STYLIST = 1, TYPE_MANAGER = 2;
 
     public abstract String getName();
     public abstract String getUID();
@@ -29,6 +30,10 @@ public abstract class AfroObject {
 
         public abstract void bind(AfroObject afroObject, int position);
         public abstract Class<? extends AfroObject> getObjectClass();
+    }
+
+    public int getType(){
+        return TYPE_USER;
     }
 
     @Override

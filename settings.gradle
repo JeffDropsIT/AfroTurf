@@ -1,1 +1,1 @@
-include ':app', ':ixcoda'
+include ':app', ':ixcoda', ':cos'

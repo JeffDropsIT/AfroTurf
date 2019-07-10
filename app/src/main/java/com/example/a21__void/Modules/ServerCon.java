@@ -34,6 +34,8 @@ public class ServerCon {
     public static final String DEBUG_USER_ID = "5b9644aa6fb76e2ed83a25f6";
     public static final int TIMEOUT = 1000
             ;
+    public static final int ERROR_NETWORK = -1;
+    public static final String NETWORK_ERROR_MSG = "wedbnll";
     private static ServerCon instance;
     private final RequestQueue queue;
 

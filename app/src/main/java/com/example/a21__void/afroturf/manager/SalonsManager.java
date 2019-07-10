@@ -3,10 +3,13 @@ package com.example.a21__void.afroturf.manager;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.a21__void.Modules.ServerCon;
+import com.example.a21__void.afroturf.Interpol;
 import com.example.a21__void.afroturf.database.AfroObjectDatabaseHelper;
+import com.example.a21__void.afroturf.object.AfroObject;
 import com.example.a21__void.afroturf.object.SalonAfroObject;
 import com.example.a21__void.afroturf.pkgConnection.DevDesignRequest;
 import com.google.gson.JsonArray;
@@ -14,6 +17,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Created by ASANDA on 2018/07/28.
@@ -138,7 +142,34 @@ public class SalonsManager extends CacheManager {
     }
 
 
+    @Override
+    protected void remoteGet(String uid, final ManagerRequestListener<AfroObject> callback) {
+        String url = ServerCon.BASE_URL + "/afroturf/user/salons/obj/?salonObj=" + uid;
+        this.serverCon.HTTP(Request.Method.GET, url, ServerCon.TIMEOUT, new Response.Listener<DevDesignRequest.DevDesignResponse>() {
+            @Override
+            public void onResponse(DevDesignRequest.DevDesignResponse response) {
+                SalonAfroObject salonAfroObject = new SalonAfroObject();
+                JsonParser jsonParser = new JsonParser();
+                salonAfroObject.set(jsonParser, response.data);
+                cacheObject(salonAfroObject);
+
+                if(callback != null)
+                    callback.onRespond(salonAfroObject);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if(callback != null)
+                    if(error.networkResponse != null)
+                        callback.onRespond(null);
+                    else
+                        callback.onApiError(new ApiError(ServerCon.ERROR_NETWORK, ServerCon.NETWORK_ERROR_MSG));
+            }
+        });
+    }
+
     public static SalonsManager getInstance(Context context){
         return (instance == null) ? (instance = new SalonsManager(context)) : instance;
     }
+
 }

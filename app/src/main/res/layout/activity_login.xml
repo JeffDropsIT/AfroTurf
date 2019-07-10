@@ -21,11 +21,11 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_alignParentTop="true"
-            android:background="@drawable/ic_map_two"
+            android:background="@drawable/ic_login"
             />
 
 
-        <TextView
+        <com.example.a21__void.afroturf.pkgCommon.AfroTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

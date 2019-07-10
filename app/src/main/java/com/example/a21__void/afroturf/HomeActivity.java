@@ -603,6 +603,7 @@ public class HomeActivity extends AfroActivity implements  BottomNavigationView.
                 break;
             default:
         }
+        transaction.addToBackStack(this.stackNameNavBottom);
         transaction.commit();
     }
 
@@ -660,6 +661,11 @@ public class HomeActivity extends AfroActivity implements  BottomNavigationView.
     public void hideIndeterminateProgress() {
         if(this.progBackgroundWork != null && this.progBackgroundWork.getVisibility() != View.INVISIBLE)
             this.progBackgroundWork.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    protected int getErrorContainerId() {
+        return R.id.rel_secondary_container;
     }
 
     private static class SmallPreview{

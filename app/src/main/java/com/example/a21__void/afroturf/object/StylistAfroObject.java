@@ -58,6 +58,11 @@ public class StylistAfroObject extends AfroObject {
         return stylist;
     }
 
+    @Override
+    public int getType() {
+        return TYPE_STYLIST;
+    }
+
     public static class UIHandler extends AfroObject.UIHandler {
         private final CircleImageView ImgIcon;
         private final TextView txtFollowers, txtReviews, txtName;

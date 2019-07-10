@@ -260,5 +260,10 @@ public class SalonActivity extends AfroActivity implements View.OnClickListener 
             this.progBackgroundWork.setVisibility(View.INVISIBLE);
     }
 
+    @Override
+    protected int getErrorContainerId() {
+        return R.id.rel_secondary_container;
+    }
+
 
 }

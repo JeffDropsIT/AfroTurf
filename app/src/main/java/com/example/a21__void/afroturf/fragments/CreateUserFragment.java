@@ -6,7 +6,9 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,9 +25,12 @@ import com.example.a21__void.afroturf.Callback;
 import com.example.a21__void.afroturf.ErrorFragment;
 import com.example.a21__void.afroturf.Interpol;
 import com.example.a21__void.afroturf.R;
+import com.example.a21__void.afroturf.libIX.ui.RichTextView;
 import com.example.a21__void.afroturf.manager.CacheManager;
 import com.example.a21__void.afroturf.manager.UserManager;
 import com.example.a21__void.afroturf.object.UserAfroObject;
+import com.example.a21__void.afroturf.pkgCommon.AfroDropDown;
+import com.example.a21__void.afroturf.pkgCommon.AfroEditText;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,9 +47,10 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
             , ERROR_CONFIRM_PASSWORD = "error_confirm_password";
     private static final String TAG_ERROR_FRAGMENT = "error_fragment_create_user";
 
-    private TextView txtError;
-    private LinearLayout linName, linEmailAddress, linPassword, linConfirmPassword;
-    private EditText edtName, edtEmailAddress, edtPassword, edtConfirmPassword;
+    private RichTextView txtError;
+    private AfroEditText aedtName,  aedtEmailAddress,  aedtPassword,  aedtConfirmPassword;
+    private AfroDropDown adrpType;
+    private EventListener eventListener;
     //private MaterialProgressBar progBackgroundWork;
 
     public CreateUserFragment() {
@@ -59,24 +65,16 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
 
         this.txtError = relParent.findViewById(R.id.txt_error);
 
-        this.linName = relParent.findViewById(R.id.lin_name);
-        this.linEmailAddress = relParent.findViewById(R.id.lin_email_address);
-        this.linPassword = relParent.findViewById(R.id.lin_password);
-        this.linConfirmPassword = relParent.findViewById(R.id.lin_confirm_password);
+        this.aedtName = relParent.findViewById(R.id.aedt_name);
+        this.aedtEmailAddress = relParent.findViewById(R.id.aedt_email_address);
+        this.aedtPassword = relParent.findViewById(R.id.aedt_password);
+        this.aedtConfirmPassword = relParent.findViewById(R.id.aedt_confirm_password);
 
-        this.edtName = relParent.findViewById(R.id.edt_name);
-        this.edtEmailAddress = relParent.findViewById(R.id.edt_email_address);
-        this.edtPassword = relParent.findViewById(R.id.edt_password);
-        this.edtConfirmPassword = relParent.findViewById(R.id.edt_confirm_password);
-      //iviv  this.progBackgroundWork = relParent.findViewById(R.id.prog_background_work);
+        this.adrpType = relParent.findViewById(R.id.adrp_type);
+        this.adrpType.setDataset(new String[]{"Customer", "Stylist", "Manager"});
 
-        relParent.findViewById(R.id.img_toggle).setOnClickListener(this);
-        this.edtName.setOnClickListener(this);
-        this.edtEmailAddress.setOnClickListener(this);
-        this.edtPassword.setOnClickListener(this);
-        this.edtConfirmPassword.setOnClickListener(this);
-        this.edtConfirmPassword.setOnEditorActionListener(this);
-
+        this.showError(null);
+        relParent.findViewById(R.id.txt_create).setOnClickListener(this);
 
         return relParent;
     }
@@ -88,18 +86,10 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
             return;
         }
 
-        this.showIndeterminateProgress();
-        this.clearErrors();
 
-        String name = this.edtName.getText().toString().trim()
-                , emailAddress = this.edtEmailAddress.getText().toString().trim()
-                , password  = this.edtPassword.getText().toString().trim()
-                , confirmPassword = this.edtConfirmPassword.getText().toString().trim();
-
-        this.createUser(name, emailAddress, password, confirmPassword, callback);
     }
 
-    private void createUser(String name, String emailAddress, String password, String confirmPassword, final Callback<Boolean> callback) {
+    private void createUser(String name, String emailAddress, String password, String confirmPassword) {
         Map<String, String> errors = this.handleErrors(name, emailAddress, password, confirmPassword);
 
         if(errors.isEmpty()){
@@ -113,7 +103,8 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
                     @Override
                     public void onRespond(UserAfroObject result) {
                         hideIndeterminateProgress();
-                        callback.onRespond(true);
+                        if(CreateUserFragment.this.eventListener != null)
+                            CreateUserFragment.this.eventListener.onCreateUser(CreateUserFragment.this, result);
                     }
 
                     @Override
@@ -121,14 +112,13 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
                         if(apiError.errorCode == 409){
                             hideIndeterminateProgress();
                             showError("Email already exists");
-                            linEmailAddress.setSelected(true);
-                            callback.onRespond(false);
+                            aedtEmailAddress.setSelected(true);
                         }else{
                             hideIndeterminateProgress();
                             CreateUserFragment.this.showNetworkError("No Connection", "Please make sure your wifi or mobile data is turned on.", new ErrorFragment.OnFragmentInteractionListener(){
                                 @Override
                                 public void onRequestRetry() {
-                                    shouldProceed(callback);
+                                    createAccount();
                                 }
 
                                 @Override
@@ -148,7 +138,6 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
         }else{
             hideIndeterminateProgress();
             showError(compileErrors(errors));
-            callback.onRespond(false);
         }
     }
 
@@ -183,34 +172,34 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
     }
 
     private void clearErrors() {
-        this.linName.setSelected(false);
-        this.linEmailAddress.setSelected(false);
-        this.linPassword.setSelected(false);
-        this.linConfirmPassword.setSelected(false);
-        this.txtError.setVisibility(View.INVISIBLE);
+        this.aedtName.setSelected(false);
+        this.aedtEmailAddress.setSelected(false);
+        this.aedtPassword.setSelected(false);
+        this.aedtConfirmPassword.setSelected(false);
+        this.txtError.setVisibility(View.GONE);
     }
 
     private Map<String, String> handleErrors(String name, String emailAddress, String password, String confirmPassword) {
         Map<String, String> errors = new HashMap<>();
         if(name.length() == 0){
             errors.put(ERROR_NAME, "name");
-            this.linName.setSelected(true);
+            this.aedtName.setSelected(true);
         }
 
         if(!this.validEmailAddress(emailAddress)){
             errors.put(ERROR_EMAIL, "email");
-            this.linEmailAddress.setSelected(true);
+            this.aedtEmailAddress.setSelected(true);
         }
 
         if(!this.validPassword(password)){
             errors.put(ERROR_PASSWORD, "password");
-            this.linPassword.setSelected(true);
+            this.aedtPassword.setSelected(true);
         }
 
         if(!confirmPassword.equals(password)) {
             if(!errors.containsKey(ERROR_PASSWORD))
                 errors.put(ERROR_CONFIRM_PASSWORD, "password");
-            this.linConfirmPassword.setSelected(true);
+            this.aedtConfirmPassword.setSelected(true);
         }
         return errors;
     }
@@ -226,10 +215,10 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
     private void showError(String error){
         if(this.txtError  != null){
             if(error != null){
-                this.txtError.setText(error);
+                this.txtError.setMessage(error);
                 this.txtError.setVisibility(View.VISIBLE);
             }else{
-                this.txtError.setVisibility(View.INVISIBLE);
+                this.txtError.setVisibility(View.GONE);
             }
         }
     }
@@ -237,46 +226,32 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.edt_name:
-                this.linName.setSelected(false);
-                break;
-            case R.id.edt_email_address:
-                this.linEmailAddress.setSelected(false);
-                break;
-            case R.id.edt_password:
-                this.linPassword.setSelected(false);
-                break;
-            case R.id.edt_confirm_password:
-                this.linConfirmPassword.setSelected(false);
-                break;
-            case R.id.img_toggle:
-                if(v.isSelected()){
-                    v.setSelected(false);
-                    ((ImageView)v).setColorFilter(ContextCompat.getColor(this.getContext(), R.color.background_light_shade3), PorterDuff.Mode.MULTIPLY);
-                    edtPassword.setInputType(InputType.TYPE_CLASS_TEXT);
-                }else{
-                    v.setSelected(true);
-                    ((ImageView)v).setColorFilter(ContextCompat.getColor(this.getContext(), R.color.colorAccent_three), PorterDuff.Mode.MULTIPLY);
-                    edtPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                }
-
+            case R.id.txt_create:{
+                this.createAccount();
+            }
         }
     }
 
-  /*  public void showProgress(){
-        if(this.progBackgroundWork != null)
-            this.progBackgroundWork.setVisibility(View.VISIBLE);
+    private void createAccount() {
+        this.showIndeterminateProgress();
+        this.clearErrors();
+
+        String name = this.aedtName.getText().trim()
+                , emailAddress = this.aedtEmailAddress.getText().trim()
+                , password  = this.aedtPassword.getText().trim()
+                , confirmPassword = this.aedtConfirmPassword.getText().trim();
+
+        this.createUser(name, emailAddress, password, confirmPassword);
     }
 
-    public void hideProgress(){
-        if(this.progBackgroundWork != null)
-            this.progBackgroundWork.setVisibility(View.GONE);
-    }*/
+    public void setEventListener(EventListener eventListener) {
+        this.eventListener = eventListener;
+    }
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if(actionId == EditorInfo.IME_ACTION_DONE){
-            Interpol.hideKeyBoard(this.getContext(), edtConfirmPassword);
+
             return true;
         }
         return false;
@@ -285,5 +260,10 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
     @Override
     public String getTitle() {
         return "Sign Up";
+    }
+
+
+    public interface EventListener{
+        void onCreateUser(CreateUserFragment creator, UserAfroObject user);
     }
 }

@@ -1,5 +1,7 @@
 package com.example.a21__void.afroturf;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -7,7 +9,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,7 +32,7 @@ import com.example.a21__void.afroturf.object.UserAfroObject;
 
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
-public class SignUpActivity extends AfroActivity implements View.OnClickListener {
+public class SignUpActivity extends AfroActivity implements View.OnClickListener, CreateUserFragment.EventListener {
 
     private static final String TAG_CREATE_USER = "create_user"
             , TAG_ACCOUNT_TYPE = "account_type"
@@ -47,6 +52,8 @@ public class SignUpActivity extends AfroActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_sign_up);
 
         this.createUserFragment = new CreateUserFragment();
@@ -55,6 +62,7 @@ public class SignUpActivity extends AfroActivity implements View.OnClickListener
         this.createSalonFragment = new CreateSalonFragment();
 
         this.salonsFragment.setMode(SalonsFragment.MODE_SELECT);
+        this.createUserFragment.setEventListener(this);
 
         this.findViewById(R.id.txt_cancel).setOnClickListener(this);
         this.findViewById(R.id.txt_next).setOnClickListener(this);
@@ -197,6 +205,7 @@ public class SignUpActivity extends AfroActivity implements View.OnClickListener
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                 .replace(R.id.rel_secondary_container, progressFragment, TAG_PROGRESS)
                 .commit();
+        this.getSupportFragmentManager().executePendingTransactions();
     }
 
     @Override
@@ -211,6 +220,13 @@ public class SignUpActivity extends AfroActivity implements View.OnClickListener
 
     }
 
+    @Override
+    protected int getErrorContainerId() {
+        return R.id.rel_secondary_container;
+    }
+
+
+
     private void showNetworkError(ErrorFragment.OnFragmentInteractionListener callback){
         ErrorFragment errorFragment = ErrorFragment.newInstance(R.drawable.ic_no_connection, "No Connection", "dsfe");
         errorFragment.setmListener(callback);
@@ -221,12 +237,17 @@ public class SignUpActivity extends AfroActivity implements View.OnClickListener
                 .commit();
     }
 
-    private void hideNetworkError(){
-        Fragment errorFragment = this.getSupportFragmentManager().findFragmentByTag(TAG_ERROR);
-        if(errorFragment != null){
-            this.getSupportFragmentManager().beginTransaction()
-                    .remove(errorFragment)
-                    .commit();
+
+    @Override
+    public void onCreateUser(CreateUserFragment creator, UserAfroObject user) {
+        switch(user.getType()){
+            case UserAfroObject.TYPE_USER:
+                setResult(Activity.RESULT_OK);
+                finish();
+                break;
+            case UserAfroObject.TYPE_STYLIST:
+                //addFragment(this.salonsFragment);
+            case UserAfroObject.TYPE_MANAGER:
         }
     }
 }

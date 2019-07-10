@@ -38,12 +38,20 @@ Aenean in arcu laoreet, gravida orci et, faucibus velit. Etiam finibus viverra t
     </declare-styleable>
 
     <declare-styleable name="AfroEditText">
-        <attr name="iconRes" format="reference"/>
-        <attr name="hint" format="string"/>
+        <attr name="iconRes" format="reference" />
+        <attr name="hint" format="string" />
+        <attr name="showPasswordToggle" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="AfroDropDown">
-        <attr name="selection" format="string"/>
+        <attr name="selection" format="integer" />
+        <attr name="hinto" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="rich_textview">
+        <attr name="primaryColor" format="color" />
+        <attr name="icon" format="reference" />
+        <attr name="message" format="string" />
     </declare-styleable>
 
 </resources>

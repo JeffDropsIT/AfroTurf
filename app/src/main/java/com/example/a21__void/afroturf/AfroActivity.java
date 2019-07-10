@@ -1,5 +1,7 @@
 package com.example.a21__void.afroturf;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethod;
@@ -10,16 +12,46 @@ import android.view.inputmethod.InputMethodManager;
  * for Pandaphic
  */
 public abstract class AfroActivity extends AppCompatActivity{
+    private static final String TAG_ERROR_FRAGMENT = "tag_error_fragment";
+
     public abstract void showIndeterminateProgress();
     public abstract void hideIndeterminateProgress();
 
-    public void hideKeyBoard(){
-        InputMethodManager imm =(InputMethodManager)this.getSystemService(INPUT_METHOD_SERVICE);
-        View view = this.getCurrentFocus();
-        if(view == null)
-            view = new View(this);
+    protected abstract int getErrorContainerId();
+    public void showNetworkError(String title, String msg, final ErrorFragment.OnFragmentInteractionListener callback){
+        ErrorFragment errorFragment = ErrorFragment.newInstance(R.drawable.ic_no_connection, title, msg);
+        errorFragment.setmListener(new ErrorFragment.OnFragmentInteractionListener() {
+            @Override
+            public void onRequestRetry() {
+                AfroActivity.this.hideNetworkError();
+                callback.onRequestRetry();
+            }
 
-        imm.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
+            @Override
+            public void onRequestExit() {
+                AfroActivity.this.hideNetworkError();
+                callback.onRequestExit();
+            }
+        });
+
+        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(this.getErrorContainerId(), errorFragment, TAG_ERROR_FRAGMENT)
+                .commit();
+
+        this.getSupportFragmentManager().executePendingTransactions();
+    }
+
+    public void hideNetworkError(){
+        Fragment fragment = this.getSupportFragmentManager().findFragmentByTag(TAG_ERROR_FRAGMENT);
+        if(fragment != null){
+            FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+            transaction.remove(fragment)
+                    .commit();
+
+            this.getSupportFragmentManager().executePendingTransactions();
+        }
+
     }
   
 }

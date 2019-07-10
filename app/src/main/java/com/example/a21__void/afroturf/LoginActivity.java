@@ -138,24 +138,6 @@ public class LoginActivity extends AfroActivity implements View.OnClickListener,
         }
     }
 
-    private void showNetworkError(String title, String msg, ErrorFragment.OnFragmentInteractionListener callback){
-        ErrorFragment errorFragment =  ErrorFragment.newInstance(R.drawable.ic_no_connection, title, msg);
-        errorFragment.setmListener(callback);
-
-        this.getSupportFragmentManager().beginTransaction()
-                .replace(R.id.rel_error, errorFragment, TAG_ERROR_FRAGMENT)
-                .commit();
-    }
-
-    public void hideNetworkError(){
-        Fragment errorFragment  = this.getSupportFragmentManager().findFragmentByTag(TAG_ERROR_FRAGMENT);
-
-        if(errorFragment != null)
-            this.getSupportFragmentManager().beginTransaction()
-            .remove(errorFragment)
-            .commit();
-    }
-
     private boolean isPasswordValid(String password) {
         return password != null && password.length() > 0;
     }
@@ -225,5 +207,10 @@ public class LoginActivity extends AfroActivity implements View.OnClickListener,
     @Override
     public void hideIndeterminateProgress() {
 
+    }
+
+    @Override
+    protected int getErrorContainerId() {
+        return R.id.rel_error;
     }
 }

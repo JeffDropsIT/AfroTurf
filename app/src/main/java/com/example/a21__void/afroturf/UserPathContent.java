@@ -9,16 +9,26 @@ public class UserPathContent {
     public static final String UP_REVIEWS = "Reviews", UP_BOOKINGS = "Bookings", UP_INBOX  = "Inbox"
             , UP_PAYMENT_METHOD = "Payment Method"
             , UP_ABOUT = "About"
-            , UP_LOGOUT = "Logout";
+            , UP_LOGOUT = "Logout"
+            , UP_PROFILE = "Profile";
 
-    public static final List<UserPath> ITEMS = new ArrayList<UserPath>();
+    public static final List<UserPath> ITEMS_USER = new ArrayList<UserPath>();
+    public static final List<UserPath> ITEMS_STYLIST = new ArrayList<UserPath>();
+    public static final List<UserPath> ITEMS_MANAGER = new ArrayList<UserPath>();
+
     static {
-        ITEMS.add(new UserPath(UP_REVIEWS, UP_REVIEWS,"All the Salons/Stylist review you've made", R.drawable.ic_reviews));
-        ITEMS.add(new UserPath(UP_BOOKINGS, UP_BOOKINGS, "Past and future bookings",R.drawable.ic_bookings));
-        ITEMS.add(new UserPath(UP_INBOX, UP_INBOX, "All your notification",R.drawable.ic_inbox));
-        ITEMS.add(new UserPath(UP_PAYMENT_METHOD, UP_PAYMENT_METHOD,"Set payment method", R.drawable.ic_payment));
-        ITEMS.add(new UserPath(UP_ABOUT, UP_ABOUT, "All about us as Afroturf", R.drawable.ic_about));
-        ITEMS.add(new UserPath(UP_LOGOUT, UP_LOGOUT, "Logout of this account.",R.drawable.ic_logout));
+        ITEMS_USER.add(new UserPath(UP_REVIEWS, UP_REVIEWS,"All the Salons/Stylist review you've made", R.drawable.ic_reviews));
+        ITEMS_USER.add(new UserPath(UP_BOOKINGS, UP_BOOKINGS, "Past and future bookings",R.drawable.ic_bookings));
+        ITEMS_USER.add(new UserPath(UP_INBOX, UP_INBOX, "All your notification",R.drawable.ic_inbox));
+        ITEMS_USER.add(new UserPath(UP_PAYMENT_METHOD, UP_PAYMENT_METHOD,"Set payment method", R.drawable.ic_payment));
+        ITEMS_USER.add(new UserPath(UP_ABOUT, UP_ABOUT, "All about us as Afroturf", R.drawable.ic_about));
+        ITEMS_USER.add(new UserPath(UP_LOGOUT, UP_LOGOUT, "Logout of this account.",R.drawable.ic_logout));
+
+        ITEMS_STYLIST.add(new UserPath(UP_PROFILE, UP_PROFILE, "Change your avator and upload pictures of your work", R.drawable.ic_launcher));
+        ITEMS_STYLIST.addAll(ITEMS_USER);
+
+        ITEMS_MANAGER.add(new UserPath(UP_PROFILE, UP_PROFILE, "Change your avator and upload pictures of your work", R.drawable.ic_launcher));
+        ITEMS_MANAGER.addAll(ITEMS_USER);
     }
 
     public static class UserPath {

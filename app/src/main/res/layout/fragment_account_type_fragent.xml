@@ -25,11 +25,11 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/ic_launcher_two"
+            android:background="@drawable/ic_account_type"
             android:layout_above="@id/txt_title"
             />
 
-        <TextView
+        <com.example.a21__void.afroturf.pkgCommon.AfroTextView
             android:id="@+id/txt_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

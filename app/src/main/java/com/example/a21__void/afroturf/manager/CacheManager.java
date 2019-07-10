@@ -9,6 +9,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.example.a21__void.afroturf.database.AfroObjectDatabaseHelper;
 import com.example.a21__void.afroturf.object.AfroObject;
+import com.example.a21__void.afroturf.object.SalonAfroObject;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -25,13 +26,16 @@ public abstract class CacheManager {
     private static final HashMap<String, CacheManager> instances;
     static{
         instances = new HashMap<>();
+
     }
 
     private CachePointer cachePointer;
+    private final HashMap<String, AfroObject> ramCache;
 
     public CacheManager(Context context){
         this.cachePointer = new CachePointer(null);
         this.afroObjectDatabaseHelper = new AfroObjectDatabaseHelper(getDatabaseName(), getTableName(), context);
+        this.ramCache = new HashMap<>();
     }
 
     public abstract String getDatabaseName();
@@ -50,6 +54,12 @@ public abstract class CacheManager {
         this.notifyCacheChanged();
     }
 
+    protected void cacheObject(AfroObject afroObject){
+        this.afroObjectDatabaseHelper.add(afroObject);
+        this.ramCache.put(afroObject.getUID(), afroObject);
+        this.notifyCacheChanged();
+    }
+
     public static ApiError parseApiError(NetworkResponse response){
             int httpCode = response.statusCode;
             String msg;
@@ -64,6 +74,20 @@ public abstract class CacheManager {
 
     public CachePointer getCachePointer() {
         return cachePointer;
+    }
+
+    public final void get(String uid, ManagerRequestListener<AfroObject> callback){
+        if(uid != null){
+            if(this.ramCache.containsKey(uid))
+                callback.onRespond(this.ramCache.get(uid));
+            else
+                this.remoteGet(uid, callback);
+        }else
+            callback.onRespond(null);
+    }
+
+    protected void remoteGet(String uid, ManagerRequestListener<AfroObject> callback) {
+        callback.onRespond(null);
     }
 
     public int getCount(){ return cachePointer.cursor.getCount();}

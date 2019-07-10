@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/error"
+    android:orientation="horizontal">
+
+
+    <ImageView
+        android:id="@+id/img_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight=".85"
+        android:src="@drawable/ic_warning"
+        android:tint="@color/white"
+        android:background="#33000000"
+        android:padding="4dp"/>
+
+    <TextView
+        android:id="@+id/txt_message"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight=".15"
+        android:text="Invalid username"
+        android:gravity="center"
+        android:textSize="13sp"
+        android:textColor="@color/white"
+        android:visibility="visible"
+        android:textStyle="bold"/>
+</LinearLayout>

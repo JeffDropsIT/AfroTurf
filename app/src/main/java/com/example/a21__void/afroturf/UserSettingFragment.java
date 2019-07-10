@@ -12,6 +12,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.example.a21__void.Modules.AfroFragment;
+import com.example.a21__void.afroturf.manager.UserManager;
+import com.example.a21__void.afroturf.object.AfroObject;
+import com.example.a21__void.afroturf.object.UserAfroObject;
+
+import java.util.List;
 
 
 public class UserSettingFragment extends AfroFragment {
@@ -42,9 +47,26 @@ public class UserSettingFragment extends AfroFragment {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new UserSettingRecyclerViewAdapter(UserPathContent.ITEMS));
+            recyclerView.setAdapter(new UserSettingRecyclerViewAdapter(this.getItems()));
         }
         return view;
+    }
+
+    private List<UserPathContent.UserPath> getItems() {
+        UserAfroObject userAfroObject = UserManager.getInstance(this.getContext()).getCurrentUser();
+        if(userAfroObject == null)
+            return UserPathContent.ITEMS_USER;
+
+        switch (userAfroObject.getType()){
+            case AfroObject.TYPE_USER:
+                return UserPathContent.ITEMS_USER;
+            case AfroObject.TYPE_STYLIST:
+                return UserPathContent.ITEMS_STYLIST;
+            case AfroObject.TYPE_MANAGER:
+                return UserPathContent.ITEMS_MANAGER;
+            default:
+                return UserPathContent.ITEMS_USER;
+        }
     }
 
     @Override

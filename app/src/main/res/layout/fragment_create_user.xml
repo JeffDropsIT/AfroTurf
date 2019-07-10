@@ -29,7 +29,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/ic_map_two"
+            android:background="@drawable/ic_sign_up"
             android:scaleType="centerCrop"
             android:layout_above="@id/txt_title"
             />
@@ -47,16 +47,18 @@
             android:layout_above="@id/tmp_lin_base"
             />
 
+      <com.example.a21__void.afroturf.libIX.ui.RichTextView
+          android:id="@+id/txt_error"
+          android:layout_width="match_parent"
+          android:layout_height="30dp"
+          app:message="message"
+          app:icon="@drawable/ic_warning"
+          app:primaryColor="@color/white"
+          android:visibility="gone"
+          >
 
-        <TextView
-            android:id="@+id/txt_error"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Invalid username"
-            android:gravity="center"
-            android:textSize="13sp"
-            android:textColor="@color/error"
-            android:visibility="visible"/>
+      </com.example.a21__void.afroturf.libIX.ui.RichTextView>
+
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
             android:id="@+id/prog_background_work"
@@ -71,139 +73,79 @@
             style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
             android:visibility="gone"/>
 
-        <LinearLayout
-            android:id="@+id/lin_name"
+        <com.example.a21__void.afroturf.pkgCommon.AfroEditText
+            android:id="@+id/aedt_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_one"
             android:layout_marginTop="10dp"
-            >
+            app:hint="name"
+            app:iconRes="@drawable/user_icon"
+            app:showPasswordToggle="false">
 
-            <ImageView
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:src="@drawable/user_icon"
-                android:padding="15dp"
-                android:tint="#b4b4b4"/>
+        </com.example.a21__void.afroturf.pkgCommon.AfroEditText>
 
-            <EditText
-                android:id="@+id/edt_name"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:hint="name"
-                android:textSize="13sp"
-                android:inputType="text"
-                android:maxLines="1"
-                android:imeOptions="actionNext"
-                android:nextFocusDown="@+id/edt_email_address"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/lin_email_address"
+        <com.example.a21__void.afroturf.pkgCommon.AfroEditText
+            android:id="@+id/aedt_email_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_one"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            app:hint="email address"
+            app:iconRes="@drawable/ic_email"
+            app:showPasswordToggle="false">
 
-            <ImageView
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:src="@drawable/ic_email"
-                android:padding="15dp"
-                android:tint="#b4b4b4"/>
+        </com.example.a21__void.afroturf.pkgCommon.AfroEditText>
 
-            <EditText
-                android:id="@+id/edt_email_address"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:hint="email address"
-                android:textSize="13sp"
-                android:inputType="text"
-                android:maxLines="1"
-                android:imeOptions="actionNext"
-                android:nextFocusDown="@+id/edt_password"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/lin_password"
+        <com.example.a21__void.afroturf.pkgCommon.AfroEditText
+            android:id="@+id/aedt_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_one"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            app:hint="password"
+            app:iconRes="@drawable/ic_lock"
+            app:showPasswordToggle="true">
 
-            <ImageView
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:src="@drawable/ic_lock"
-                android:padding="15dp"
-                android:tint="#b4b4b4"/>
+        </com.example.a21__void.afroturf.pkgCommon.AfroEditText>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <EditText
-                    android:id="@+id/edt_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:hint="password"
-                    android:inputType="textPassword"
-                    android:textSize="13sp"
-                    android:layout_toLeftOf="@+id/img_toggle"
-                    android:imeOptions="actionNext"
-                    android:maxLines="1"
-                    android:nextFocusDown="@+id/edt_confirm_password"/>
-
-                <ImageView
-                    android:id="@+id/img_toggle"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:src="@drawable/ic_eye"
-                    android:padding="15dp"
-                    android:layout_alignParentRight="true"
-                    android:tint="@color/background_light_shade3"/>
-
-            </RelativeLayout>
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/lin_confirm_password"
+        <com.example.a21__void.afroturf.pkgCommon.AfroEditText
+            android:id="@+id/aedt_confirm_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_one"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            app:hint="confirm password"
+            app:iconRes="@drawable/ic_lock"
+            app:showPasswordToggle="false">
 
-            <ImageView
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:src="@drawable/ic_lock"
-                android:padding="15dp"
-                android:tint="#b4b4b4"/>
+        </com.example.a21__void.afroturf.pkgCommon.AfroEditText>
 
-            <EditText
-                android:id="@+id/edt_confirm_password"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:hint="confirm password"
-                android:inputType="textPassword"
-                android:textSize="13sp"
-                android:maxLines="1"
-                android:imeOptions="actionDone"
+        <com.example.a21__void.afroturf.pkgCommon.AfroTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Account type: "
+            />
 
-                />
-        </LinearLayout>
+        <com.example.a21__void.afroturf.pkgCommon.AfroDropDown
+            android:id="@+id/adrp_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            app:selection="0"
+            app:hinto="Account Type">
+
+        </com.example.a21__void.afroturf.pkgCommon.AfroDropDown>
+
+        <TextView
+            android:id="@+id/txt_create"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Create Account"
+            android:padding="15dp"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:background="@color/colorAccent_three" />
 
 
     </LinearLayout>
-
 
 
     <RelativeLayout

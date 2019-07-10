@@ -12,6 +12,7 @@ import android.widget.TimePicker;
 
 import com.example.a21__void.afroturf.Callback;
 import com.example.a21__void.afroturf.R;
+import com.example.a21__void.afroturf.ServiceActivity;
 import com.example.a21__void.afroturf.object.SalonAfroObject;
 import com.example.a21__void.afroturf.pkgCommon.AfroDropDown;
 import com.example.a21__void.afroturf.pkgCommon.AfroEditText;
@@ -29,6 +30,7 @@ import static android.app.Activity.RESULT_OK;
 public class CreateSalonFragment extends SequenceFragment implements View.OnClickListener {
 
     private static final int REQ_CODE_LOCATION = 32;
+    private static final int REQ_CODE_SERVICES = 33;
     private AfroEditText edtName;
     private AfroDropDown drpTimeStart, drpTimeClose, drpLocation, drpServices;
     private Time timeStart, timeClose;
@@ -77,7 +79,7 @@ public class CreateSalonFragment extends SequenceFragment implements View.OnClic
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         CreateSalonFragment.this.timeStart = new Time(hourOfDay, minute, 0);
-                        CreateSalonFragment.this.drpTimeStart.setSelection(timeStart.toString());
+                       //todo CreateSalonFragment.this.drpTimeStart.setSelection(timeStart.toString());
                     }
                 });
                 break;
@@ -86,7 +88,7 @@ public class CreateSalonFragment extends SequenceFragment implements View.OnClic
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         CreateSalonFragment.this.timeClose = new Time(hourOfDay, minute, 0);
-                        CreateSalonFragment.this.drpTimeClose.setSelection(timeClose.toString());
+                       //todo CreateSalonFragment.this.drpTimeClose.setSelection(timeClose.toString());
                     }
                 });
                 break;
@@ -100,6 +102,9 @@ public class CreateSalonFragment extends SequenceFragment implements View.OnClic
                 }
                 break;
             case R.id.drp_services:
+                Intent intent = new Intent(this.getContext(), ServiceActivity.class);
+
+                this.startActivityForResult(intent, REQ_CODE_SERVICES);
                 break;
                 default:
                     break;
@@ -118,7 +123,7 @@ public class CreateSalonFragment extends SequenceFragment implements View.OnClic
                     location.latitude = (float)place.getLatLng().latitude;
                     location.longitude = (float)place.getLatLng().longitude;
 
-                    this.drpLocation.setSelection(this.location.address);
+                    //todo this.drpLocation.setSelection(this.location.address);
                 }
             }
         }
