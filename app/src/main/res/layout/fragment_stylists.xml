@@ -47,14 +47,14 @@
         android:visibility="invisible"
         android:layout_below="@+id/tmp_lin_search"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcy_stylist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/tmp_lin_search"
         android:layout_above="@+id/txt_apply">
 
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
     <com.example.a21__void.afroturf.pkgCommon.AfroTextView
         android:id="@+id/txt_apply"

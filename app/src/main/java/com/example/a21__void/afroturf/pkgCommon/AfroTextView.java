@@ -4,11 +4,13 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 
+import androidx.appcompat.widget.AppCompatTextView;
+
 /**
  * Created by ASANDA on 2018/12/21.
  * for Pandaphic
  */
-public class AfroTextView extends android.support.v7.widget.AppCompatTextView {
+public class AfroTextView extends AppCompatTextView {
 
     public AfroTextView(Context context) {
         super(context);

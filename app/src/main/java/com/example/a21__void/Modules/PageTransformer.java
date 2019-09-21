@@ -1,9 +1,8 @@
 package com.example.a21__void.Modules;
 
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.CardView;
+import androidx.viewpager.widget.ViewPager;
+
 import android.view.View;
-import android.widget.RelativeLayout;
 
 public class PageTransformer implements ViewPager.OnPageChangeListener, ViewPager.PageTransformer {
 

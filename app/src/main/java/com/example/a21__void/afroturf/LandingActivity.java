@@ -3,8 +3,9 @@ package com.example.a21__void.afroturf;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.a21__void.afroturf.manager.BookmarkManager;
 import com.example.a21__void.afroturf.manager.CacheManager;

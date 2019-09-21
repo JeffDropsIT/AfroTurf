@@ -11,12 +11,24 @@
         android:id="@+id/toolbar"
         layout="@layout/toolbar_template"/>
 
+    <com.example.a21__void.afroturf.libIX.ui.RichTextView
+        android:id="@+id/txt_offline"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/toolbar"
+        app:message="OfflineMode: No Connection, tap to retry"
+        app:icon="@drawable/ic_warning"
+        app:primaryColor="@color/white"
+        android:background="@color/link_blue"
+        android:visibility="gone"
+        />
+
 
     <FrameLayout
         android:id="@+id/frame_secondary_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar">
+        android:layout_below="@+id/txt_offline">
 
         <fragment
             android:id="@+id/map"
@@ -25,30 +37,77 @@
             android:layout_height="match_parent"
             />
 
+        <LinearLayout
+            android:id="@+id/lin_no_location"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="#eeffffff"
+            android:visibility="invisible"
+            android:gravity="center_horizontal"
+            android:padding="20dp"
+            >
+
+
+            <com.example.a21__void.afroturf.pkgCommon.AfroTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_map"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:textSize="13sp"
+                android:textStyle="bold"/>
+
+            <com.example.a21__void.afroturf.pkgCommon.AfroTextView
+                android:id="@+id/txt_fix_options"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\n-\t Enable LOCATION PERMISSION\n-\t Enable LOCATION\n-\t Enable Wifi or Mobile Data"
+                android:textSize="13sp"/>
+
+            <com.example.a21__void.afroturf.pkgCommon.AfroTextView
+                android:id="@+id/txt_retry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Retry"
+                android:padding="10dp"
+                android:textColor="@color/white"
+                android:background="@drawable/round_corner"
+                android:backgroundTint="@color/link_blue"
+                android:layout_marginTop="10dp"
+                />
+
+        </LinearLayout>
+
     </FrameLayout>
 
-
     <RelativeLayout
-        android:id="@+id/rel_secondary_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
+        android:layout_height="match_parent"
         android:layout_above="@+id/bnv_nav"
-        android:background="@android:color/transparent">
+        android:layout_below="@+id/txt_offline">
+        <RelativeLayout
+            android:id="@+id/rel_secondary_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:gravity="bottom"
 
+            android:background="@android:color/transparent">
+
+        </RelativeLayout>
 
     </RelativeLayout>
-
 
     <RelativeLayout
         android:id="@+id/rel_tertiary_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
+        android:layout_below="@+id/txt_offline"
         android:layout_above="@+id/bnv_nav"
         android:background="@android:color/transparent">
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -80,7 +139,7 @@
         android:tint="@color/colorAccent"
         style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal" />
 
-    <android.support.design.widget.BottomNavigationView
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bnv_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -90,5 +149,5 @@
         app:itemBackground="@color/colorPrimary"
         app:itemTextColor="@drawable/bottom_nav_selector">
 
-    </android.support.design.widget.BottomNavigationView>
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 </RelativeLayout>

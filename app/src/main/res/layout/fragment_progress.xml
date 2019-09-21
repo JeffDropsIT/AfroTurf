@@ -1,44 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.ProgressFragment"
-    android:background="#aa000000"
+    android:background="#ddFFFFFF"
     android:padding="20dp">
 
-    <LinearLayout
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/av_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:indicatorColor="#ffb954"
+        app:indicatorName="BallScaleMultipleIndicator"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/txt_msg"
+        />
+
+
+
+    <TextView
+        android:id="@+id/txt_msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/white"
-        android:layout_gravity="center">
+        android:padding="10dp"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_margin="10dp"
+        android:text="Please wait. Loading Salons"
+        android:textColor="@color/colorTextDark"
+        android:layout_centerInParent="true"
+        android:gravity="center"/>
 
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_weight=".85"
-            android:padding="5dp"
-            android:indeterminateTint="#000000"
-            android:background="#11000000"/>
-
-        <TextView
-            android:id="@+id/txt_msg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.15"
-            android:text="Creating Account..."
-            android:padding="10dp"
-            android:textColor="#3d3d3d"
-            android:textSize="20sp"
-            android:gravity="center_vertical"
-            android:textStyle="bold"/>
-
-
-    </LinearLayout>
-
-</FrameLayout>
+</RelativeLayout>

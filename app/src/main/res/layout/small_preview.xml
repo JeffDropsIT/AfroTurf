@@ -3,21 +3,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:background="@android:color/transparent">
+    android:layout_height="90dp"
+    android:background="#00000000">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/crd_small_preview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:cardBackgroundColor="#f2f2f2"
-        android:visibility="invisible"
+        android:layout_centerInParent="true"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="3dp"
         app:cardElevation="1.5dp"
-        android:layout_marginBottom="10dp"
+        android:layout_margin="10dp"
         app:cardUseCompatPadding="true"
         app:cardPreventCornerOverlap="true">
 
@@ -28,10 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="0dp"
-                android:layout_alignBottom="@+id/img_next"
-                android:layout_alignParentTop="true"
+                android:gravity="center_vertical"
+                android:layout_centerInParent="true"
                 android:background="@color/white">
 
                 <TextView
@@ -40,7 +35,6 @@
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:layout_marginTop="5dp"
                     android:layout_marginLeft="15dp"
                     android:text="Salon Name"/>
 
@@ -60,18 +54,42 @@
             </LinearLayout>
 
 
-            <ImageView
-                android:id="@+id/img_next"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:padding="10dp"
-                android:src="@drawable/ic_next"
-                android:tint="@color/white"
-                android:background="@drawable/fab_background"
-                android:visibility="invisible"
-                android:layout_alignParentRight="true"/>
+            <RelativeLayout
+                android:id="@+id/rel_progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/snoh_white"
+                android:visibility="invisible">
+
+                <com.wang.avi.AVLoadingIndicatorView
+                    android:id="@+id/av_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:indicatorColor="@color/colorTextSuperDark"
+                    app:indicatorName="BallScaleMultipleIndicator"
+                    android:layout_centerInParent="true"
+                    android:background="@color/snoh_white"
+
+                    />
+            </RelativeLayout>
+
+
         </RelativeLayout>
-    </android.support.v7.widget.CardView>
+
+
+    </androidx.cardview.widget.CardView>
+
+    <com.example.a21__void.afroturf.libIX.ui.RichTextView
+        android:id="@+id/txt_no_salons"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:message="No Salons nearby"
+        app:icon="@drawable/ic_warning"
+        app:primaryColor="@color/white"
+        android:background="@color/snoh_amber"
+        android:layout_alignParentBottom="true"
+        android:visibility="invisible"
+        />
 
 
 </RelativeLayout>

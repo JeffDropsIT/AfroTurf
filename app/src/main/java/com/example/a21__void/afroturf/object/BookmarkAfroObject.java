@@ -2,6 +2,7 @@ package com.example.a21__void.afroturf.object;
 
 import android.util.Log;
 
+import com.example.a21__void.afroturf.pkgCommon.APIConstants;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -11,33 +12,32 @@ import com.google.gson.JsonParser;
  * for Pandaphic
  */
 public class BookmarkAfroObject extends AfroObject {
-    private AfroObject markedObject;
-    private String bookmarkID;
+    public static final int MARKED_TYPE_SALON = 0, MARKED_TYPE_USER = 1;
 
-    public  BookmarkAfroObject(){
+    private String markedObjectUID;
+    private String bookmarkID, title, info;
+    private int markedType;
 
+    public  BookmarkAfroObject() {
     }
 
-    public String getMarkObjectUID(){
-        return this.markedObject != null ? this.markedObject.getUID() : null;
+    public int getMarkedType() {
+        return markedType;
+    }
+
+    public String getMarkedObjectUID() {
+        return markedObjectUID;
     }
 
     public String getInfo(){
-        if(this.markedObject instanceof SalonAfroObject)
-            return "";//((SalonAfroObject)this.markedObject).location.address;
-        else
-            return "";
+        return this.info;
     }
 
     @Override
-    public String getName() {
-        return "";//markedObject.getName();
-    }
+    public String getName() { return title; }
 
     @Override
-    public String getUID() {
-        return this.bookmarkID;
-    }
+    public String getUID() { return this.bookmarkID; }
 
     @Override
     public void set(JsonParser parser, String json) {
@@ -47,23 +47,23 @@ public class BookmarkAfroObject extends AfroObject {
     @Override
     public void set(JsonParser parser, JsonElement jsonElement) {
         JsonObject bookmark = jsonElement.getAsJsonObject();
-        Log.i("TGIM", bookmark.toString());
         this.bookmarkID =  "" + bookmark.get("bookmarkId").getAsInt();
+        this.title = bookmark.get(APIConstants.FIELD_TITLE).getAsString();
+        this.info = bookmark.get(APIConstants.FIELD_INFO).getAsString();
 
-//       // JsonObject jsonMarkedObject = bookmark.get("markedObject").getAsJsonObject();
-//        if(!jsonMarkedObject.has("stylistId")){
-//            SalonAfroObject salonAfroObject = new SalonAfroObject();
-//            salonAfroObject.set(parser, jsonMarkedObject.toString());
-//            this.markedObject = salonAfroObject;
-//        }
+        this.markedObjectUID = bookmark.get(APIConstants.FIELD_SALON_ID).getAsInt() + "";
+        this.markedType = MARKED_TYPE_SALON;
     }
 
     @Override
     public JsonElement asJson() {
         JsonObject bookmark = new JsonObject();
-        JsonParser parser = new JsonParser();
-        bookmark.addProperty("bookmarkId", this.bookmarkID);
-//        bookmark.add("markedObject", markedObject.asJson().getAsJsonObject());
+
+        bookmark.addProperty("bookmarkId", Integer.parseInt(this.bookmarkID));
+        bookmark.addProperty(APIConstants.FIELD_TITLE, this.title);
+        bookmark.addProperty(APIConstants.FIELD_INFO, this.info);
+        bookmark.addProperty(APIConstants.FIELD_SALON_ID, Integer.parseInt(this.markedObjectUID));
+
         return bookmark;
     }
 }

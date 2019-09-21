@@ -9,8 +9,11 @@ import com.google.gson.JsonParser;
  * for Pandaphic
  */
 public class UserAfroObject extends AfroObject {
+    public static final String JSON_PROP_UUID = "_id"
+                                , JSON_PROP_NAME = "fname"
+                                , JSON_PROP_TYPE = "type";
+
     private String name, uid, reviewsDocId;
-    private String token;
 
     @Override
     public String getName() {
@@ -22,13 +25,14 @@ public class UserAfroObject extends AfroObject {
         return this.uid;
     }
 
+
     @Override
     public void set(JsonParser parser, JsonElement jsonElement) {
         JsonObject user = jsonElement.getAsJsonObject();
 
 
-        this.uid = user.get("_id").getAsString();
-        this.name = user.get("fname").getAsString();
+        this.uid = user.get(JSON_PROP_UUID).getAsString();
+        this.name = user.get(JSON_PROP_NAME).getAsString();
         //this.reviewsDocId = user.get("reviewsDocId").getAsString();
 
     }
@@ -42,11 +46,5 @@ public class UserAfroObject extends AfroObject {
         return user;
     }
 
-    public String getToken() {
-        return token;
-    }
 
-    public void setToken(String pToken){
-        this.token = pToken;
-    }
 }

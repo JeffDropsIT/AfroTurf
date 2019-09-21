@@ -3,30 +3,22 @@ package com.example.a21__void.Modules;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.CardView;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
 
 import com.example.a21__void.afroturf.R;
 import com.example.a21__void.afroturf.database.AfroObjectDatabaseHelper;
 import com.example.a21__void.afroturf.manager.CacheManager;
 import com.example.a21__void.afroturf.object.SalonAfroObject;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 /**
  * Created by ASANDA on 2018/07/10.

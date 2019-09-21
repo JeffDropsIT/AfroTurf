@@ -1,8 +1,9 @@
 package com.example.a21__void.afroturf.pkgConnection;
 
 import android.net.http.HttpResponseCache;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -28,6 +29,7 @@ public class DevDesignRequest extends Request<DevDesignRequest.DevDesignResponse
 
     private final Response.Listener<DevDesignResponse> responseListener;
     private byte[] requestBody;
+
 
     public DevDesignRequest(int method, String url, @NonNull Response.Listener<DevDesignResponse> pResponseListener, @Nullable Response.ErrorListener  errorListener) {
         super(method, url, errorListener);

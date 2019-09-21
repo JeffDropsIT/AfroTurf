@@ -1,11 +1,6 @@
 package com.example.a21__void.afroturf.pkgStylist.pakages;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -14,16 +9,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.example.a21__void.Modules.AfroFragment;
 import com.example.a21__void.afroturf.R;
 import com.example.a21__void.afroturf.object.AfroObject;
 import com.example.a21__void.afroturf.object.SalonAfroObject;
 import com.example.a21__void.afroturf.pkgCommon.DatePickerFragment;
-import com.example.a21__void.afroturf.pkgCommon.TimeSlotObject;
 import com.example.a21__void.afroturf.pkgCommon.TimeslotFragment;
 import com.example.a21__void.afroturf.fragments.SalonsFragment;
 import com.example.a21__void.afroturf.pkgSalon.AfroObjectCursorAdapter;
-import com.example.a21__void.afroturf.pkgSalon.SalonObject;
 import com.example.a21__void.afroturf.fragments.ServicesFragment;
 import com.example.a21__void.afroturf.fragments.StylistsFragment;
 

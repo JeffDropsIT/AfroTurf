@@ -2,6 +2,7 @@ package com.example.a21__void.afroturf.manager;
 
 import android.content.Context;
 
+import com.example.a21__void.afroturf.database.AfroObjectDatabaseHelper;
 import com.example.a21__void.afroturf.object.AfroObject;
 
 import java.util.ArrayList;
@@ -12,8 +13,10 @@ import java.util.List;
  * for Pandaphic
  */
 public abstract class CacheManagerIX<T extends AfroObject> extends CacheManager{
+    public static final String ENTRY_RAW_OBJECT = AfroObjectDatabaseHelper.COLUMN_JSON;
     private final ArrayList<CacheListener> cacheListeners;
     public final ArrayList<T> ramCache;
+
 
     public CacheManagerIX(Context context) {
         super(context);
@@ -37,11 +40,13 @@ public abstract class CacheManagerIX<T extends AfroObject> extends CacheManager{
 
     public int count(){ return this.ramCache.size(); }
     public T get(int pos){ return this.ramCache.get(pos); }
+
     @Override
     public void notifyCacheChanged() {
         for(int pos = 0; pos < this.cacheListeners.size(); pos++)
             if(cacheListeners.get(pos) != null)
                 cacheListeners.get(pos).onCacheChanged();
+
     }
 
     @Override
@@ -51,5 +56,32 @@ public abstract class CacheManagerIX<T extends AfroObject> extends CacheManager{
 
     public interface CacheListener{
         void onCacheChanged();
+    }
+
+    public class State{
+        private int count;
+        private int index;
+
+
+        public State(int pIndex, int pCount){
+            this.index = pIndex;
+            this.count = pCount;
+        }
+
+        public void setCount(int count) {
+            this.count = count;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 }

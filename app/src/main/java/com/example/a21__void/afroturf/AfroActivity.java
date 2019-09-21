@@ -1,17 +1,14 @@
 package com.example.a21__void.afroturf;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.view.inputmethod.InputMethod;
-import android.view.inputmethod.InputMethodManager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 /**
  * Created by ASANDA on 2018/12/02.
  * for Pandaphic
  */
-public abstract class AfroActivity extends AppCompatActivity{
+public abstract class AfroActivity extends AppCompatActivity {
     private static final String TAG_ERROR_FRAGMENT = "tag_error_fragment";
 
     public abstract void showIndeterminateProgress();

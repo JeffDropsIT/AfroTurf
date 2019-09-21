@@ -54,6 +54,7 @@
           app:message="message"
           app:icon="@drawable/ic_warning"
           app:primaryColor="@color/white"
+          android:background="@color/error"
           android:visibility="gone"
           >
 

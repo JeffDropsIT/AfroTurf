@@ -8,51 +8,29 @@
     tools:context=".SignUpActivity"
     android:background="#f2f2f2">
 
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/prog_background_work"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:indeterminate="true"
+        app:mpb_progressStyle="horizontal"
+        app:mpb_useIntrinsicPadding="false"
+        android:layout_alignBottom="@+id/toolbar"
+        android:tint="@color/colorAccent"
+        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+        android:visibility="invisible"/>
 
     <RelativeLayout
         android:id="@+id/rel_main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:layout_above="@id/tmp_lin_bottom_nav">
+        android:layout_below="@id/prog_background_work">
 
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/tmp_lin_bottom_nav"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:background="#3d3d3d"
-        android:visibility="gone"
-        >
 
-        <TextView
-            android:id="@+id/txt_cancel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:text="Cancel"
-            android:textStyle="bold"
-            android:textColor="#f2f2f2"
-            android:padding="20dp"
-            android:layout_weight=".5"/>
-
-        <TextView
-            android:id="@+id/txt_next"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="end|center_vertical"
-            android:text="Next"
-            android:textStyle="bold"
-            android:textColor="@color/colorAccent_three"
-            android:padding="20dp"
-            android:layout_alignParentBottom="true"
-            android:layout_weight=".5"/>
-
-    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/rel_secondary_container"

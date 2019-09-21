@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 
 /**
  * Created by ASANDA on 2018/10/03.
@@ -112,17 +113,17 @@ public class ReviewsManager extends CacheManager {
             public void onResponse(DevDesignRequest.DevDesignResponse response) {
                 JsonParser parser = new JsonParser();
 
-                JsonArray reviews = parser.parse(response.data).getAsJsonArray().get(0).getAsJsonObject().getAsJsonArray("reviewsIn");
+               /* JsonArray reviews = parser.parse(response.data).getAsJsonArray().get(0).getAsJsonObject().getAsJsonArray("reviewsIn");
 
-                ReviewAfroObject[] reviewObjects = new ReviewAfroObject[reviews.size()];
+                ReviewAfroObject[] reviewObjects = new ReviewAfroObject[0]'//reviews.size()];
                 for(int pos  = 0; pos < reviews.size(); pos++){
                     JsonObject review = reviews.get(pos).getAsJsonObject();
                     ReviewAfroObject reviewAfroObject = new ReviewAfroObject();//ReviewsManager.this.afroObjectDatabaseHelper.objectMapper.readValue(review.toString(), ReviewAfroObject.class);
                     reviewAfroObject.set(parser, review.toString());
                     reviewObjects[pos] = reviewAfroObject;
-                }
+                }*/
                 if(callback != null)
-                    callback.onRespond(reviewObjects);
+                    callback.onRespond(new ReviewAfroObject[0]);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -131,4 +132,6 @@ public class ReviewsManager extends CacheManager {
             }
         });
     }
+
+
 }

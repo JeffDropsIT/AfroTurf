@@ -3,10 +3,11 @@ package com.example.a21__void.afroturf.pkgStylist.pakages;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.graphics.Palette;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -27,7 +28,7 @@ public class SpacePhotoActivity extends AppCompatActivity {
         mImageView = (ImageView) findViewById(R.id.image);
         SpacePhoto spacePhoto = getIntent().getParcelableExtra(EXTRA_SPACE_PHOTO);
 
-        Glide.with(this)
+        /*Glide.with(this)
                 .load(spacePhoto.getUrl())
                 .asBitmap()
                 .listener(new RequestListener<String, Bitmap>() {
@@ -54,6 +55,6 @@ public class SpacePhotoActivity extends AppCompatActivity {
                     }
                 })
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(mImageView);
+                .into(mImageView);*/
     }
 }

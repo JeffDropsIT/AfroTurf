@@ -2,28 +2,27 @@ package com.example.a21__void.afroturf.pkgCommon;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.ImageViewCompat;
+
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
+
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.example.a21__void.afroturf.R;
 
 import static android.text.InputType.TYPE_CLASS_TEXT;
-import static android.text.InputType.TYPE_NULL;
 import static android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD;
-import static android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
 
 /**
  * Created by ASANDA on 2018/12/20.
@@ -83,6 +82,10 @@ public class AfroEditText extends LinearLayout implements View.OnClickListener {
 
     }
 
+    private void requestFocusEditText(){
+        this.edtInput.requestFocus();
+    }
+
 
     public void setShowPasswordToggle(Boolean showPasswordToggle) {
         this.showPasswordToggle = showPasswordToggle;
@@ -101,7 +104,6 @@ public class AfroEditText extends LinearLayout implements View.OnClickListener {
         return resIcon;
     }
 
-
     public String getHint() {
         return hint;
     }
@@ -115,9 +117,41 @@ public class AfroEditText extends LinearLayout implements View.OnClickListener {
         this.edtInput.setHint(this.hint);
     }
 
+    public void setNextFocusDownId(int id){
+        if(this.getParent() != null && this.getParent() instanceof ViewGroup){
+            ViewGroup parent = (ViewGroup)this.getParent();
+            final View nextView = parent.findViewById(id);
+
+            if(nextView != null){
+                this.edtInput.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+                if(nextView instanceof AfroEditText){
+
+                    this.edtInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                        @Override
+                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                            if(actionId == EditorInfo.IME_ACTION_NEXT){
+                                ((AfroEditText) nextView).requestFocusEditText();
+                                Log.i("EDT", "next");
+                                return true;
+                            }else{
+                                return false;
+                            }
+                        }
+                    });
+                }else{
+                    this.edtInput.setNextFocusDownId(id);
+                }
+            }
+        }
+    }
+
     public void setResIcon(int resIcon) {
         this.resIcon = resIcon;
         this.imgIcon.setImageResource(this.resIcon);
+    }
+
+    public void setHasError(boolean hasError){
+        this.setSelected(hasError);
     }
 
     @Override

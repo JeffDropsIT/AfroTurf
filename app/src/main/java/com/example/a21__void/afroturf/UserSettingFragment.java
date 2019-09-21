@@ -2,19 +2,20 @@ package com.example.a21__void.afroturf;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.a21__void.Modules.AfroFragment;
 import com.example.a21__void.afroturf.manager.UserManager;
 import com.example.a21__void.afroturf.object.AfroObject;
 import com.example.a21__void.afroturf.object.UserAfroObject;
+import com.example.a21__void.afroturf.user.UserGeneral;
 
 import java.util.List;
 
@@ -53,11 +54,11 @@ public class UserSettingFragment extends AfroFragment {
     }
 
     private List<UserPathContent.UserPath> getItems() {
-        UserAfroObject userAfroObject = UserManager.getInstance(this.getContext()).getCurrentUser();
-        if(userAfroObject == null)
+        UserGeneral userGeneral = UserManager.getInstance(this.getContext()).getCurrentUser();
+        if(userGeneral == null)
             return UserPathContent.ITEMS_USER;
 
-        switch (userAfroObject.getType()){
+        switch (userGeneral.getUserType()){
             case AfroObject.TYPE_USER:
                 return UserPathContent.ITEMS_USER;
             case AfroObject.TYPE_STYLIST:

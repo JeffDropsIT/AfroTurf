@@ -1,9 +1,12 @@
 package com.example.a21__void.afroturf.object;
 
-import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 
 import com.example.a21__void.afroturf.R;
 import com.google.android.gms.maps.model.LatLng;
@@ -42,8 +45,42 @@ public class SalonAfroObject extends AfroObject implements Serializable {
         return this.salonObjId;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
     public float getRating(){
         return this.rating;
+    }
+
+    public double calculateIndex(Location userLocation){
+        double Dy = userLocation.latitude - this.location.latitude
+                , Dx = userLocation.longitude - this.location.latitude;
+
+        double DSqr = (Dy * Dy) + (Dx * Dx);
+        double R = this.rating * this.rating;
+
+        return DSqr / (R + 1);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(obj == null)
+            return false;
+
+        if(obj == this)
+            return true;
+
+        if(obj instanceof SalonAfroObject){
+            return this.getUID().equals(((SalonAfroObject)obj).getUID());
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getUID().hashCode() + this.name.hashCode();
     }
 
     @Override
@@ -96,9 +133,25 @@ public class SalonAfroObject extends AfroObject implements Serializable {
         return salon;
     }
 
+
+
     public static class Location implements Serializable{
         public String address;
         public float latitude, longitude;
+
+        public Location(){
+            this(0,0);
+        }
+        public Location(float pLatitude, float pLongitude){
+            this.latitude = pLatitude;
+            this.longitude = pLongitude;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return this.address;
+        }
     }
 
     public static class UIHandler extends AfroObject.UIHandler {
@@ -108,7 +161,7 @@ public class SalonAfroObject extends AfroObject implements Serializable {
         public UIHandler(View itemView) {
             super(itemView);
             this.txtName = itemView.findViewById(R.id.txt_name);
-            this.txtLocation=  itemView.findViewById(R.id.txt_location);
+            this.txtLocation =  itemView.findViewById(R.id.txt_location);
             this.cardView = itemView.findViewById(R.id.crd_salon);
         }
 

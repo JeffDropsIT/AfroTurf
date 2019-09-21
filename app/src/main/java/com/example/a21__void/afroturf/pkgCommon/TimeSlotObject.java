@@ -1,26 +1,18 @@
 package com.example.a21__void.afroturf.pkgCommon;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.a21__void.afroturf.R;
 import com.example.a21__void.afroturf.object.AfroObject;
-import com.google.android.gms.common.util.Strings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.maps.internal.StringJoin;
 import com.ixcoda.StringsUtils;
-
-import java.util.jar.Attributes;
 
 public class TimeSlotObject extends AfroObject {
     public final int startHour;

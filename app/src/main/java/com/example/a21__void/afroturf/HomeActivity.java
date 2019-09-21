@@ -1,58 +1,41 @@
 package com.example.a21__void.afroturf;
 
-import android.animation.Animator;
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.test.suitebuilder.annotation.SmallTest;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.LinearLayout;
 
 
-import com.example.a21__void.Modules.AfroFragment;
 import com.example.a21__void.Modules.CustomClusterRender;
-import com.example.a21__void.Modules.ProgressFragment;
-import com.example.a21__void.Modules.SalonsFragementAdapter;
-import com.example.a21__void.afroturf.database.AfroObjectDatabaseHelper;
+import com.example.a21__void.afroturf.fragments.ProgressFragment;
 import com.example.a21__void.afroturf.fragments.SmallPreviewFragment;
+import com.example.a21__void.afroturf.libIX.activity.AfroActivity;
+import com.example.a21__void.afroturf.libIX.fragment.AfroFragment;
+import com.example.a21__void.afroturf.libIX.fragment.ProcessErrorFragment;
+import com.example.a21__void.afroturf.libIX.ui.RichTextView;
 import com.example.a21__void.afroturf.manager.BookmarkManager;
 import com.example.a21__void.afroturf.manager.CacheManager;
+import com.example.a21__void.afroturf.manager.ConnectionManager;
+import com.example.a21__void.afroturf.manager.LocationManager;
 import com.example.a21__void.afroturf.manager.ReviewsManager;
 import com.example.a21__void.afroturf.manager.SalonsManager;
 import com.example.a21__void.Modules.SearchFragment;
 import com.example.a21__void.afroturf.manager.ServicesManager;
 import com.example.a21__void.afroturf.manager.StylistsManager;
-import com.example.a21__void.afroturf.object.AfroObject;
 import com.example.a21__void.afroturf.object.SalonAfroObject;
-import com.example.a21__void.afroturf.pkgSalon.AfroObjectCursorAdapter;
 import com.example.a21__void.afroturf.pkgSalon.SalonActivity;
-import com.example.a21__void.afroturf.pkgSalon.SalonObject;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -61,23 +44,21 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
-public class HomeActivity extends AfroActivity implements  BottomNavigationView.OnNavigationItemSelectedListener {
-    private static final boolean debug = false;
-    private static final int MODE_IDLE = 0, MODE_SEARCH = 1, MODE_USER_SETTINGS= 2;
+public class HomeActivity extends AfroActivity implements  BottomNavigationView.OnNavigationItemSelectedListener, FragmentManager.OnBackStackChangedListener, View.OnClickListener {
     private static final int SEARCH_RADIUS = 5;
-    private static final int REQ_LOCATION_PERMISSIONS = 132;
+    private static final int REQ_LOCATION_PERMISSIONS = 132
+                                , REQ_PROCESS_ERROR_BOOKMARKS = 214;
+
+    private static final int NUM_SETUP_TASKS = 2;
+
+    private int setupTasksRemaining = NUM_SETUP_TASKS;
 
     private static final String STACK_NAME_USER_PATH = "stack_user",
             STACK_NAME_SEARCH = "stack_search",
@@ -85,18 +66,16 @@ public class HomeActivity extends AfroActivity implements  BottomNavigationView.
             STACK_NAME_PAGES = "stack_pages",
             STACK_NAME_FAVOURITE = "stack_favourite";
 
-    private int currentMode = MODE_IDLE;
-    private String stackNameNavBottom = null, stackNameNavTop = null;
+    private static final String TAG_PROCESS_ERROR = "TAG_PROCESS_ERROR"
+                                , TAG_PROGRESS = "TAG_PROGRESS";
+
     private SalonAfroObject selectedSalon = null;
 
-    private RelativeLayout previewLayout;
-    private FloatingActionButton fabHide;
 
-    private boolean previewing = false;
-    private boolean progressShown = true;
-
-    private RelativeLayout rel_secondary_container;
     private BottomNavigationView bnvNav;
+    private Toolbar toolbar;
+    private RichTextView txtOffline;
+    private LinearLayout linNoLocation;
 
     //FRAGMENTS
     private final SearchFragment searchFragment = new SearchFragment();
@@ -106,27 +85,17 @@ public class HomeActivity extends AfroActivity implements  BottomNavigationView.
     private final FavouriteFragment favouriteFragment = new FavouriteFragment();
 
     //MAP TAB
-    private SmallPreview smallPreview;
 
 
 
     //DEVICE
-    private Location currentLocation = null;
+    private SalonAfroObject.Location currentLocation = null;
 
     //GOOGLE
-    private boolean isMapReady = false;
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap googleMap;
     private ClusterManager<SalonAfroObject.SalonClusterItem> clusterManager;
 
-
-    LocationManager locationManager;
-    MyLocationListiner locationListener;
-
-    private List<Marker> originMarkers = new ArrayList<>();
-    private List<Marker> destinationMarkers = new ArrayList<>();
-    private List<Polyline> polylinePaths = new ArrayList<>();
-    private ProgressDialog progressDialog;
     //FLAGS
     public static final String FLAG_FIRST_RUN = "flag_first_run";
     //MANAGERS
@@ -139,6 +108,11 @@ public class HomeActivity extends AfroActivity implements  BottomNavigationView.
 
     private MaterialProgressBar progBackgroundWork;
     private Menu topNavigation;
+    private String selectedMenuItem;
+    private int lastFragmentBackStackSize = 0;
+
+
+    private boolean isSettingUp = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,11 +123,10 @@ public class HomeActivity extends AfroActivity implements  BottomNavigationView.
         this.servicesManager = (ServicesManager)CacheManager.getManager(this, ServicesManager.class);
         this.stylistsManager = (StylistsManager)CacheManager.getManager(this, StylistsManager.class);
         this.reviewsManager = (ReviewsManager)CacheManager.getManager(this, ReviewsManager.class);
-        this.bookmarkManager =(BookmarkManager) CacheManager.getManager(this, BookmarkManager.class);
+        this.bookmarkManager = (BookmarkManager)CacheManager.getManager(this, BookmarkManager.class);
 
-
+        this.getSupportFragmentManager().addOnBackStackChangedListener(this);
         SharedPreferences sharedPreferences = this.getSharedPreferences(this.getPackageName(), MODE_PRIVATE);
-
 
         boolean isFirstRun = sharedPreferences.getBoolean(FLAG_FIRST_RUN, true);
         if(isFirstRun){
@@ -170,14 +143,8 @@ public class HomeActivity extends AfroActivity implements  BottomNavigationView.
         this.reviewsManager.beginManagement();
         this.bookmarkManager.beginManagement();
 
-        if(debug){
-            Intent intent = new Intent(this, SalonActivity.class);
-            this.startActivity(intent);
-            return;
-        }
 
-        this.smallPreview = new SmallPreview(this);
-        Toolbar toolbar = this.findViewById(R.id.toolbar);
+        this.toolbar = this.findViewById(R.id.toolbar);
         this.setSupportActionBar(toolbar);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -186,88 +153,108 @@ public class HomeActivity extends AfroActivity implements  BottomNavigationView.
         bnvNav.setItemIconTintList(null);
         bnvNav.setOnNavigationItemSelectedListener(this);
 
-        this.rel_secondary_container = this.findViewById(R.id.rel_secondary_container);
+        this.linNoLocation = this.findViewById(R.id.lin_no_location);
+
+        this.txtOffline = this.findViewById(R.id.txt_offline);
+        this.txtOffline.setOnClickListener(this);
+
         this.progBackgroundWork = this.findViewById(R.id.prog_background_work);
-
-
-        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
         this.progBackgroundWork.setVisibility(View.INVISIBLE);
-        locationManager = (LocationManager) getSystemService(this.LOCATION_SERVICE);
-        this.smallPreviewFragment.setClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, SalonActivity.class);
-                intent.putExtra(SalonActivity.EXTRA_SALON, HomeActivity.this.selectedSalon);
-                HomeActivity.this.startActivity(intent);
-            }
-        });
-        this.pagesFragment.setOnItemClickListener(new SalonsFragementAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(SalonAfroObject salonAfroObject, int position) {
-                Intent intent = new Intent(HomeActivity.this, SalonActivity.class);
-                intent.putExtra(SalonActivity.EXTRA_SALON, salonAfroObject);
-                HomeActivity.this.startActivity(intent);
-            }
-        });
-        this.init();
+
+        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.getApplicationContext());
+
+        this.setup();
     }
 
-    private void init(){
-        this.showProgress();
-        this.setUpMap();
-        this.getDeviceLocation(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(final Location location) {
-                SalonsManager.getInstance(getApplicationContext()).requestRefresh(new CacheManager.ManagerRequestListener<CacheManager>() {
-                    @Override
-                    public void onRespond(CacheManager result) {
-                        currentLocation = location;
-                        HomeActivity.this.refreshMap();
-                    }
+    private void setup(){
+        this.isSettingUp = true;
+        this.showProgress("Setting up");
+        this.taskSetUpMap();
 
-                    @Override
-                    public void onApiError(CacheManager.ApiError apiError) {
-                        //todo error
-                    }
-                });
+        LocationManager locationManager = LocationManager.getInstance(this.getApplicationContext());
+        locationManager.getDeviceLocation(new LocationManager.LocationListener() {
+            @Override
+            public void onGetLocation(SalonAfroObject.Location location, boolean current) {
+                HomeActivity.this.linNoLocation.setVisibility(null != null ? View.INVISIBLE : View.VISIBLE);
+                onTaskFinished();
+            }
+
+           @Override
+            public void onError() {
+                onTaskFinished();
             }
         });
     }
 
-    public void getDeviceLocation(OnSuccessListener<Location> locationCallback) {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, REQ_LOCATION_PERMISSIONS);
-            return;
-        }else{
-            this.fusedLocationClient.getLastLocation().addOnSuccessListener(locationCallback);
-        }
-    }
-
-    private void setUpMap() {
+    private void taskSetUpMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         GoogleMapManager.getInstance().registerMapCallback(mapFragment, new GoogleMapManager.MapCallback() {
             @SuppressLint("MissingPermission")
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 HomeActivity.this.googleMap = googleMap;
-
                 HomeActivity.this.googleMap.setMyLocationEnabled(true);
 
                 UiSettings mapUiSettings = HomeActivity.this.googleMap.getUiSettings();
                 mapUiSettings.setZoomControlsEnabled(false);
                 mapUiSettings.setMapToolbarEnabled(false);
 
-
                 HomeActivity.this.setUpClusterManager();
-                HomeActivity.this.isMapReady = true;
-                HomeActivity.this.refreshMap();
+                HomeActivity.this.onTaskFinished();
             }
         });
     }
 
+    private void onTaskFinished() {
+        this.setupTasksRemaining--;
+        if(this.setupTasksRemaining <= 0){
+            this.onSetupTasksFinished();
+        }
+    }
+
+    private void onSetupTasksFinished(){
+
+        SalonAfroObject.Location userLocation = LocationManager.getInstance(this.getApplicationContext()).getCurrentLocation();
+        if(userLocation != null){
+            final LatLng customerLocation = new LatLng(userLocation.latitude, userLocation.longitude);
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(customerLocation)
+                    .zoom(13f)
+                    .bearing(50)
+                    .tilt(30)
+                    .build();
+
+            this.googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
+
+        this.hideProgress();
+        this.onDoBackgroundWork();
+
+        HomeActivity.this.salonsManager.updateLocation(userLocation, new CacheManager.ManagerRequestListener<ArrayList<SalonAfroObject>>() {
+            @Override
+            public void onRespond(ArrayList<SalonAfroObject> result) {
+                clusterManager.clearItems();
+                for(int pos = 0; pos < result.size(); pos++){
+                    SalonAfroObject salonAfroObject = result.get(pos);
+                    clusterManager.addItem(new SalonAfroObject.SalonClusterItem(salonAfroObject));
+                    if(pos == 0)
+                        HomeActivity.this.selectedSalon = salonAfroObject;
+                }
+                isSettingUp = false;
+                HomeActivity.this.onFinishBackgroundWork();
+            }
+
+            @Override
+            public void onApiError(CacheManager.ApiError apiError) {
+
+            }
+        });
+
+        HomeActivity.this.selectedMenuItem = null;
+        bnvNav.setSelectedItemId(R.id.nav_pages);
+    }
+
     private void setUpClusterManager() {
-        if(isMapReady){
             this.clusterManager = new ClusterManager<SalonAfroObject.SalonClusterItem>(this, this.googleMap);
 
             this.googleMap.setOnCameraIdleListener(this.clusterManager);
@@ -276,201 +263,123 @@ public class HomeActivity extends AfroActivity implements  BottomNavigationView.
                 @Override
                 public boolean onClusterItemClick(SalonAfroObject.SalonClusterItem salonObject) {
                     HomeActivity.this.selectedSalon = salonObject.getSalonAfroObject();
-                    HomeActivity.this.onMapPinClick(salonObject);
+                    if(HomeActivity.this.selectedMenuItem == null)
+                        return false;
+
+                    if(HomeActivity.this.selectedMenuItem == STACK_NAME_SMALL_PREVIEW){
+                        SmallPreviewFragment smallPreviewFragment = (SmallPreviewFragment) HomeActivity.this.getSupportFragmentManager().findFragmentByTag(HomeActivity.this.selectedMenuItem);
+                        smallPreviewFragment.setSalonObject(HomeActivity.this.selectedSalon);
+                    }else if(selectedMenuItem == STACK_NAME_PAGES){
+                        PagesFragment pagesFragment = (PagesFragment)HomeActivity.this.getSupportFragmentManager().findFragmentByTag(selectedMenuItem);
+                        pagesFragment.focusOnPage(selectedSalon);
+                    }
                     return false;
                 }
             });
 
            this.clusterManager.setRenderer(new CustomClusterRender(this, this.googleMap, this.clusterManager));
-        }
     }
 
-    private void onMapPinClick(SalonAfroObject.SalonClusterItem salonObject) {
-        if(this.stackNameNavBottom == null)
+    private void setMenuItemSelectedIcon(String currentStackName) {
+        if(currentStackName == null)
             return;
 
-        if(stackNameNavBottom == STACK_NAME_SMALL_PREVIEW){
-            SmallPreviewFragment smallPreviewFragment = (SmallPreviewFragment) this.getSupportFragmentManager().findFragmentByTag(stackNameNavBottom);
-            smallPreviewFragment.setSalonObject(this.selectedSalon);
-        }else if(stackNameNavBottom == STACK_NAME_PAGES){
-            PagesFragment pagesFragment = (PagesFragment) this.getSupportFragmentManager().findFragmentByTag(stackNameNavBottom);
-        }else{
-
+        MenuItem item;
+        switch (currentStackName){
+            case STACK_NAME_SMALL_PREVIEW:
+                item = this.bnvNav.getMenu().findItem(R.id.nav_map);
+                item.setIcon(R.drawable.ic_map_selected);
+                break;
+            case STACK_NAME_PAGES:
+                item = this.bnvNav.getMenu().findItem(R.id.nav_pages);
+                item.setIcon(R.drawable.ic_pages_selected);
+                break;
+            case STACK_NAME_FAVOURITE:
+                item = this.bnvNav.getMenu().findItem(R.id.nav_bookmark);
+                item.setIcon(R.drawable.ic_bookmark_selected);
+                break;
+            case STACK_NAME_USER_PATH:
+                item = this.topNavigation.findItem(R.id.nav_user);
+                item.setIcon(R.drawable.ic_user);
+                break;
+            case STACK_NAME_SEARCH:
+                item = this.topNavigation.findItem(R.id.nav_search);
+                item.setIcon(R.drawable.ic_search);
+                Log.i("1245", "setMenuItemSelectedIcon: ");
+                break;
+            default:
         }
     }
 
-    private void refreshMap() {
-        if(isMapReady && currentLocation != null){
-            if(!debug){
-                final LatLng customerLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(customerLocation)      // Sets the center of the map to Mountain View
-                        .zoom(12f)                   // Sets the zoom
-                        .bearing(50)                // Sets the orientation of the camera to east
-                        .tilt(30)                   // Sets the tilt of the camera to 30 degrees
-                        .build();                  // Creates a CameraPosition from the builder
-                this.googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    private void setMenuItemDeselectedIcon(String stackNameNavBottom) {
+        if(stackNameNavBottom == null)
+            return;
 
-                HomeActivity.this.salonsManager.requestRefresh(new CacheManager.ManagerRequestListener<CacheManager>() {
-                    @Override
-                    public void onRespond(CacheManager result) {
-                        HomeActivity.this.setUpClusterManager();
-                        clusterManager.clearItems();
-                        JsonParser jsonParser = new JsonParser();
-                        for(int pos = 0; pos < result.getCachePointer().getCursor().getCount(); pos++){
-                            Cursor cursor = result.getCachePointer().getCursor();
-                            if(!cursor.moveToPosition(pos))
-                                continue;
+        MenuItem item;
+        switch (stackNameNavBottom){
+            case STACK_NAME_SMALL_PREVIEW:
+                item = this.bnvNav.getMenu().findItem(R.id.nav_map);
+                item.setIcon(R.drawable.ic_map_deselected);
+                break;
+            case STACK_NAME_PAGES:
+                item = this.bnvNav.getMenu().findItem(R.id.nav_pages);
+                item.setIcon(R.drawable.ic_pages_deslected);
+                break;
+            case STACK_NAME_FAVOURITE:
+                item = this.bnvNav.getMenu().findItem(R.id.nav_bookmark);
+                item.setIcon(R.drawable.ic_bookmark_deselected);
+                break;
+            case STACK_NAME_USER_PATH:
+                item = this.topNavigation.findItem(R.id.nav_user);
+                item.setIcon(R.drawable.user_icon);
+                break;
+            case STACK_NAME_SEARCH:
+                item = this.topNavigation.findItem(R.id.nav_search);
+                item.setIcon(R.drawable.search_icon);
+                break;
+            default:
+        }
+    }
 
-                            byte[] json = cursor.getBlob(cursor.getColumnIndex(AfroObjectDatabaseHelper.COLUMN_JSON));
-                            SalonAfroObject salonAfroObject = new SalonAfroObject();
-                            salonAfroObject.set(jsonParser, new String(json));
 
-                            clusterManager.addItem(new SalonAfroObject.SalonClusterItem(salonAfroObject));
-                            if(pos == 0)
-                                HomeActivity.this.selectedSalon = salonAfroObject;
-                        }
-                        Log.i("TGIF", customerLocation + ":");
-                        HomeActivity.this.hideProgress();
-                        bnvNav.setSelectedItemId(R.id.nav_pages);
-                    }
+    private String convertTOStackName(int itemId) {
+        switch (itemId){
+            case R.id.nav_map:
+                return STACK_NAME_SMALL_PREVIEW;
+            case R.id.nav_pages:
+                return  STACK_NAME_PAGES;
+            case R.id.nav_bookmark:
+                return  STACK_NAME_FAVOURITE;
+            case R.id.nav_user:
+                return STACK_NAME_USER_PATH;
+            case R.id.nav_search:
+                return STACK_NAME_SEARCH;
+            default:
+                return "";
+        }
+    }
 
-                    @Override
-                    public void onApiError(CacheManager.ApiError apiError) {
-                        //todo error
-                    }
-                });
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.smallPreviewFragment.setClickListener(new SmallPreviewFragment.InteractionListener() {
+            @Override
+            public void onClick(SalonAfroObject salon) {
+                Intent intent = new Intent(HomeActivity.this, SalonActivity.class);
+                intent.putExtra(SalonActivity.EXTRA_SALON, HomeActivity.this.selectedSalon);
+                HomeActivity.this.startActivity(intent);
             }
-        }
-    }
-
-
-    private void showProgress(){
-        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.rel_secondary_container, ProgressFragment.newInstance("Loading Salons"), ProgressFragment.TAG);
-        transaction.commit();
-    }
-
-    private void hideProgress(){
-        final Fragment currentProgressTag = this.getSupportFragmentManager().findFragmentByTag(ProgressFragment.TAG);
-
-        if(currentProgressTag != null){
-            Animator animator = ((ProgressFragment)currentProgressTag).hide();
-
-            if(animator != null){
-                animator.addListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        FragmentTransaction transaction = HomeActivity.this.getSupportFragmentManager().beginTransaction();
-                        transaction.remove(currentProgressTag);
-                        transaction.commit();
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
-                });
-                animator.start();
-            }else{
-                FragmentTransaction transaction = HomeActivity.this.getSupportFragmentManager().beginTransaction();
-                transaction.remove(currentProgressTag);
-                transaction.commit();
+        });
+        this.pagesFragment.setOnClickListener(new PagesFragment.OnClickListener() {
+            @Override
+            public void onItemClick(SalonAfroObject salon, int position) {
+                Intent intent = new Intent(HomeActivity.this, SalonActivity.class);
+                intent.putExtra(SalonActivity.EXTRA_SALON, salon);
+                HomeActivity.this.startActivity(intent);
             }
-
-        }
+        });
     }
-
-
-
-
-
-
-//    private void getSalons(double latitude, double longitude, double searchRadius, RemoteDataRetriever.DataCallback callback){
-//        String url = "https://us-central1-afroturf-d2c3a.cloudfunctions.net/search?location=" + latitude +"," + longitude + "&radius=" + searchRadius + "&searchPath=salons";
-//        RemoteDataRetriever.getInstance().get(url, callback);
-//    }
-
-
-//    private void sendRequest() {
-//        String origin = Double.toString(latitude) + "," + Double.toString(longitude);
-//        Log.i("RFC", "sendRequest: " + origin);
-//        String destination = Double.toString(latitude+.1) + "," + Double.toString(longitude+.1);
-//        try{
-//            new DirectionFinder(this, origin, destination).execute();
-//        }catch (UnsupportedEncodingException e){
-//            e.printStackTrace();
-//        }
-//    }
-
-
-//    @Override
-//    public void onDirectionFinderStart() {
-//        progressDialog = ProgressDialog.show(this, "Please wait.",
-//                "Finding direction..!", true);
-//
-//        if (originMarkers != null) {
-//            for (Marker marker : originMarkers) {
-//                marker.remove();
-//            }
-//        }
-//
-//        if (destinationMarkers != null) {
-//            for (Marker marker : destinationMarkers) {
-//                marker.remove();
-//            }
-//        }
-//
-//        if (polylinePaths != null) {
-//            for (Polyline polyline:polylinePaths ) {
-//                polyline.remove();
-//            }
-//        }
-//    }
-
-//    @Override
-//    public void onDirectionFinderSuccess(List<Route> routes) {
-//        progressDialog.dismiss();
-//        polylinePaths = new ArrayList<>();
-//        originMarkers = new ArrayList<>();
-//        destinationMarkers = new ArrayList<>();
-//
-//        for (Route route : routes) {
-//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
-//            //((TextView) findViewById(R.id.ttvDuration)).setText(route.duration.text);
-//            //((TextView) findViewById(R.id.ttvDistance)).setText(route.distance.text);
-//
-//            originMarkers.add(mMap.addMarker(new MarkerOptions()
-//                    .title(route.startAddress)
-//                    .position(route.startLocation)
-//            .icon(locationIcon)));
-//            destinationMarkers.add(mMap.addMarker(new MarkerOptions()
-//                    .title(route.endAddress)
-//                    .position(route.endLocation)
-//            .icon(locationIcon)));
-//
-//            PolylineOptions polylineOptions = new PolylineOptions().
-//                    geodesic(true).
-//                    color(Color.rgb( 0,179, 253))
-//                    .width(10);
-//
-//            for (int i = 0; i < route.points.size(); i++)
-//                polylineOptions.add(route.points.get(i));
-//
-//            polylinePaths.add(mMap.addPolyline(polylineOptions));
-//        }
-//    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -486,234 +395,213 @@ public class HomeActivity extends AfroActivity implements  BottomNavigationView.
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        if(this.stackNameNavTop != null){
-            AfroFragment afroFragment = (AfroFragment)this.getSupportFragmentManager().findFragmentByTag(this.stackNameNavTop);
-            afroFragment.requestClose(new AfroFragment.AfroFragmentCallback() {
-                @Override
-                public void onShow() {
+        if(this.isSettingUp)
+            return false;
 
-                }
+        String stackName = this.convertTOStackName(item.getItemId());
 
-                @Override
-                public void onClose() {
-                    HomeActivity.this.getSupportFragmentManager().popBackStack(stackNameNavTop, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    if(!stackNameNavTop.equals(convertTOStackName(item.getItemId())))
-                        addTopNavFragment(convertTOStackName(item.getItemId()));
-                    else
-                        stackNameNavTop = null;
-                }
-            });
+        if(this.selectedMenuItem != stackName){
+            this.setMenuItemDeselectedIcon(this.selectedMenuItem);
+
+            FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+            boolean currentNavTop = (selectedMenuItem == STACK_NAME_SEARCH || selectedMenuItem == STACK_NAME_USER_PATH);
+            int animExit = currentNavTop ? R.anim.anim_slide_up_offscreen : R.anim.anim_slide_down
+                    , animBackStackEnter = currentNavTop ? R.anim.anim_slide_onscreen_down : R.anim.anim_slide_up ;
+            transaction.setCustomAnimations(R.anim.anim_slide_onscreen_down, animExit, animBackStackEnter, R.anim.anim_slide_up_offscreen);
+
+            switch (stackName){
+                case STACK_NAME_SEARCH:
+                    transaction.replace(R.id.rel_secondary_container, this.searchFragment, stackName);
+                    break;
+                case STACK_NAME_USER_PATH:
+                    transaction.replace(R.id.rel_secondary_container, this.userSettingFragment, stackName);
+                    break;
+            }
+
+            this.selectedMenuItem = stackName;
+            this.setMenuItemSelectedIcon(this.selectedMenuItem);
+            transaction.addToBackStack(this.selectedMenuItem);
+            this.lastFragmentBackStackSize++;
+            transaction.commit();
+
         }else{
-            this.addTopNavFragment(this.convertTOStackName(item.getItemId()));
+            this.getSupportFragmentManager().popBackStack();
         }
         return true;
     }
 
-    private void addTopNavFragment(String stackName) {
-        FragmentManager fragmentManager = this.getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        this.deselectMenuItem(topNavigation, stackNameNavTop);
-
-        switch (stackName){
-            case STACK_NAME_USER_PATH:
-                transaction.replace(R.id.rel_tertiary_container, this.userSettingFragment, STACK_NAME_USER_PATH);
-                stackNameNavTop = STACK_NAME_USER_PATH;
-                break;
-            case STACK_NAME_SEARCH:
-                transaction.replace(R.id.rel_tertiary_container, this.searchFragment, STACK_NAME_SEARCH);
-                stackNameNavTop = STACK_NAME_SEARCH;
-                break;
-                default:
-                return;
-        }
-        transaction.commit();
-    }
- @Override
+    @Override
     public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
-        if(this.stackNameNavTop != null) {
-            this.getSupportFragmentManager().popBackStack(stackNameNavTop, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            stackNameNavTop = null;
-        }
+        if(isSettingUp && item.getItemId() != R.id.nav_pages)
+            return false;
 
-        if(this.stackNameNavBottom == convertTOStackName(item.getItemId()))
+        String nextStackName = convertTOStackName(item.getItemId());
+        if(this.selectedMenuItem == nextStackName)
             return true;
 
-        final FragmentManager fragmentManager = this.getSupportFragmentManager();
-        if(this.stackNameNavBottom != null){
-            AfroFragment afroFragment = (AfroFragment)fragmentManager.findFragmentByTag(stackNameNavBottom);
-            if(this.stackNameNavTop == null)
-                afroFragment.requestClose(new AfroFragment.AfroFragmentCallback() {
-                    @Override
-                    public void onShow() {
 
-                    }
-
-                    @Override
-                    public void onClose() {
-                        switchBottomNavigation(item);
-                    }
-                });
-            else{
-                switchBottomNavigation(item);
-            }
-        }else{
-            switchBottomNavigation(item);
-        }
-        return true;
-    }
-
-    private String convertTOStackName(int itemId) {
-        switch (itemId){
-            case R.id.nav_map:
-                return STACK_NAME_SMALL_PREVIEW;
-            case R.id.nav_pages:
-                return  STACK_NAME_PAGES;
-            case R.id.nav_bookmark:
-                return  STACK_NAME_FAVOURITE;
-            case R.id.nav_user:
-                return STACK_NAME_USER_PATH;
-            case R.id.nav_search:
-                return STACK_NAME_SEARCH;
-                default:
-                    return "";
-        }
-    }
-
-    private void switchBottomNavigation(MenuItem item) {
+        String lastSelectedItem  = this.selectedMenuItem;
         FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-        this.deselectMenuItem(this.bnvNav.getMenu(), this.stackNameNavBottom);
+        this.setMenuItemDeselectedIcon(this.selectedMenuItem);
 
+        boolean currentNavTop = (selectedMenuItem == STACK_NAME_SEARCH || selectedMenuItem == STACK_NAME_USER_PATH);
+        int animExit = currentNavTop ? R.anim.anim_slide_up_offscreen : R.anim.anim_slide_down
+                , animBackStackEnter = currentNavTop ? R.anim.anim_slide_onscreen_down : R.anim.anim_slide_up ;
 
         switch (item.getItemId()){
             case R.id.nav_map:
-                item.setIcon(R.drawable.ic_map_selected);
-                this.stackNameNavBottom = STACK_NAME_SMALL_PREVIEW;
-                transaction.replace(R.id.rel_secondary_container, this.smallPreviewFragment, STACK_NAME_SMALL_PREVIEW);
-                this.smallPreviewFragment.setSalonObject(this.selectedSalon);
-                break;
-            case R.id.nav_pages:
-                item.setIcon(R.drawable.ic_pages_selected);
-                this.stackNameNavBottom = STACK_NAME_PAGES;
-                transaction.replace(R.id.rel_secondary_container, this.pagesFragment, STACK_NAME_PAGES);
-                break;
-            case R.id.nav_bookmark:
-                item.setIcon(R.drawable.ic_bookmark_selected);
-                this.stackNameNavBottom = STACK_NAME_FAVOURITE;
-                transaction.replace(R.id.rel_secondary_container, this.favouriteFragment, STACK_NAME_FAVOURITE);
-                break;
-            default:
-        }
-        transaction.addToBackStack(this.stackNameNavBottom);
-        transaction.commit();
+             item.setIcon(R.drawable.ic_map_selected);
+             this.selectedMenuItem = STACK_NAME_SMALL_PREVIEW;
+
+             transaction.setCustomAnimations(R.anim.anim_slide_up, animExit, animBackStackEnter, R.anim.anim_slide_down);
+             transaction.replace(R.id.rel_secondary_container, this.smallPreviewFragment, STACK_NAME_SMALL_PREVIEW);
+             this.smallPreviewFragment.setLoading(this.isSettingUp);
+             this.smallPreviewFragment.setSalonObject(this.selectedSalon);
+             break;
+         case R.id.nav_pages:
+             item.setIcon(R.drawable.ic_pages_selected);
+             this.selectedMenuItem = STACK_NAME_PAGES;
+             transaction.setCustomAnimations(R.anim.anim_slide_up, animExit,  animBackStackEnter, R.anim.anim_slide_down);
+             transaction.replace(R.id.rel_secondary_container, this.pagesFragment, STACK_NAME_PAGES);
+             break;
+         case R.id.nav_bookmark:
+             item.setIcon(R.drawable.ic_bookmark_selected);
+             this.selectedMenuItem = STACK_NAME_FAVOURITE;
+             transaction.setCustomAnimations(R.anim.anim_slide_up, animExit,  animBackStackEnter, R.anim.anim_slide_down);
+             transaction.replace(R.id.rel_secondary_container, this.favouriteFragment, STACK_NAME_FAVOURITE);
+             break;
+         default:
+     }
+
+     if(lastSelectedItem != null)
+        transaction.addToBackStack(this.selectedMenuItem);
+
+     this.lastFragmentBackStackSize++;
+     transaction.commit();
+        return true;
     }
 
-    private void deselectMenuItem(Menu menu, String stackNameNavBottom) {
-        if(menu == null || stackNameNavBottom == null)
-            return;
+    @Override
+    public void onProcessError(AfroFragment parent, int processId, int resIcon, String title, String message) {
+        if(parent instanceof FavouriteFragment){
+            ProcessErrorFragment processErrorFragment = ProcessErrorFragment.newInstance(REQ_PROCESS_ERROR_BOOKMARKS, processId, title, message, resIcon);
 
-        MenuItem item;
-        switch (stackNameNavBottom){
-            case STACK_NAME_SMALL_PREVIEW:
-                item = menu.findItem(R.id.nav_map);
-                item.setIcon(R.drawable.ic_map_deselected);
-                break;
-            case STACK_NAME_PAGES:
-                item = menu.findItem(R.id.nav_pages);
-                item.setIcon(R.drawable.ic_pages_deslected);
-                break;
-            case STACK_NAME_FAVOURITE:
-                item = menu.findItem(R.id.nav_bookmark);
-                item.setIcon(R.drawable.ic_bookmark_deselected);
-                break;
-            case STACK_NAME_USER_PATH:
-                item = menu.findItem(R.id.nav_user);
-                item.setIcon(R.drawable.ic_user);
-                break;
-            case STACK_NAME_SEARCH:
-                item = menu.findItem(R.id.nav_search);
-                item.setIcon(R.drawable.search_icon);
-                break;
-                default:
+            this.getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .add(processErrorFragment, TAG_PROCESS_ERROR)
+                    .commit();
         }
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        getSupportFragmentManager().popBackStack();
-        this.onBackPressed();
-        Toast.makeText(this, "b", Toast.LENGTH_SHORT).show();
-        return false;
-    }
-
-    @Override
-    public void onBackPressed() {
-        this.currentMode = MODE_IDLE;
-        super.onBackPressed();
-    }
-
-    @Override
-    public void showIndeterminateProgress() {
+    public void onDoBackgroundWork() {
+        super.onDoBackgroundWork();
         if(this.progBackgroundWork != null && this.progBackgroundWork.getVisibility() != View.VISIBLE)
             this.progBackgroundWork.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void hideIndeterminateProgress() {
-        if(this.progBackgroundWork != null && this.progBackgroundWork.getVisibility() != View.INVISIBLE)
-            this.progBackgroundWork.setVisibility(View.INVISIBLE);
+    public void onFinishBackgroundWork() {
+        super.onFinishBackgroundWork();
+        if(this.getActiveBackgroundWorkCount() <= 0)
+            if(this.progBackgroundWork != null && this.progBackgroundWork.getVisibility() != View.INVISIBLE)
+                this.progBackgroundWork.setVisibility(View.INVISIBLE);
     }
 
     @Override
-    protected int getErrorContainerId() {
-        return R.id.rel_secondary_container;
+    public void showProgress(String message) {
+        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+
+        ProgressFragment progressFragment = ProgressFragment.newInstance(message);
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.rel_secondary_container, progressFragment, TAG_PROGRESS)
+                .commitNow();
     }
 
-    private static class SmallPreview{
-        private final RelativeLayout parentView;
-        private final TextView txtName;
-        private final RatingBar ratRating;
-        private final ImageView imgNext;
-        private RelativeLayout currentContainer;
+    @Override
+    public void hideProgress() {
+        Fragment fragment = this.getSupportFragmentManager().findFragmentByTag(TAG_PROGRESS);
+        if(fragment == null)
+            return;
 
-        private boolean isShown;
+        this.getSupportFragmentManager().beginTransaction()
+                .remove(fragment)
+                .commit();
+    }
 
-        public SmallPreview(Context context){
-            this.isShown = false;
-            this.parentView = (RelativeLayout)LayoutInflater.from(context).inflate(R.layout.small_preview, null, false);
-            this.txtName = this.parentView.findViewById(R.id.txt_name);
-            this.ratRating = this.parentView.findViewById(R.id.rat_rating);
-            this.imgNext = this.parentView.findViewById(R.id.img_next);
-        }
+    @Override
+    public boolean onSupportNavigateUp() {
+        this.getSupportFragmentManager().popBackStack();
+        return false;
+    }
 
-        public void show(RelativeLayout container, SalonObject salonObject, View.OnClickListener onClickListener){
-            this.hide();
-            RelativeLayout.LayoutParams params  = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 
-            this.currentContainer = container;
-            this.imgNext.setOnClickListener(onClickListener);
-            this.currentContainer.addView(this.parentView, params);
-            //TODO animate
+    @Override
+    public void onBackStackChanged() {
 
-            this.update(salonObject);
-            this.isShown = true;
-        }
+        Log.i("1245", "onBackStackChanged: " + lastFragmentBackStackSize + "|" + this.getSupportFragmentManager().getBackStackEntryCount());
+        if(this.lastFragmentBackStackSize > this.getSupportFragmentManager().getBackStackEntryCount()){
+            this.lastFragmentBackStackSize--;
+            this.setMenuItemDeselectedIcon(this.selectedMenuItem);
+            Log.i("1245", "onBackStackChanged: " + this.selectedMenuItem);
 
-        public void update(SalonObject salonObject) {
-            this.txtName.setText(salonObject.getTitle());
-            this.ratRating.setRating(new Float(salonObject.getRating()));
-        }
+            FragmentManager fragmentManager = this.getSupportFragmentManager();
+            String currentStackName;
+            if(fragmentManager.getBackStackEntryCount() > 0){
+                currentStackName = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
+                Log.i("1245", "onBackStackChangedt: " + currentStackName);
+            }else{
+                currentStackName = STACK_NAME_PAGES;
+            }
 
-        public void hide(){
-            if(this.currentContainer != null){
-                this.currentContainer.removeView(parentView);
-                this.currentContainer = null;
-                this.isShown = false;
+            this.setMenuItemSelectedIcon(currentStackName);
+            this.selectedMenuItem = currentStackName;
+
+            switch (this.selectedMenuItem){
+                case STACK_NAME_SMALL_PREVIEW:
+                    this.bnvNav.setSelectedItemId(R.id.nav_map);
+                    break;
+                case STACK_NAME_PAGES:
+                    this.bnvNav.setSelectedItemId(R.id.nav_pages);
+                    break;
+                case STACK_NAME_FAVOURITE:
+                    this.bnvNav.setSelectedItemId(R.id.nav_bookmark);
+                    break;
             }
         }
 
-        public boolean isShown(){
-            return this.isShown;
+    }
+
+    @Override
+    public void onRequestRetry(int requestID, int processID) {
+
+    }
+
+    @Override
+    public void onRequestCancel(int requestID, int processID) {
+
+    }
+
+    @Override
+    protected void onWorkModeChange(int mode) {
+        if(mode == ConnectionManager.WORKING_MODE_OFFLINE){
+            this.txtOffline.setVisibility(View.VISIBLE);
+        }else{
+            this.txtOffline.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.txt_offline:
+                txtOffline.setVisibility(View.INVISIBLE);
+                this.requestOnlineWorkingMode();
+                break;
         }
     }
 

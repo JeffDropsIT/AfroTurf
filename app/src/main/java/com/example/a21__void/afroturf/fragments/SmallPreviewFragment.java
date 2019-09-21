@@ -2,8 +2,11 @@ package com.example.a21__void.afroturf.fragments;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,147 +16,67 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.a21__void.Modules.AfroFragment;
 import com.example.a21__void.afroturf.R;
+import com.example.a21__void.afroturf.libIX.fragment.AfroFragment;
+import com.example.a21__void.afroturf.manager.LocationManager;
 import com.example.a21__void.afroturf.object.SalonAfroObject;
+import com.google.gson.JsonParser;
+import com.wang.avi.AVLoadingIndicatorView;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SmallPreviewFragment extends AfroFragment {
+public class SmallPreviewFragment extends AfroFragment implements View.OnClickListener {
+    private static final String BUNDLE_SALON_OBJECT = "bundle_salon_object";
     private SalonAfroObject salonAfroObject = null;
-    private boolean animating = false;
-    private boolean isShown = false;
-    private Animation animSlideIn, animSlideOut;
-    private View preview = null;
-    private View.OnClickListener clickListener;
+    private boolean isLoading = false;
+    private View preview = null, txtNoSalons;
+    private RelativeLayout relLoading;
+    private InteractionListener interactionListener;
 
     public SmallPreviewFragment() {
         // Required empty public constructor
     }
 
-    private void showPreview(){
-        if(this.preview != null && this.animSlideIn != null){
-            this.animSlideIn.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
 
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    SmallPreviewFragment.this.animating = false;
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            this.preview.setVisibility(View.VISIBLE);
-            this.preview.startAnimation(this.animSlideIn);
-            this.animating = true;
-            this.isShown = true;
-        }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
-
-    private void hidePreview(final AfroFragmentCallback callback){
-        if(this.preview != null && this.animSlideOut != null){
-            this.animSlideOut.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if(callback != null)
-                        callback.onClose();
-                    SmallPreviewFragment.this.animating = false;
-                    SmallPreviewFragment.this.preview.setVisibility(View.INVISIBLE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            this.preview.startAnimation(this.animSlideOut);
-            this.isShown = false;
-        }
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         RelativeLayout relParent = (RelativeLayout)inflater.inflate(R.layout.small_preview, container, false);
         this.preview = relParent.findViewById(R.id.crd_small_preview);
+        this.txtNoSalons = relParent.findViewById(R.id.txt_no_salons);
+        this.relLoading = relParent.findViewById(R.id.rel_progress);
 
-        this.animSlideIn = AnimationUtils.loadAnimation(this.getContext(), R.anim.anim_slide_up);
-        this.animSlideOut = AnimationUtils.loadAnimation(this.getContext(), R.anim.anim_slide_down);
-        this.animSlideIn.setDuration(250);
-        this.animSlideOut.setDuration(250);
+        this.preview.setOnClickListener(this);
 
-        if(this.clickListener != null)
-            preview.setOnClickListener(this.clickListener);
+        if(savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SALON_OBJECT)){
+            this.salonAfroObject = new SalonAfroObject();
+            this.salonAfroObject.set(new JsonParser(), savedInstanceState.getString(BUNDLE_SALON_OBJECT));
+        }
 
         return relParent;
     }
 
-    @Override
-    public void requestClose(final AfroFragmentCallback callback) {
-
-        if(this.isShown){
-            this.hidePreview(callback);
-        }else{
-            callback.onClose();
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-    }
 
     @Override
     public void onResume() {
-        if(this.salonAfroObject != null) {
-            this.updateUI();
-            this.showPreview();
-        }
-        else{
-            if(this.isShown){
-                this.hidePreview(null);
-            }
-        }
         super.onResume();
-    }
-
-    @Override
-    public String getTitle() {
-        return "Preview";
+        this.refresh();
     }
 
 
-    public void setClickListener(View.OnClickListener clickListener) {
-        this.clickListener = clickListener;
-        if(this.preview != null)
-            this.preview.setOnClickListener(clickListener);
+    public void setClickListener(InteractionListener interactionListener) {
+        this.interactionListener = interactionListener;
     }
 
     public void setSalonObject(SalonAfroObject pSalonObject){
         this.salonAfroObject = pSalonObject;
-        this.updateUI();
-
-        if(this.isShown){
-            if(this.salonAfroObject == null)
-                this.hidePreview(null);
-        }else{
-            if(this.salonAfroObject != null)
-                this.showPreview();
-        }
+        this.refresh();
     }
 
     private void updateUI() {
@@ -167,5 +90,59 @@ public class SmallPreviewFragment extends AfroFragment {
             txtName.setText(this.salonAfroObject.getName());
             ratRating.setRating(this.salonAfroObject.getRating());
         }
+    }
+
+    public void setLoading(boolean pIsLoading) {
+        this.isLoading = pIsLoading;
+    }
+
+    @Override
+    public void retryProcess(int processId) {
+
+    }
+
+    @Override
+    public void cancelProcess(int processId) {
+
+    }
+
+    @Override
+    public void refresh() {
+        if(preview == null)
+            return;
+
+        if(!isLoading && LocationManager.getInstance(this.getContext()).getCurrentLocation() == null){
+            Log.i("TGISA", "refresh: hide");
+            this.getView().setVisibility(View.INVISIBLE);
+        }else{
+            Log.i("TGISA", "refresh: show");
+            this.getView().setVisibility(View.VISIBLE);
+        }
+
+        if(this.salonAfroObject == null){
+            if(this.isLoading){
+                relLoading.setVisibility(View.VISIBLE);
+                txtNoSalons.setVisibility(View.INVISIBLE);
+                preview.setVisibility(View.VISIBLE);
+            }else{
+                txtNoSalons.setVisibility(View.VISIBLE);
+                preview.setVisibility(View.INVISIBLE);
+            }
+        }else{
+            updateUI();
+            txtNoSalons.setVisibility(View.INVISIBLE);
+            relLoading.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(this.interactionListener != null)
+            this.interactionListener.onClick(this.salonAfroObject);
+    }
+
+
+    public interface InteractionListener{
+        void onClick(SalonAfroObject salon);
     }
 }

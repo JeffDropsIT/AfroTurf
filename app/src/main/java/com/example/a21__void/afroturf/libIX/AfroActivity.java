@@ -1,6 +1,6 @@
 package com.example.a21__void.afroturf.libIX;
 
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 
 /**
  * Created by ASANDA on 2019/07/07.

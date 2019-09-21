@@ -1,13 +1,7 @@
 package com.example.a21__void.afroturf.pkgSalon;
 
 import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,22 +14,26 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
+
 import com.example.a21__void.Modules.AfroFragmentAdapter;
 import com.example.a21__void.Modules.ServerCon;
 import com.example.a21__void.afroturf.AfroActivity;
-import com.example.a21__void.afroturf.HomeActivity;
 import com.example.a21__void.afroturf.R;
 import com.example.a21__void.afroturf.fragments.ServicesFragment;
 import com.example.a21__void.afroturf.manager.BookmarkManager;
 import com.example.a21__void.afroturf.manager.CacheManager;
+import com.example.a21__void.afroturf.manager.UserManager;
 import com.example.a21__void.afroturf.object.BookmarkAfroObject;
 import com.example.a21__void.afroturf.object.SalonAfroObject;
 import com.example.a21__void.afroturf.pkgCommon.ReviewsFragment;
 import com.example.a21__void.afroturf.fragments.StylistsFragment;
 import com.example.a21__void.afroturf.pkgStylist.pakages.BookingActivity;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import com.example.a21__void.afroturf.user.UserGeneral;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
@@ -94,10 +92,11 @@ public class SalonActivity extends AfroActivity implements View.OnClickListener 
 
             @Override
             public void onPageSelected(int position) {
-                if(position == 2)
-                    fabReviews.setVisibility(View.VISIBLE);
-                else
-                    fabReviews.setVisibility(View.INVISIBLE);
+                //TODO visibility
+                //if(position == 2)
+                   // fabReviews.setVisibility(View.VISIBLE);
+                //else
+                    //fabReviews.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -196,7 +195,9 @@ public class SalonActivity extends AfroActivity implements View.OnClickListener 
 
     private void bookmarkSalon(SalonAfroObject salonObject) {
         this.showIndeterminateProgress();
-        this.bookmarkManager.addBookmark(salonObject, ServerCon.DEBUG_USER_ID, new CacheManager.ManagerRequestListener<BookmarkAfroObject>() {
+        UserGeneral userGeneral = UserManager.getInstance(this.getApplicationContext()).getCurrentUser();
+        Log.i("TGIF", userGeneral.getUUID());
+        this.bookmarkManager.addBookmark(salonObject, userGeneral.getUUID(), new CacheManager.ManagerRequestListener<BookmarkAfroObject>() {
             @Override
             public void onRespond(BookmarkAfroObject result) {
                 if(result != null){

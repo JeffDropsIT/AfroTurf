@@ -1,57 +1,49 @@
 package com.example.a21__void.afroturf.fragments;
 
 
-import android.app.Activity;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.text.InputType;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.a21__void.afroturf.Callback;
-import com.example.a21__void.afroturf.ErrorFragment;
-import com.example.a21__void.afroturf.Interpol;
 import com.example.a21__void.afroturf.R;
+import com.example.a21__void.afroturf.libIX.fragment.AfroFragment;
 import com.example.a21__void.afroturf.libIX.ui.RichTextView;
 import com.example.a21__void.afroturf.manager.CacheManager;
 import com.example.a21__void.afroturf.manager.UserManager;
 import com.example.a21__void.afroturf.object.UserAfroObject;
+import com.example.a21__void.afroturf.pkgCommon.APIConstants;
 import com.example.a21__void.afroturf.pkgCommon.AfroDropDown;
 import com.example.a21__void.afroturf.pkgCommon.AfroEditText;
+import com.example.a21__void.afroturf.user.UserGeneral;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreateUserFragment extends SequenceFragment implements View.OnClickListener, TextView.OnEditorActionListener {
+public class CreateUserFragment extends AfroFragment implements View.OnClickListener, TextView.OnEditorActionListener {
     private static final String ERROR_NAME = "error_name"
             , ERROR_EMAIL = "error_email"
             , ERROR_PASSWORD = "error_password"
             , ERROR_CONFIRM_PASSWORD = "error_confirm_password";
     private static final String TAG_ERROR_FRAGMENT = "error_fragment_create_user";
+    private static final int PROCESS_CREATE_ACCOUNT = 0;
 
     private RichTextView txtError;
     private AfroEditText aedtName,  aedtEmailAddress,  aedtPassword,  aedtConfirmPassword;
     private AfroDropDown adrpType;
     private EventListener eventListener;
-    //private MaterialProgressBar progBackgroundWork;
 
     public CreateUserFragment() {
         // Required empty public constructor
@@ -70,6 +62,10 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
         this.aedtPassword = relParent.findViewById(R.id.aedt_password);
         this.aedtConfirmPassword = relParent.findViewById(R.id.aedt_confirm_password);
 
+        this.aedtName.setNextFocusDownId(this.aedtEmailAddress.getId());
+        this.aedtEmailAddress.setNextFocusDownId(this.aedtPassword.getId());
+        this.aedtPassword.setNextFocusDownId(this.aedtConfirmPassword.getId());
+
         this.adrpType = relParent.findViewById(R.id.adrp_type);
         this.adrpType.setDataset(new String[]{"Customer", "Stylist", "Manager"});
 
@@ -79,79 +75,46 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
         return relParent;
     }
 
-    @Override
-    public void shouldProceed(Callback<Boolean> callback) {
-        if(this.getView() == null){
-            callback.onRespond(true);
-            return;
-        }
 
-
-    }
-
-    private void createUser(String name, String emailAddress, String password, String confirmPassword) {
+    private void createUser(String name, String emailAddress, String password, String confirmPassword, int userType) {
         Map<String, String> errors = this.handleErrors(name, emailAddress, password, confirmPassword);
 
         if(errors.isEmpty()){
             UserManager userManager = UserManager.getInstance(this.getContext());
-            UserAfroObject currentUser = userManager.getCurrentUser();
-            if(currentUser != null){
+            UserGeneral currentUser = userManager.getCurrentUser();
+            if(false){
 
             }else{
-                clearErrors();
-                userManager.signUpUser(name, emailAddress, password, new CacheManager.ManagerRequestListener<UserAfroObject>() {
+                userManager.signUpUser(name, emailAddress, password,userType, new CacheManager.ManagerRequestListener<UserGeneral>() {
                     @Override
-                    public void onRespond(UserAfroObject result) {
-                        hideIndeterminateProgress();
+                    public void onRespond(UserGeneral result) {
+                        CreateUserFragment.this.hideProcess();
                         if(CreateUserFragment.this.eventListener != null)
                             CreateUserFragment.this.eventListener.onCreateUser(CreateUserFragment.this, result);
                     }
 
                     @Override
                     public void onApiError(CacheManager.ApiError apiError) {
+                        CreateUserFragment.this.hideProcess();
                         if(apiError.errorCode == 409){
-                            hideIndeterminateProgress();
                             showError("Email already exists");
                             aedtEmailAddress.setSelected(true);
                         }else{
-                            hideIndeterminateProgress();
-                            CreateUserFragment.this.showNetworkError("No Connection", "Please make sure your wifi or mobile data is turned on.", new ErrorFragment.OnFragmentInteractionListener(){
-                                @Override
-                                public void onRequestRetry() {
-                                    createAccount();
-                                }
-
-                                @Override
-                                public void onRequestExit() {
-                                    Activity activity = CreateUserFragment.this.getActivity();
-                                    if(activity != null)
-                                        activity.finish();
-                                    else
-                                        Toast.makeText(CreateUserFragment.this.getContext(), "Unexpected Error", Toast.LENGTH_SHORT).show();
-
-                                }
-                            });
+                            CreateUserFragment.this.showProcessError(PROCESS_CREATE_ACCOUNT, R.drawable.ic_no_connection, APIConstants.TITLE_NO_CONNECTION, APIConstants.MSG_NO_CONNECTION);
                         }
+
+                        Log.i("test0", "onApiError: " + apiError.message + "|" + apiError.errorCode);
                     }
                 });
             }
         }else{
-            hideIndeterminateProgress();
+            this.hideProcess();
             showError(compileErrors(errors));
         }
     }
 
-    private void showNetworkError(String title, String msg, ErrorFragment.OnFragmentInteractionListener callback) {
-        ErrorFragment errorFragment = ErrorFragment.newInstance(R.drawable.ic_no_connection, title, msg);
-        errorFragment.setmListener(callback);
 
-        this.setTargetFragment(null, 9);
-        this.getFragmentManager().beginTransaction()
-                .replace(R.id.rel_error, errorFragment, TAG_ERROR_FRAGMENT)
-                .commit();
-    }
-
-    private String compileErrors(Map<String, String> errors) {
+    private String compileErrors(@NonNull Map<String, String> errors) {
        String compiledErrors = "invalid: ";
        if(!errors.isEmpty()){
            String[] errorsArray = errors.values().toArray(new String[errors.size()]);
@@ -233,15 +196,16 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
     }
 
     private void createAccount() {
-        this.showIndeterminateProgress();
+        this.showProcess("Creating Account");
         this.clearErrors();
 
         String name = this.aedtName.getText().trim()
                 , emailAddress = this.aedtEmailAddress.getText().trim()
                 , password  = this.aedtPassword.getText().trim()
                 , confirmPassword = this.aedtConfirmPassword.getText().trim();
+        int userType = this.adrpType.getSelection();
 
-        this.createUser(name, emailAddress, password, confirmPassword);
+        this.createUser(name, emailAddress, password, confirmPassword, userType);
     }
 
     public void setEventListener(EventListener eventListener) {
@@ -257,13 +221,25 @@ public class CreateUserFragment extends SequenceFragment implements View.OnClick
         return false;
     }
 
+
     @Override
-    public String getTitle() {
-        return "Sign Up";
+    public void retryProcess(int processId) {
+        if(processId == PROCESS_CREATE_ACCOUNT){
+            this.createAccount();
+        }
     }
 
+    @Override
+    public void cancelProcess(int processId) {
+
+    }
+
+    @Override
+    public void refresh() {
+
+    }
 
     public interface EventListener{
-        void onCreateUser(CreateUserFragment creator, UserAfroObject user);
+        void onCreateUser(CreateUserFragment creator, UserGeneral user);
     }
 }

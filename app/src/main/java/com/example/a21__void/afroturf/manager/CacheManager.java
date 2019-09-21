@@ -6,10 +6,12 @@ import android.database.CursorWrapper;
 import android.util.Log;
 
 import com.android.volley.NetworkResponse;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.example.a21__void.afroturf.database.AfroObjectDatabaseHelper;
 import com.example.a21__void.afroturf.object.AfroObject;
 import com.example.a21__void.afroturf.object.SalonAfroObject;
+import com.example.a21__void.afroturf.pkgCommon.APIConstants;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -22,8 +24,11 @@ import java.util.List;
  * for Pandaphic
  */
 public abstract class CacheManager {
+    public static final String ENTRY_RAW_OBJECT = AfroObjectDatabaseHelper.COLUMN_JSON;
+
     protected final AfroObjectDatabaseHelper afroObjectDatabaseHelper;
     private static final HashMap<String, CacheManager> instances;
+    private Context context;
     static{
         instances = new HashMap<>();
 
@@ -32,7 +37,8 @@ public abstract class CacheManager {
     private CachePointer cachePointer;
     private final HashMap<String, AfroObject> ramCache;
 
-    public CacheManager(Context context){
+    public CacheManager(Context pContext){
+        this.context = pContext;
         this.cachePointer = new CachePointer(null);
         this.afroObjectDatabaseHelper = new AfroObjectDatabaseHelper(getDatabaseName(), getTableName(), context);
         this.ramCache = new HashMap<>();
@@ -60,20 +66,29 @@ public abstract class CacheManager {
         this.notifyCacheChanged();
     }
 
-    public static ApiError parseApiError(NetworkResponse response){
-            int httpCode = response.statusCode;
-            String msg;
+    public static ApiError parseApiError(VolleyError error){
+        int httpCode;
+        String msg;
+        if(error.networkResponse != null){
+            httpCode = error.networkResponse.statusCode;
             try {
-                msg = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                msg = new String(error.networkResponse.data, HttpHeaderParser.parseCharset(error.networkResponse.headers));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
-                msg = "Server Side Error.";
+                msg = "Sorry, A Communication Error has occurred with the server. Please try again later";
             }
-            return new ApiError(httpCode, msg);
+        }else{
+            httpCode = APIConstants.NETWORK_ERROR;
+            msg = error.getMessage();
+        }
+        return new ApiError(httpCode, msg);
     }
 
     public CachePointer getCachePointer() {
         return cachePointer;
+    }
+    protected Context getContext(){
+        return this.context;
     }
 
     public final void get(String uid, ManagerRequestListener<AfroObject> callback){
@@ -86,11 +101,13 @@ public abstract class CacheManager {
             callback.onRespond(null);
     }
 
+
+
     protected void remoteGet(String uid, ManagerRequestListener<AfroObject> callback) {
         callback.onRespond(null);
     }
 
-    public int getCount(){ return cachePointer.cursor.getCount();}
+    public int getCount(){ return cachePointer.cursor == null ? 0 : cachePointer.cursor.getCount(); }
 
     public static CacheManager getManager(Context context, Class<? extends CacheManager> managerClass){
         String name = managerClass.getName();
@@ -151,6 +168,10 @@ public abstract class CacheManager {
         public void release(){
             if(cursor != null)
                 cursor.close();
+        }
+
+        public int ItemCount() {
+            return this.cursor == null ? 0 : this.cursor.getCount();
         }
 
 

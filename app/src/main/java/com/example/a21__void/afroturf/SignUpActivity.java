@@ -1,50 +1,42 @@
 package com.example.a21__void.afroturf;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Cache;
-import com.example.a21__void.afroturf.fragments.AccountTypeFragment;
 import com.example.a21__void.afroturf.fragments.CreateSalonFragment;
 import com.example.a21__void.afroturf.fragments.CreateUserFragment;
 import com.example.a21__void.afroturf.fragments.ProgressFragment;
+import com.example.a21__void.afroturf.fragments.SalonPickerFragment;
 import com.example.a21__void.afroturf.fragments.SalonsFragment;
-import com.example.a21__void.afroturf.fragments.StylistsFragment;
-import com.example.a21__void.afroturf.manager.CacheManager;
-import com.example.a21__void.afroturf.manager.SalonsManager;
-import com.example.a21__void.afroturf.manager.UserManager;
+import com.example.a21__void.afroturf.libIX.activity.AfroActivity;
+import com.example.a21__void.afroturf.libIX.fragment.AfroFragment;
+import com.example.a21__void.afroturf.libIX.fragment.ProcessErrorFragment;
 import com.example.a21__void.afroturf.object.SalonAfroObject;
-import com.example.a21__void.afroturf.object.UserAfroObject;
-
+import com.example.a21__void.afroturf.user.UserGeneral;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
-public class SignUpActivity extends AfroActivity implements View.OnClickListener, CreateUserFragment.EventListener {
+
+public class SignUpActivity extends AfroActivity  implements CreateUserFragment.EventListener, SalonPickerFragment.InteractionListener {
 
     private static final String TAG_CREATE_USER = "create_user"
             , TAG_ACCOUNT_TYPE = "account_type"
             , TAG_SELECT_SALON = "select_salon"
             , TAG_CREATE_SALON = "create_salon";
-    private static final String TAG_PROGRESS = "tag_progress";
-    private static final String TAG_ERROR = "tag_error";
+    private static final String TAG_PROGRESS = "tag_progress"
+            , TAG_PROCESS_ERROR = "tag_error";
+    private static final int REQ_UNKNOWN = 0
+            , REQ_CREATE_USER = 1
+            , REQ_REGISTER_WITH_SALON = 2
+            , REQ_CREATE_SALON = 3;
 
-    private int currentStep = 0;
+    private MaterialProgressBar backgroundProgressBar;
 
     private CreateUserFragment createUserFragment;
-    private AccountTypeFragment accountTypeFragment;
     private SalonsFragment salonsFragment;
     private CreateSalonFragment createSalonFragment;
 
@@ -56,160 +48,80 @@ public class SignUpActivity extends AfroActivity implements View.OnClickListener
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_sign_up);
 
+        this.backgroundProgressBar = this.findViewById(R.id.prog_background_work);
+
         this.createUserFragment = new CreateUserFragment();
-        this.accountTypeFragment = new AccountTypeFragment();
         this.salonsFragment = new SalonsFragment();
         this.createSalonFragment = new CreateSalonFragment();
 
-        this.salonsFragment.setMode(SalonsFragment.MODE_SELECT);
         this.createUserFragment.setEventListener(this);
 
-        this.findViewById(R.id.txt_cancel).setOnClickListener(this);
-        this.findViewById(R.id.txt_next).setOnClickListener(this);
-
-        this.currentStep = 0;
-        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.rel_main_container, createUserFragment, TAG_CREATE_USER)
-                .commit();
+        this.nextFragment(this.createUserFragment, TAG_CREATE_USER, false);
     }
 
-    private void addFragment(Fragment fragment, String tag) {
+    private void nextFragment(Fragment fragment, String tag, boolean addToBackStack) {
         FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.anim_slide_left, R.anim.anim_slide_left_offscreen, android.R.anim.fade_in, R.anim.anim_slide_right)
                 .add(R.id.rel_main_container, fragment, tag)
-                .addToBackStack(tag)
-                .commit();
-    }
+                .addToBackStack(tag);
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.txt_next:
-                this.nextFragment();
-                break;
-            case R.id.txt_cancel:
-                this.finish();
-                break;
-                default:
+        if(addToBackStack)
+            transaction.addToBackStack("stack:" + tag);
 
-        }
-    }
-
-    private void nextFragment() {
-        FragmentManager fragmentManager = this.getSupportFragmentManager();
-        int stackSize = fragmentManager.getBackStackEntryCount();
-        String currentTag;
-        if(stackSize == 0)
-            currentTag = TAG_CREATE_USER;
-        else
-            currentTag = this.getSupportFragmentManager().getBackStackEntryAt(stackSize - 1).getName();
-        switch (currentTag){
-            case TAG_CREATE_USER:
-                this.createUserFragment.shouldProceed(new Callback<Boolean>() {
-                    @Override
-                    public void onRespond(Boolean proceed) {
-                        if(proceed)
-                            addFragment(accountTypeFragment, TAG_ACCOUNT_TYPE);
-                    }
-                });
-                break;
-            case TAG_ACCOUNT_TYPE:
-                int accountType = this.accountTypeFragment.getAccountType();
-                if(accountType >= 0){
-                    switch (accountType){
-                        case AccountTypeFragment.TYPE_CUSTOMER:
-                            SignUpActivity.this.setResult(RESULT_OK);
-                            SignUpActivity.this.finish();
-                            break;
-                        case AccountTypeFragment.TYPE_STYLIST:
-                            this.salonsFragment.setMode(SalonsFragment.MODE_SELECT);
-                            SignUpActivity.this.addFragment(salonsFragment, TAG_SELECT_SALON);
-                            break;
-                        case AccountTypeFragment.TYPE_SALON_MANAGER:
-                            SignUpActivity.this.addFragment(createSalonFragment, TAG_CREATE_SALON);
-                            break;
-                    }
-                }else
-                    Toast.makeText(this, "Please Select Account Type", Toast.LENGTH_SHORT).show();
-                break;
-            case TAG_SELECT_SALON:
-                SalonAfroObject selectedSalon = this.salonsFragment.getSelectedSalon();
-                if(selectedSalon != null){
-                    this.registerUserWithSalon(selectedSalon);
-                }else
-                    Toast.makeText(this, "Please Select Salon", Toast.LENGTH_SHORT).show();
-                break;
-            case TAG_CREATE_SALON:
-                this.createSalonFragment.shouldProceed(new Callback<Boolean>() {
-                    @Override
-                    public void onRespond(Boolean proceed) {
-                        if(proceed){
-                            SignUpActivity.this.setResult(RESULT_OK);
-                            SignUpActivity.this.finish();
-                        }
-                    }
-                });
-                break;
-        }
-    }
-
-    private void registerUserWithSalon (final SalonAfroObject salon) {
-        this.showIndeterminateProgress("Making request");
-        UserManager.getInstance(this.getApplicationContext()).registerWithSalon(salon, new CacheManager.ManagerRequestListener<UserAfroObject>() {
-            @Override
-            public void onRespond(UserAfroObject result) {
-                hideIndeterminateProgress();
-                AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
-                builder.setTitle("Success")
-                        .setCancelable(false)
-                        .setMessage("A request to be a stylist has been made. we will notify you once the salon manager has accepted your request.")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                SignUpActivity.this.setResult(RESULT_OK);
-                                SignUpActivity.this.finish();
-                            }
-                        });
-                builder.show();
-            }
-
-            @Override
-            public void onApiError(CacheManager.ApiError apiError) {
-                hideIndeterminateProgress();
-                showNetworkError(new ErrorFragment.OnFragmentInteractionListener() {
-                    @Override
-                    public void onRequestRetry() {
-                        registerUserWithSalon(salon);
-                    }
-
-                    @Override
-                    public void onRequestExit() {
-                        SignUpActivity.this.finish();
-                    }
-                });
-            }
-        });
+        transaction.commit();
     }
 
 
     @Override
-    public void showIndeterminateProgress() {
-        this.showIndeterminateProgress("Loading");
+    public void onCreateUser(CreateUserFragment creator, UserGeneral user) {
+        switch(user.getUserType()){
+            case UserGeneral.USER_TYPE_GENERAL:
+                setResult(RESULT_OK);
+                finish();
+                break;
+            case UserGeneral.USER_TYPE_STYLIST:
+                this.nextFragment(new SalonPickerFragment(), TAG_SELECT_SALON, false);
+                break;
+            case UserGeneral.USER_TYPE_OWNER:
+        }
     }
 
-    private void showIndeterminateProgress(String msg) {
+
+    @Override
+    public void onProcessError(AfroFragment parent, int processId, int resIcon, String title, String message) {
+        int requestID = REQ_UNKNOWN;
+        if(parent instanceof CreateUserFragment) requestID = REQ_CREATE_USER;
+        //else if(parent instanceof SalonsFragment) requestID = REQ_REGISTER_WITH_SALON;
+
+        ProcessErrorFragment processErrorFragment = ProcessErrorFragment.newInstance(requestID, processId, title, message, resIcon);
+        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .add(R.id.rel_secondary_container, processErrorFragment, TAG_PROCESS_ERROR)
+                .commitNow();
+    }
+
+    @Override
+    public void onDoBackgroundWork() {
+        this.backgroundProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onFinishBackgroundWork() {
+        this.backgroundProgressBar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showProgress(String message) {
         FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
 
-        ProgressFragment progressFragment = ProgressFragment.newInstance(msg);
+        ProgressFragment progressFragment = ProgressFragment.newInstance(message);
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                 .replace(R.id.rel_secondary_container, progressFragment, TAG_PROGRESS)
-                .commit();
-        this.getSupportFragmentManager().executePendingTransactions();
+                .commitNow();
     }
 
     @Override
-    public void hideIndeterminateProgress() {
+    public void hideProgress() {
         Fragment fragment = this.getSupportFragmentManager().findFragmentByTag(TAG_PROGRESS);
         if(fragment == null)
             return;
@@ -217,37 +129,46 @@ public class SignUpActivity extends AfroActivity implements View.OnClickListener
         this.getSupportFragmentManager().beginTransaction()
                 .remove(fragment)
                 .commit();
-
     }
 
     @Override
-    protected int getErrorContainerId() {
-        return R.id.rel_secondary_container;
-    }
+    public void onRequestRetry(int requestID, int processID) {
+        Fragment processErrorFragment = this.getSupportFragmentManager().findFragmentByTag(TAG_PROCESS_ERROR);
+        if(processErrorFragment != null)
+            getSupportFragmentManager().beginTransaction()
+                    .remove(processErrorFragment)
+                    .commitNow();
 
-
-
-    private void showNetworkError(ErrorFragment.OnFragmentInteractionListener callback){
-        ErrorFragment errorFragment = ErrorFragment.newInstance(R.drawable.ic_no_connection, "No Connection", "dsfe");
-        errorFragment.setmListener(callback);
-
-        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .replace(R.id.rel_secondary_container, errorFragment, TAG_ERROR)
-                .commit();
-    }
-
-
-    @Override
-    public void onCreateUser(CreateUserFragment creator, UserAfroObject user) {
-        switch(user.getType()){
-            case UserAfroObject.TYPE_USER:
-                setResult(Activity.RESULT_OK);
-                finish();
+        switch (requestID){
+            case REQ_CREATE_USER:
+                this.createUserFragment.retryProcess(processID);
                 break;
-            case UserAfroObject.TYPE_STYLIST:
-                //addFragment(this.salonsFragment);
-            case UserAfroObject.TYPE_MANAGER:
         }
+    }
+
+    @Override
+    public void onRequestCancel(int requestID, int processID) {
+        Fragment processErrorFragment = this.getSupportFragmentManager().findFragmentByTag(TAG_PROCESS_ERROR);
+        if(processErrorFragment != null)
+            getSupportFragmentManager().beginTransaction()
+                    .remove(processErrorFragment)
+                    .commitNow();
+
+        switch (requestID){
+            case REQ_CREATE_USER:
+                this.createUserFragment.cancelProcess(processID);
+                break;
+        }
+    }
+
+    @Override
+    public void onSignUp(UserGeneral user, SalonAfroObject salon) {
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    @Override
+    protected void onWorkModeChange(int mode) {
+
     }
 }

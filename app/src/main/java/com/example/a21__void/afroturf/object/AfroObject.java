@@ -1,11 +1,8 @@
 package com.example.a21__void.afroturf.object;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
-import com.example.a21__void.afroturf.AfroJson;
+import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
@@ -14,6 +11,8 @@ import com.google.gson.JsonParser;
  */
 public abstract class AfroObject {
     public static final int TYPE_USER = 0, TYPE_STYLIST = 1, TYPE_MANAGER = 2;
+
+    private String token;
 
     public abstract String getName();
     public abstract String getUID();
@@ -34,6 +33,13 @@ public abstract class AfroObject {
 
     public int getType(){
         return TYPE_USER;
+    }
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String pToken){
+        this.token = pToken;
     }
 
     @Override

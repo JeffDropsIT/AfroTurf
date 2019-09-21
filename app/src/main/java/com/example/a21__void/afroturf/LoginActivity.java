@@ -1,48 +1,56 @@
 package com.example.a21__void.afroturf;
 
 import android.content.Intent;
-import android.os.Handler;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
+import com.example.a21__void.afroturf.fragments.ProgressFragment;
+import com.example.a21__void.afroturf.libIX.activity.AfroActivity;
+import com.example.a21__void.afroturf.libIX.fragment.AfroFragment;
+import com.example.a21__void.afroturf.libIX.fragment.ProcessErrorFragment;
+import com.example.a21__void.afroturf.libIX.ui.RichTextView;
 import com.example.a21__void.afroturf.manager.CacheManager;
 import com.example.a21__void.afroturf.manager.UserManager;
 import com.example.a21__void.afroturf.object.UserAfroObject;
+import com.example.a21__void.afroturf.pkgCommon.AfroEditText;
+import com.example.a21__void.afroturf.pkgCommon.AfroTextView;
+import com.example.a21__void.afroturf.user.UserGeneral;
 
 import java.util.HashMap;
 
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
-public class LoginActivity extends AfroActivity implements View.OnClickListener, TextWatcher, TextView.OnEditorActionListener {
+public class LoginActivity extends AfroActivity implements View.OnClickListener {
     public static final int RESULT_LOGGED_IN = 19;
     public static final int RESULT_REQUEST_SIGN_UP = 29;
-    private static final String TAG_ERROR_FRAGMENT = "error_fragment";
+    private static final String TAG_UNKNOWN =  "tag_unknown_fragment"
+                            , TAG_PROCESS_ERROR = "tag_process_error_fragment"
+                            , TAG_PROGRESS = "tag_progress_fragment";
+
+    private static final int REQ_PROCESS_ERROR_LOGIN = 12;
+    private static final int PROCESS_ID_LOGIN = 1;
+
+    private static final String KEY_ERROR_EMAIL = "key_error_email"
+                                    , KEY_ERROR_PASSWORD = "key_error_password";
 
     private HashMap<String, String> errors = new HashMap<>();
 
-    TextView txtLogin, txtSignUp, txtError;
-    EditText edtEmailAddress, edtPassword;
-    LinearLayout linEmailAddress, linPassword;
+    AfroTextView txtLogin, txtSignUp;
+    RichTextView txtError;
+    AfroEditText edtEmailAddress, edtPassword;
     private MaterialProgressBar progBackgroundWork;
 
+    private Animation animSlideUp, animSlideDown;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,22 +58,59 @@ public class LoginActivity extends AfroActivity implements View.OnClickListener,
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
 
+
+        this.animSlideUp = AnimationUtils.loadAnimation(this.getApplicationContext(), R.anim.anim_slide_up);
+        this.animSlideDown = AnimationUtils.loadAnimation(this.getApplicationContext(), R.anim.anim_slide_down);
+        this.animSlideUp.setDuration(250);
+        this.animSlideDown.setDuration(250);
+        this.animSlideUp.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                if(LoginActivity.this.txtError != null)
+                    LoginActivity.this.txtError.setVisibility(View.VISIBLE);
+                Log.i("anim", "onAnimationStart: ");
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        this.animSlideDown.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if(LoginActivity.this.txtError != null)
+                    LoginActivity.this.txtError.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
         this.progBackgroundWork = this.findViewById(R.id.prog_background_work);
         this.txtLogin = findViewById(R.id.txt_login);
         this.txtSignUp = findViewById(R.id.txt_sign_up);
         this.txtError = this.findViewById(R.id.txt_error);
-        this.edtEmailAddress = findViewById(R.id.edt_email_address);
+        this.edtEmailAddress = findViewById(R.id.edt_email);
         this.edtPassword = findViewById(R.id.edt_password);
-        this.linEmailAddress = findViewById(R.id.lin_email_address);
-        this.linPassword = findViewById(R.id.lin_password);
+        this.edtEmailAddress.setNextFocusDownId(this.edtPassword.getId());
 
         txtLogin.setOnClickListener(this);
         txtSignUp.setOnClickListener(
                 this);
 
-        this.edtEmailAddress.addTextChangedListener(this);
-        this.edtPassword.addTextChangedListener(this);
-        this.edtPassword.setOnEditorActionListener(this);
     }
 
     @Override
@@ -77,16 +122,17 @@ public class LoginActivity extends AfroActivity implements View.OnClickListener,
             case R.id.txt_sign_up:
                 this.setResult(RESULT_REQUEST_SIGN_UP);
                 this.finish();
+
                 break;
         }
     }
 
     private void login() {
-        this.showProgress();
         this.hideError();
+        this.showProgress("Logging in");
         this.txtError.requestFocus();
-        String username = this.edtEmailAddress.getText().toString().trim(),
-                password = this.edtPassword.getText().toString().trim();
+        String username = this.edtEmailAddress.getText().trim(),
+                password = this.edtPassword.getText().trim();
 
         boolean usernameValid = this.isUsernameValid(username),
                 passwordValid = this.isPasswordValid(password);
@@ -94,9 +140,9 @@ public class LoginActivity extends AfroActivity implements View.OnClickListener,
 
 
         if(usernameValid && passwordValid){
-            UserManager.getInstance(this).login(username, password, new CacheManager.ManagerRequestListener<UserAfroObject>() {
+            UserManager.getInstance(this).login(username, password, new CacheManager.ManagerRequestListener<UserGeneral>() {
                 @Override
-                public void onRespond(UserAfroObject result) {
+                public void onRespond(UserGeneral result) {
                     LoginActivity.this.hideProgress();
                     Intent intentHome = new Intent(LoginActivity.this, HomeActivity.class);
                     LoginActivity.this.startActivity(intentHome);
@@ -107,33 +153,24 @@ public class LoginActivity extends AfroActivity implements View.OnClickListener,
                 public void onApiError(CacheManager.ApiError apiError) {
                     LoginActivity.this.hideProgress();
                     if(apiError.errorCode < 0){
-                        LoginActivity.this.showNetworkError("No Connection", "Please make sure your wifi or mobile data is turned on.", new ErrorFragment.OnFragmentInteractionListener(){
-
-                            @Override
-                            public void onRequestRetry() {
-                                LoginActivity.this.hideNetworkError();
-                                LoginActivity.this.showProgress();
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        LoginActivity.this.login();
-                                    }
-                                }, 1500);
-                            }
-
-                            @Override
-                            public void onRequestExit() {
-                                LoginActivity.this.finish();
-                            }
-                        });
+                        LoginActivity.this.onProcessError(null, PROCESS_ID_LOGIN, R.drawable.ic_no_connection, "No Connection", "Please make sure your wifi or mobile data is turned on.");
                     }else{
-                        showError();
+                        HashMap<String, String> errors = new HashMap<>();
+                        errors.put(KEY_ERROR_EMAIL, "Email Address");
+                        errors.put(KEY_ERROR_PASSWORD, "Password");
+                        showError(errors);
                         hideProgress();
                     }
                 }
             });
         }else{
-            showError();
+            HashMap<String, String> errors = new HashMap<>();
+            if(!usernameValid)
+                errors.put(KEY_ERROR_EMAIL, "Email Address");
+            if(!passwordValid)
+                errors.put(KEY_ERROR_PASSWORD, "Password");
+
+            showError(errors);
             hideProgress();
         }
     }
@@ -146,71 +183,125 @@ public class LoginActivity extends AfroActivity implements View.OnClickListener,
         return username != null && username.length() > 0;
     }
 
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-        if(this.linEmailAddress.isSelected()){
-            hideError();
-        }
-    }
-
-    private void showError(){
+    private void showError(HashMap<String, String> errors){
         if(this.txtError != null){
-            txtError.setVisibility(View.VISIBLE);
-            this.linEmailAddress.setSelected(true);
-            this.linPassword.setSelected(true);
+            String compiledErrors = this.compileErrors(errors, false);
+            if(compiledErrors.length() > 0){
+                txtError.setMessage(compiledErrors + " Invalid");
+
+                if(!this.animSlideDown.hasEnded())
+                    this.animSlideDown.cancel();
+
+                Log.i("anim", "onAnimationStart: " + this.animSlideDown.hasEnded());
+
+                this.txtError.startAnimation(this.animSlideUp);
+
+
+                if(errors.containsKey(KEY_ERROR_EMAIL))
+                    edtEmailAddress.setHasError(true);
+                if(errors.containsKey(KEY_ERROR_PASSWORD))
+                    edtPassword.setHasError(true);
+            }
         }
     }
 
     private void hideError(){
         if(this.txtError != null){
-            this.txtError.setVisibility(View.INVISIBLE);
-            this.linEmailAddress.setSelected(false);
-            this.linPassword.setSelected(false);
+            if(!this.animSlideUp.hasEnded())
+                this.animSlideUp.cancel();
+
+            if(this.animSlideDown.hasEnded())
+                this.txtError.startAnimation(this.animSlideDown);
+
+            this.edtEmailAddress.setHasError(false);
+            this.edtPassword.setHasError(false);
         }
     }
 
-    private void showProgress(){
+    private String compileErrors(HashMap<String, String> errors, boolean and){
+        String compiledErrors = "";
+        String ender = and ? " and " : " or ";
+
+        int size = errors.size();
+        for(String key : errors.keySet()){
+            size--;
+            String error = errors.get(key);
+            compiledErrors += error + ((size == 1) ? ender : (size == 0) ? "" : ", ");
+        }
+        return compiledErrors;
+    }
+
+
+    @Override
+    public void onProcessError(AfroFragment parent, int processId, int resIcon, String title, String message) {
+        ProcessErrorFragment processErrorFragment = ProcessErrorFragment.newInstance(REQ_PROCESS_ERROR_LOGIN, processId, title, message, resIcon);
+
+        this.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .add(processErrorFragment, TAG_PROCESS_ERROR)
+                .commit();
+    }
+
+    @Override
+    public void onDoBackgroundWork() {
         if(this.progBackgroundWork != null)
             this.progBackgroundWork.setVisibility(View.VISIBLE);
     }
 
-    private void hideProgress(){
+    @Override
+    public void onFinishBackgroundWork() {
         if(this.progBackgroundWork != null)
-            this.progBackgroundWork.setVisibility(View.GONE);
+            this.progBackgroundWork.setVisibility(View.INVISIBLE);
     }
 
     @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if(actionId == EditorInfo.IME_ACTION_DONE){
-            Interpol.hideKeyBoard(this.getBaseContext(), edtPassword);
+    public void showProgress(String message) {
+        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+
+        ProgressFragment progressFragment = ProgressFragment.newInstance(message);
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.rel_secondary_container, progressFragment, TAG_PROGRESS)
+                .commitNow();
+    }
+
+    @Override
+    public void hideProgress() {
+        Fragment fragment = this.getSupportFragmentManager().findFragmentByTag(TAG_PROGRESS);
+        if(fragment == null)
+            return;
+
+        this.getSupportFragmentManager().beginTransaction()
+                .remove(fragment)
+                .commit();
+    }
+
+    @Override
+    public void onRequestRetry(int requestID, int processID) {
+        Fragment fragment = this.getSupportFragmentManager().findFragmentByTag(TAG_PROCESS_ERROR);
+
+        if(fragment != null)
+            this.getSupportFragmentManager().beginTransaction()
+                .remove(fragment)
+                .commit();
+
+
+        if(processID == PROCESS_ID_LOGIN){
             this.login();
-            return true;
         }
-        return false;
     }
 
     @Override
-    public void showIndeterminateProgress() {
+    public void onRequestCancel(int requestID, int processID) {
+        Fragment fragment = this.getSupportFragmentManager().findFragmentByTag(TAG_PROCESS_ERROR);
 
+        if(fragment != null)
+            this.getSupportFragmentManager().beginTransaction()
+                    .remove(fragment)
+                    .commit();
     }
 
     @Override
-    public void hideIndeterminateProgress() {
+    protected void onWorkModeChange(int mode) {
 
-    }
-
-    @Override
-    protected int getErrorContainerId() {
-        return R.id.rel_error;
     }
 }

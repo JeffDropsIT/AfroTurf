@@ -1,6 +1,5 @@
 package com.example.a21__void.afroturf;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;

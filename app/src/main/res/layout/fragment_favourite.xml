@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FavouriteFragment"
-    android:background="#eeffffff">
+    android:background="@color/snoh_white">
 
     <TextView
         android:id="@+id/txt_clear_all"
@@ -14,7 +14,7 @@
         android:textColor="#df1742"
         android:textStyle="bold"
         android:padding="10dp"
-        android:gravity="end"/>
+        android:gravity="end"/>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 
     <ListView
         android:id="@+id/lst_bookmarks"
@@ -27,17 +27,38 @@
 
     </ListView>
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/txt_empty"
+    <LinearLayout
+        android:id="@+id/rel_no_bookmarks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Opps Looks Like you don't have any Bookmarks yet\nSalon and Stylist you like will appear hare"
+        android:orientation="vertical"
         android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="10sp"
-        android:padding="20dp"
-        android:background="#f2f2f2"
-        android:textColor="@color/colorTextSuperDark"/>
+        android:background="@color/snoh_white"
+        >
+
+        <TextView
+            android:id="@+id/txt_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Opps Looks Like you don't have any Bookmarks yet.\nSalon and Stylist you like will appear hare"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:padding="20dp"
+            android:background="@color/snoh_white"
+            android:textColor="@color/colorTextSuperDark"/>
+
+        <TextView
+            android:id="@+id/txt_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="REFRESH"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:background="@drawable/round_corner"
+            android:backgroundTint="@color/link_blue"
+            />
+    </LinearLayout>
+
 
 </RelativeLayout>

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="snoh_white">#F5F5F5</color>
+    <color name="snoh_black">#002834</color>
+    <color name="snoh_amber">#FFB74D</color>
+
+    <color name="link_blue">#2196f3</color>
+
     <color name="colorPrimary">#DDE4E4</color>
     <color name="colorPrimaryDark">#DDE4E4</color>
     <color name="colorAccent">#2196f3</color>

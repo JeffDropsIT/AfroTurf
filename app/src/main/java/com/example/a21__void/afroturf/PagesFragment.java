@@ -1,42 +1,46 @@
 package com.example.a21__void.afroturf;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.CardView;
+
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import com.example.a21__void.Modules.AfroFragment;
-import com.example.a21__void.Modules.ListPagesAdapter;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import com.example.a21__void.Modules.PageTransformer;
 import com.example.a21__void.Modules.SalonsFragementAdapter;
-import com.example.a21__void.afroturf.fragments.SmallPreviewFragment;
+import com.example.a21__void.afroturf.libIX.adapter.PagesAdapter;
+import com.example.a21__void.afroturf.libIX.fragment.AfroFragment;
+import com.example.a21__void.afroturf.libIX.ui.RichTextView;
 import com.example.a21__void.afroturf.manager.CacheManager;
 import com.example.a21__void.afroturf.manager.SalonsManager;
-import com.example.a21__void.Modules.SalonsPreviewFragment;
 import com.example.a21__void.afroturf.object.SalonAfroObject;
-import com.example.a21__void.afroturf.pkgSalon.SalonObject;
+import com.example.a21__void.afroturf.pkgCommon.APIConstants;
 
 import java.util.ArrayList;
 
 
-public class PagesFragment extends AfroFragment {
-    private SalonsFragementAdapter pagesAdapter;
-    private ViewPager vpgPages;
-    private Animation animSlideIn, animSlideOut;
-    private boolean animating = false;
-    private SalonsFragementAdapter.OnItemClickListener onItemClickListener;
+public class PagesFragment extends AfroFragment implements PagesAdapter.InteractionListener {
+    private static final int PID_REFRESH = 548;
+    private PagesAdapter pagesAdapter;
+    private OnClickListener onClickListener;
+    private RichTextView txtNoSalons;
+    private RecyclerView rcvPages;
 
     public PagesFragment() {
         // Required empty public constructor
+    }
+
+    public void setOnClickListener(OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
     }
 
     public static PagesFragment newInstance(String param1, String param2) {
@@ -47,108 +51,100 @@ public class PagesFragment extends AfroFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.pagesAdapter = new SalonsFragementAdapter(this.getContext(), SalonsManager.getInstance(this.getContext()).getCachePointer());
-        this.pagesAdapter.setClickListener(this.onItemClickListener);
+        SalonsManager salonsManager = SalonsManager.getInstance(this.getContext());
+        this.pagesAdapter = new PagesAdapter(this.getContext(), salonsManager.getSalons());
+        this.pagesAdapter.setInteractionListener(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         RelativeLayout parent  = (RelativeLayout)inflater.inflate(R.layout.fragment_pages, container, false);
-        this.vpgPages = parent.findViewById(R.id.vpg_pages);
+        this.rcvPages = parent.findViewById(R.id.rcv_pages);
+        this.txtNoSalons = parent.findViewById(R.id.txt_no_salons);
 
-        PageTransformer fragmentCardShadowTransformer = new PageTransformer(vpgPages, pagesAdapter);
-        fragmentCardShadowTransformer.enableScaling(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false);
+        rcvPages.setLayoutManager(linearLayoutManager);
+        rcvPages.setAdapter(this.pagesAdapter);
 
-        this.vpgPages.setPageTransformer(false, fragmentCardShadowTransformer);
-        this.vpgPages.setOffscreenPageLimit(3);
-        this.vpgPages.setAdapter(pagesAdapter);
-
-        this.animSlideIn = AnimationUtils.loadAnimation(this.getContext(), R.anim.anim_slide_up);
-        this.animSlideOut = AnimationUtils.loadAnimation(this.getContext(), R.anim.anim_slide_down);
-        this.animSlideIn.setDuration(250);
-        this.animSlideOut.setDuration(250);
         return parent;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if(this.getView() != null && this.animSlideIn != null){
-            this.animating = true;
-            this.animSlideIn.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    PagesFragment.this.animating = false;
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            vpgPages.startAnimation(this.animSlideIn);
-        }
-    }
 
     @Override
     public void onResume() {
         super.onResume();
-        this.showIndeterminateProgress();
-        SalonsManager.getInstance(this.getContext()).requestRefresh(new CacheManager.ManagerRequestListener<CacheManager>() {
+        this.refresh();
+    }
+
+
+    @Override
+    public void retryProcess(int processId) {
+        if(processId == PID_REFRESH)
+            this.refresh();
+    }
+
+    @Override
+    public void cancelProcess(int processId) {
+        if(processId == PID_REFRESH)
+            if(PagesFragment.this.pagesAdapter.getItemCount() == 0)
+                PagesFragment.this.txtNoSalons.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void refresh() {
+        this.notifyBackgroundWorkStarted();
+        if(this.pagesAdapter.getItemCount() == 0)
+            this.pagesAdapter.setLoading(true);
+        else
+            this.txtNoSalons.setVisibility(View.INVISIBLE);
+
+        SalonsManager.getInstance(this.getContext()).getSalons(new CacheManager.ManagerRequestListener<ArrayList<SalonAfroObject>>() {
             @Override
-            public void onRespond(CacheManager result) {
-                PagesFragment.this.hideIndeterminateProgress();
+            public void onRespond(ArrayList<SalonAfroObject> result) {
+                PagesFragment.this.pagesAdapter.setSalons(result);
+                PagesFragment.this.pagesAdapter.setLoading(false);
+                PagesFragment.this.notifyBackgroundWorkFinished();
+                if(result.size() == 0)
+                    PagesFragment.this.txtNoSalons.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onApiError(CacheManager.ApiError apiError) {
-                //todo error
+                PagesFragment.this.pagesAdapter.setLoading(false);
+
+                if(apiError.errorCode == -1){
+                    PagesFragment.this.addToOnConnectionQueue(PID_REFRESH);
+
+                    if(PagesFragment.this.pagesAdapter.getItemCount() == 0)
+                        PagesFragment.this.txtNoSalons.setVisibility(View.VISIBLE);
+                }else{
+                    PagesFragment.this.showProcessError(PID_REFRESH, R.drawable.ic_warning, APIConstants.TITLE_COMMUNICATION_ERROR, APIConstants.MSG_NO_CONNECTION);
+                }
+                PagesFragment.this.notifyBackgroundWorkFinished();
             }
         });
     }
 
     @Override
-    public void requestClose(final AfroFragmentCallback callback) {
-        if(this.getView() != null && this.animSlideOut != null){
-            animating = true;
-            animSlideOut.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    PagesFragment.this.animating = false;
-                    callback.onClose();
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            this.vpgPages.startAnimation(this.animSlideOut);
-        }else{
-            callback.onClose();
-        }
-    }
-
-    public void setOnItemClickListener(SalonsFragementAdapter.OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-        if(this.pagesAdapter != null)
-            this.pagesAdapter.setClickListener(this.onItemClickListener);
+    public void onPause() {
+        this.removeAtOnConnectionQueue();
+        super.onPause();
     }
 
     @Override
-    public String getTitle() {
-        return "Pages";
+    public void onItemClick(SalonAfroObject item, int position) {
+        if(this.onClickListener != null)
+            this.onClickListener.onItemClick(item, position);
     }
 
+    public void focusOnPage(SalonAfroObject selectedSalon) {
+        int index = this.pagesAdapter.indexOf(selectedSalon);
+        if(index >= 0)
+            this.rcvPages.smoothScrollToPosition(index);
+    }
+
+    public interface OnClickListener{
+        void onItemClick(SalonAfroObject salon, int position);
+    }
 }

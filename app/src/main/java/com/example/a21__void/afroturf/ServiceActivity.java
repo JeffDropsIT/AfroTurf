@@ -1,7 +1,6 @@
 package com.example.a21__void.afroturf;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.a21__void.Modules.ServerCon;

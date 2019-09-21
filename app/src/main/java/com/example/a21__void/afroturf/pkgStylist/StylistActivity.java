@@ -2,16 +2,16 @@ package com.example.a21__void.afroturf.pkgStylist;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 
 import com.example.a21__void.afroturf.R;
 import com.example.a21__void.afroturf.fragments.Gallery;
@@ -21,6 +21,7 @@ import com.example.a21__void.afroturf.pkgStylist.pakages.ChatActivity;
 import com.example.a21__void.afroturf.pkgStylist.pakages.BookingActivity;
 import com.example.a21__void.afroturf.pkgStylist.pakages.ViewPagerAdapter;
 import com.example.a21__void.afroturf.pkgStylist.pakages.WriteReview;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class StylistActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -30,7 +31,7 @@ public class StylistActivity extends AppCompatActivity implements View.OnClickLi
         Reviews reviews;
         MenuItem prevMenuItem;
         private ViewPager viewPager;
-        private  BottomNavigationView bottomNavigationView;
+        private BottomNavigationView bottomNavigationView;
 
         @Override
         protected void onCreate(Bundle savedInstanceState){
